@@ -1,5 +1,5 @@
 // Version: 0.1.0
-import Article from "./slices/Article";
+import ArticleSlice from "./slices/Article";
 
 /***** Slice exports *****/
-export { Article };
+export { ArticleSlice };
