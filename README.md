@@ -1,1 +1,1 @@
-# b.kit prismic - Slices to connect React b.kit components with Prismic
+# b.kit Prismic - Connect React b.kit components to Prismic
