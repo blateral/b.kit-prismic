@@ -1,65 +1,65 @@
 {
-  "name": "@blateral/b.kit-prismic",
-  "version": "0.1.0",
-  "description": "",
-  "main": "lib/index.js",
-  "module": "lib/index.es.js",
-  "types": "lib",
-  "files": [
-    "lib"
-  ],
-  "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "tc": "tsc --noEmit",
-    "check-publish": "yarn pack && tar -xvzf *.tgz && rm -rf package *.tgz"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/blateral/b.kit-prismic.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/blateral/b.kit-prismic/issues"
-  },
-  "homepage": "https://github.com/blateral/b.kit-prismic#readme",
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn tc"
+    "name": "@blateral/b.kit-prismic",
+    "version": "0.1.1",
+    "description": "",
+    "main": "lib/index.js",
+    "module": "lib/index.es.js",
+    "types": "lib",
+    "files": [
+        "lib"
+    ],
+    "scripts": {
+        "build": "rollup -c",
+        "watch": "rollup -c -w",
+        "tc": "tsc --noEmit",
+        "check-publish": "yarn pack && tar -xvzf *.tgz && rm -rf package *.tgz"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/blateral/b.kit-prismic.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/blateral/b.kit-prismic/issues"
+    },
+    "homepage": "https://github.com/blateral/b.kit-prismic#readme",
+    "husky": {
+        "hooks": {
+            "pre-push": "yarn tc"
+        }
+    },
+    "devDependencies": {
+        "@blateral/b.kit": "^0.2.4",
+        "@rollup/plugin-commonjs": "^17.0.0",
+        "@rollup/plugin-node-resolve": "^11.0.0",
+        "@types/prismic-dom": "^2.1.1",
+        "@types/react": "^17.0.0",
+        "@types/react-dom": "^17.0.0",
+        "@types/styled-components": "^5.1.4",
+        "@typescript-eslint/eslint-plugin": "^4.8.2",
+        "@typescript-eslint/parser": "^4.8.2",
+        "eslint": "^7.14.0",
+        "eslint-plugin-react": "^7.21.5",
+        "eslint-plugin-react-hooks": "^4.2.0",
+        "husky": "^4.3.0",
+        "prismic-dom": "^2.2.4",
+        "prismic-javascript": "^3.0.2",
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "rollup": "^2.34.1",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "rollup-plugin-typescript2": "^0.29.0",
+        "styled-components": "^5.2.1",
+        "typescript": "^4.1.2"
+    },
+    "peerDependencies": {
+        "@blateral/b.kit": "^0.2.4",
+        "prismic-dom": "^2.2.4",
+        "prismic-javascript": "^3.0.2",
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "styled-components": "^5.2.1"
     }
-  },
-  "devDependencies": {
-    "@blateral/b.kit": "^0.2.4",
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.0.0",
-    "@types/prismic-dom": "^2.1.1",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@types/styled-components": "^5.1.4",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "@typescript-eslint/parser": "^4.8.2",
-    "eslint": "^7.14.0",
-    "eslint-plugin-react": "^7.21.5",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^4.3.0",
-    "prismic-dom": "^2.2.4",
-    "prismic-javascript": "^3.0.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "rollup": "^2.34.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-typescript2": "^0.29.0",
-    "styled-components": "^5.2.1",
-    "typescript": "^4.1.2"
-  },
-  "peerDependencies": {
-    "@blateral/b.kit": "^0.2.4",
-    "prismic-dom": "^2.2.4",
-    "prismic-javascript": "^3.0.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "styled-components": "^5.2.1"
-  }
 }
