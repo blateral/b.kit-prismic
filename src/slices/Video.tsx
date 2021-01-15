@@ -70,11 +70,12 @@ const ArticleSlice: React.FC<VideoSliceType> = ({
                 medium: bg_image?.Medium?.url || '',
                 large: bg_image?.Large?.url || '',
                 xlarge: bg_image?.ExtraLarge?.url || '',
-                alt: bg_image.alt && RichText.asText(bg_image.alt),
+                alt: bg_image?.alt && RichText.asText(bg_image.alt),
             }}
             embedId={RichText.asText(embed_id)}
             playIcon={playIcon}
             primaryAction={(isInverted) =>
+                primaryAction &&
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
@@ -82,6 +83,7 @@ const ArticleSlice: React.FC<VideoSliceType> = ({
                 )
             }
             secondaryAction={(isInverted) =>
+                secondaryAction &&
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
