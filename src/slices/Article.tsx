@@ -42,7 +42,7 @@ const ArticleSlice: React.FC<ArticleSliceType> = ({
             title={RichText.asText(title)}
             superTitle={RichText.asText(suptitle)}
             text={RichText.asHtml(text, linkResolver)}
-            asideText={RichText.asHtml(text, linkResolver)}
+            asideText={RichText.asHtml(aside_text, linkResolver)}
             isInverted={is_inverted}
             primaryAction={(is_inverted) => (
                 <Button.View
