@@ -8,7 +8,7 @@ import {
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 import { RichText } from 'prismic-dom';
 import { Video } from '@blateral/b.kit';
