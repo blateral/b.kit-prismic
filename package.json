@@ -4,7 +4,7 @@
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
-    "types": "lib",
+    "types": "lib/index.d.ts",
     "files": [
         "lib"
     ],
@@ -12,7 +12,8 @@
         "build": "rollup -c",
         "watch": "rollup -c -w",
         "tc": "tsc --noEmit",
-        "check-publish": "yarn pack && tar -xvzf *.tgz && rm -rf package *.tgz"
+        "check-publish": "yarn pack && tar -xvzf *.tgz && rm -rf package *.tgz",
+        "deploy": "yarn tc && yarn build && yarn publish"
     },
     "repository": {
         "type": "git",
@@ -31,7 +32,7 @@
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "^0.2.4",
+        "@blateral/b.kit": "^0.2.8",
         "@rollup/plugin-commonjs": "^17.0.0",
         "@rollup/plugin-node-resolve": "^11.0.0",
         "@types/prismic-dom": "^2.1.1",
