@@ -8,18 +8,26 @@ import {
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
+    PrismicSelectField,
+    mapPrismicSelect,
+    AliasMapperType,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
-import { Video } from '@blateral/b.kit';
+import { Gallery } from '@blateral/b.kit';
 
-export interface VideoSliceType extends PrismicSlice<'video'> {
+type Sizes = 'half' | 'full';
+
+export interface GallerySliceType
+    extends PrismicSlice<
+        'gallery',
+        PrismicImage & { size: PrismicSelectField }
+    > {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        bg_image?: PrismicImage;
-        embed_id?: string;
         is_inverted?: PrismicBoolean;
+        has_back?: PrismicBoolean;
 
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
@@ -28,6 +36,7 @@ export interface VideoSliceType extends PrismicSlice<'video'> {
     };
 
     // helpers to define elements outside of slice
+    sizeSelectAlias?: AliasMapperType<Sizes>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -38,41 +47,45 @@ export interface VideoSliceType extends PrismicSlice<'video'> {
         label?: string,
         href?: string
     ) => React.ReactNode;
-    playIcon?: React.ReactChild;
 }
 
-const VideoSlice: React.FC<VideoSliceType> = ({
+const GallerySlice: React.FC<GallerySliceType> = ({
     primary: {
         super_title,
         title,
         text,
-        bg_image,
-        embed_id,
+        has_back,
         is_inverted,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
+    items,
+    sizeSelectAlias = {
+        full: 'full',
+        half: 'half',
+    },
     primaryAction,
     secondaryAction,
-    playIcon,
 }) => {
     return (
-        <Video
+        <Gallery
             isInverted={is_inverted}
+            hasBack={has_back}
             title={RichText.asText(title)}
             superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
-            bgImage={{
-                small: bg_image?.url || '',
-                medium: bg_image?.Medium?.url || '',
-                large: bg_image?.Large?.url || '',
-                xlarge: bg_image?.ExtraLarge?.url || '',
-                alt: bg_image?.alt && RichText.asText(bg_image.alt),
-            }}
-            embedId={RichText.asText(embed_id)}
-            playIcon={playIcon}
+            images={items.map((item) => {
+                return {
+                    small: item?.url || '',
+                    medium: item?.Medium?.url || '',
+                    large: item?.Large?.url || '',
+                    xlarge: item?.ExtraLarge?.url || '',
+                    alt: item?.alt && RichText.asText(item.alt),
+                    size: mapPrismicSelect(sizeSelectAlias, item?.size),
+                };
+            })}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
@@ -93,4 +106,4 @@ const VideoSlice: React.FC<VideoSliceType> = ({
     );
 };
 
-export default VideoSlice;
+export default GallerySlice;
