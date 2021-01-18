@@ -14,7 +14,7 @@ import { RichText } from 'prismic-dom';
 import { Article } from '@blateral/b.kit';
 import { Button } from '@blateral/b.kit';
 
-export interface ArticleSliceType extends PrismicSlice<'artikel'> {
+export interface ArticleSliceType extends PrismicSlice<'article'> {
     primary: {
         suptitle?: PrismicHeading;
         title?: PrismicHeading;
