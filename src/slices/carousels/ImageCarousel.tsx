@@ -14,6 +14,7 @@ import {
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { ImageCarousel } from '@blateral/b.kit';
+import { ResponsiveObject } from 'slices/carousels/slick';
 
 type BgMode = 'full' | 'splitted';
 type Spacing = 'large' | 'normal';
@@ -54,6 +55,7 @@ export interface ImageCarouselSliceType
     afterChange?: (currentStep: number) => void;
     onInit?: (steps: number) => void;
     slidesToShow?: number;
+    responsive?: ResponsiveObject[];
 }
 
 const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
@@ -87,6 +89,7 @@ const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
     afterChange,
     onInit,
     slidesToShow,
+    responsive,
 }) => {
     return (
         <ImageCarousel
@@ -128,6 +131,7 @@ const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
             onInit={onInit}
             dot={dot}
             slidesToShow={slidesToShow}
+            responsive={responsive}
         />
     );
 };
