@@ -18,7 +18,7 @@ import { Article } from '@blateral/b.kit';
 
 type BgMode = 'full' | 'splitted';
 
-export interface ArticleSliceType extends PrismicSlice<'article'> {
+export interface ArticleSliceType extends PrismicSlice<'Article'> {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;

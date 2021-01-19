@@ -17,7 +17,7 @@ import { FeatureList } from '@blateral/b.kit';
 
 type BgMode = 'full' | 'splitted';
 
-export interface FeatureListSliceType extends PrismicSlice<'feature_list'> {
+export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
     primary: {
         title?: PrismicHeading;
         super_title?: PrismicRichText;

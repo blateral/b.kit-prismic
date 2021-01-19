@@ -19,7 +19,7 @@ type Sizes = 'half' | 'full';
 
 export interface GallerySliceType
     extends PrismicSlice<
-        'gallery',
+        'Gallery',
         PrismicImage & { size: PrismicSelectField }
     > {
     primary: {
