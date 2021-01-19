@@ -8,30 +8,46 @@ import {
     linkResolver,
     PrismicLink,
     resolveUnknownLink,
+    PrismicSelectField,
+    AliasMapperType,
+    mapPrismicSelect,
 } from '../utils/prismic';
 
 import { RichText } from 'prismic-dom';
 import { Article } from '@blateral/b.kit';
-import { Button } from '@blateral/b.kit';
+
+type BgMode = 'full' | 'splitted';
 
 export interface ArticleSliceType extends PrismicSlice<'article'> {
     primary: {
-        suptitle?: PrismicHeading;
+        super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
         aside_text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
-        bg_mode?: 'full' | 'splitted';
+        bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
         primary_label?: string;
         secondary_label?: string;
     };
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasMapperType<BgMode>;
+    primaryAction?: (
+        isInverted?: boolean,
+        label?: string,
+        href?: string
+    ) => React.ReactNode;
+    secondaryAction?: (
+        isInverted?: boolean,
+        label?: string,
+        href?: string
+    ) => React.ReactNode;
 }
 
 const ArticleSlice: React.FC<ArticleSliceType> = ({
     primary: {
-        suptitle,
+        super_title,
         title,
         text,
         aside_text,
@@ -42,31 +58,37 @@ const ArticleSlice: React.FC<ArticleSliceType> = ({
         secondary_link,
         secondary_label,
     },
+    bgModeSelectAlias = {
+        full: 'full',
+        splitted: 'splitted',
+    },
+    primaryAction,
+    secondaryAction,
 }) => {
     return (
         <Article
-            bgMode={bg_mode}
+            isInverted={is_inverted}
+            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
             title={RichText.asText(title)}
-            superTitle={RichText.asText(suptitle)}
+            superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
             asideText={RichText.asHtml(aside_text, linkResolver)}
-            isInverted={is_inverted}
-            primaryAction={(is_inverted) => (
-                <Button.View
-                    href={resolveUnknownLink(primary_link) || ''}
-                    isInverted={is_inverted}
-                >
-                    <Button.Label>{primary_label}</Button.Label>
-                </Button.View>
-            )}
-            secondaryAction={(isInverted) => (
-                <Button.View
-                    href={resolveUnknownLink(secondary_link) || ''}
-                    isInverted={isInverted}
-                >
-                    <Button.Label>{secondary_label}</Button.Label>
-                </Button.View>
-            )}
+            primaryAction={(isInverted) =>
+                primaryAction &&
+                primaryAction(
+                    isInverted,
+                    RichText.asText(primary_label),
+                    resolveUnknownLink(primary_link) || ''
+                )
+            }
+            secondaryAction={(isInverted) =>
+                secondaryAction &&
+                secondaryAction(
+                    isInverted,
+                    RichText.asText(secondary_label),
+                    resolveUnknownLink(secondary_link) || ''
+                )
+            }
         />
     );
 };
