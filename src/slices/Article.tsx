@@ -11,7 +11,7 @@ import {
     PrismicSelectField,
     AliasMapperType,
     mapPrismicSelect,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 import { RichText } from 'prismic-dom';
 import { Article } from '@blateral/b.kit';

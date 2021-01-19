@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
     PrismicBoolean,
     PrismicHeading,
@@ -10,21 +9,22 @@ import {
     resolveUnknownLink,
     PrismicImage,
     AliasMapperType,
-} from '../utils/prismic';
-
+    PrismicSelectField,
+    mapPrismicSelect,
+} from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { FeatureList } from '@blateral/b.kit';
 
-type Sizes = 'half' | 'full';
+type BgMode = 'full' | 'splitted';
 
-export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
+export interface FeatureListSliceType extends PrismicSlice<'feature_list'> {
     primary: {
         title?: PrismicHeading;
         super_title?: PrismicRichText;
         text?: PrismicRichText;
 
         is_inverted?: PrismicBoolean;
-        bg_mode?: 'full' | 'splitted';
+        bg_mode?: PrismicSelectField;
 
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
@@ -37,12 +37,7 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
 
         description?: PrismicRichText;
         intro?: PrismicRichText;
-        image: PrismicImage & {
-            medium: PrismicImage;
-            semilarge: PrismicImage;
-            large: PrismicImage;
-            xlarge: PrismicImage;
-        };
+        image: PrismicImage;
 
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
@@ -51,7 +46,7 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
     }[];
 
     // helpers to define elements outside of slice
-    sizeSelectAlias?: AliasMapperType<Sizes>;
+    bgModeSelectAlias?: AliasMapperType<BgMode>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -77,11 +72,17 @@ const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         secondary_label,
     },
     items,
+    bgModeSelectAlias = {
+        full: 'full',
+        splitted: 'splitted',
+    },
     primaryAction,
     secondaryAction,
 }) => {
     return (
         <FeatureList
+            isInverted={is_inverted}
+            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
             title={RichText.asText(title)}
             superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
@@ -101,7 +102,6 @@ const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                     resolveUnknownLink(secondary_link) || ''
                 )
             }
-            isInverted={is_inverted}
             features={items.map(
                 ({
                     title,
@@ -117,7 +117,7 @@ const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                     return {
                         title: RichText.asText(title),
                         text: RichText.asHtml(text),
-                        description: RichText.asHtml(description),
+                        description: RichText.asHtml(description, linkResolver),
                         intro: RichText.asHtml(intro),
 
                         image: {
