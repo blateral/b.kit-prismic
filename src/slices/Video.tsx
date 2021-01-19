@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
     PrismicBoolean,
     PrismicHeading,
@@ -8,31 +7,27 @@ import {
     linkResolver,
     PrismicLink,
     resolveUnknownLink,
-    PrismicSelectField,
-    AliasMapperType,
-    mapPrismicSelect,
+    PrismicImage,
 } from 'utils/prismic';
-
 import { RichText } from 'prismic-dom';
-import { Article } from '@blateral/b.kit';
+import { Video } from '@blateral/b.kit';
 
-type BgMode = 'full' | 'splitted';
-
-export interface ArticleSliceType extends PrismicSlice<'Article'> {
+export interface VideoSliceType extends PrismicSlice<'Video'> {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        aside_text?: PrismicRichText;
+        bg_image?: PrismicImage;
+        embed_id?: string;
         is_inverted?: PrismicBoolean;
-        bg_mode?: PrismicSelectField;
+
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
         primary_label?: string;
         secondary_label?: string;
     };
+
     // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasMapperType<BgMode>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -43,36 +38,41 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
         label?: string,
         href?: string
     ) => React.ReactNode;
+    playIcon?: React.ReactChild;
 }
 
-const ArticleSlice: React.FC<ArticleSliceType> = ({
+const VideoSlice: React.FC<VideoSliceType> = ({
     primary: {
         super_title,
         title,
         text,
-        aside_text,
+        bg_image,
+        embed_id,
         is_inverted,
-        bg_mode,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
-    bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
-    },
     primaryAction,
     secondaryAction,
+    playIcon,
 }) => {
     return (
-        <Article
+        <Video
             isInverted={is_inverted}
-            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
             title={RichText.asText(title)}
             superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
-            asideText={RichText.asHtml(aside_text, linkResolver)}
+            bgImage={{
+                small: bg_image?.url || '',
+                medium: bg_image?.Medium?.url || '',
+                large: bg_image?.Large?.url || '',
+                xlarge: bg_image?.ExtraLarge?.url || '',
+                alt: bg_image?.alt && RichText.asText(bg_image.alt),
+            }}
+            embedId={RichText.asText(embed_id)}
+            playIcon={playIcon}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
@@ -93,4 +93,4 @@ const ArticleSlice: React.FC<ArticleSliceType> = ({
     );
 };
 
-export default ArticleSlice;
+export default VideoSlice;

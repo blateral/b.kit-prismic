@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
     PrismicBoolean,
     PrismicHeading,
@@ -8,31 +7,36 @@ import {
     linkResolver,
     PrismicLink,
     resolveUnknownLink,
+    PrismicImage,
     PrismicSelectField,
-    AliasMapperType,
     mapPrismicSelect,
+    AliasMapperType,
 } from 'utils/prismic';
-
 import { RichText } from 'prismic-dom';
-import { Article } from '@blateral/b.kit';
+import { Gallery } from '@blateral/b.kit';
 
-type BgMode = 'full' | 'splitted';
+type Sizes = 'half' | 'full';
 
-export interface ArticleSliceType extends PrismicSlice<'Article'> {
+export interface GallerySliceType
+    extends PrismicSlice<
+        'Gallery',
+        PrismicImage & { size: PrismicSelectField }
+    > {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        aside_text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
-        bg_mode?: PrismicSelectField;
+        has_back?: PrismicBoolean;
+
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
         primary_label?: string;
         secondary_label?: string;
     };
+
     // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasMapperType<BgMode>;
+    sizeSelectAlias?: AliasMapperType<Sizes>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -45,34 +49,43 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
     ) => React.ReactNode;
 }
 
-const ArticleSlice: React.FC<ArticleSliceType> = ({
+const GallerySlice: React.FC<GallerySliceType> = ({
     primary: {
         super_title,
         title,
         text,
-        aside_text,
+        has_back,
         is_inverted,
-        bg_mode,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
-    bgModeSelectAlias = {
+    items,
+    sizeSelectAlias = {
         full: 'full',
-        splitted: 'splitted',
+        half: 'half',
     },
     primaryAction,
     secondaryAction,
 }) => {
     return (
-        <Article
+        <Gallery
             isInverted={is_inverted}
-            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
+            hasBack={has_back}
             title={RichText.asText(title)}
             superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
-            asideText={RichText.asHtml(aside_text, linkResolver)}
+            images={items.map((item) => {
+                return {
+                    small: item?.url || '',
+                    medium: item?.Medium?.url || '',
+                    large: item?.Large?.url || '',
+                    xlarge: item?.ExtraLarge?.url || '',
+                    alt: item?.alt && RichText.asText(item.alt),
+                    size: mapPrismicSelect(sizeSelectAlias, item?.size),
+                };
+            })}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
@@ -93,4 +106,4 @@ const ArticleSlice: React.FC<ArticleSliceType> = ({
     );
 };
 
-export default ArticleSlice;
+export default GallerySlice;
