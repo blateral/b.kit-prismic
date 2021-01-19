@@ -4,30 +4,29 @@ import {
     PrismicHeading,
     PrismicRichText,
     PrismicSlice,
-    linkResolver,
     PrismicLink,
-    resolveUnknownLink,
     PrismicImage,
     PrismicSelectField,
-    mapPrismicSelect,
     AliasMapperType,
+    mapPrismicSelect,
+    linkResolver,
+    resolveUnknownLink,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
-import { Gallery } from '@blateral/b.kit';
+import { ImageCarousel } from '@blateral/b.kit';
 
-type Sizes = 'half' | 'full';
+type BgMode = 'full' | 'splitted';
+type Spacing = 'large' | 'normal';
 
-export interface GallerySliceType
-    extends PrismicSlice<
-        'gallery',
-        PrismicImage & { size: PrismicSelectField }
-    > {
+export interface ImageCarouselSliceType
+    extends PrismicSlice<'image_carousel', PrismicImage> {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
-        has_back?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
+        spacing?: PrismicSelectField;
 
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
@@ -36,7 +35,8 @@ export interface GallerySliceType
     };
 
     // helpers to define component elements outside of slice
-    sizeSelectAlias?: AliasMapperType<Sizes>;
+    bgModeSelectAlias?: AliasMapperType<BgMode>;
+    spacingSelectAlias?: AliasMapperType<Spacing>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -47,14 +47,22 @@ export interface GallerySliceType
         label?: string,
         href?: string
     ) => React.ReactNode;
+    controlNext?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
+    controlPrev?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
+    dot?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
+    beforeChange?: (currentStep: number, nextStep: number) => void;
+    afterChange?: (currentStep: number) => void;
+    onInit?: (steps: number) => void;
+    slidesToShow?: number;
 }
 
-const GallerySlice: React.FC<GallerySliceType> = ({
+const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
     primary: {
         super_title,
         title,
         text,
-        has_back,
+        bg_mode,
+        spacing,
         is_inverted,
         primary_link,
         primary_label,
@@ -62,17 +70,29 @@ const GallerySlice: React.FC<GallerySliceType> = ({
         secondary_label,
     },
     items,
-    sizeSelectAlias = {
+    bgModeSelectAlias = {
         full: 'full',
-        half: 'half',
+        splitted: 'splitted',
+    },
+    spacingSelectAlias = {
+        normal: 'normal',
+        large: 'large',
     },
     primaryAction,
     secondaryAction,
+    controlNext,
+    controlPrev,
+    dot,
+    beforeChange,
+    afterChange,
+    onInit,
+    slidesToShow,
 }) => {
     return (
-        <Gallery
+        <ImageCarousel
             isInverted={is_inverted}
-            hasBack={has_back}
+            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
+            spacing={mapPrismicSelect(spacingSelectAlias, spacing)}
             title={RichText.asText(title)}
             superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
@@ -83,7 +103,6 @@ const GallerySlice: React.FC<GallerySliceType> = ({
                     large: item?.Large?.url || '',
                     xlarge: item?.ExtraLarge?.url || '',
                     alt: item?.alt && RichText.asText(item.alt),
-                    size: mapPrismicSelect(sizeSelectAlias, item?.size),
                 };
             })}
             primaryAction={(isInverted) =>
@@ -102,8 +121,15 @@ const GallerySlice: React.FC<GallerySliceType> = ({
                     resolveUnknownLink(secondary_link) || ''
                 )
             }
+            controlNext={controlNext}
+            controlPrev={controlPrev}
+            beforeChange={beforeChange}
+            afterChange={afterChange}
+            onInit={onInit}
+            dot={dot}
+            slidesToShow={slidesToShow}
         />
     );
 };
 
-export default GallerySlice;
+export default ImageCarouselSlice;

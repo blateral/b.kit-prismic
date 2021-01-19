@@ -243,9 +243,9 @@ export type AliasMapperType<TargetType extends string> = {
 
 export const mapPrismicSelect = <TargetType extends string>(
     aliasMapper: AliasMapperType<TargetType>,
-    prismicSelectValue: PrismicSelectField
+    prismicSelectValue?: PrismicSelectField
 ) => {
-    let alias;
+    let alias = undefined;
     for (const key in aliasMapper) {
         // check if mapper contains alias (value) that matches with prismic select value
         if (aliasMapper[key] === prismicSelectValue) {

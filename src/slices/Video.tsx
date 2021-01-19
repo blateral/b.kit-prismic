@@ -27,7 +27,7 @@ export interface VideoSliceType extends PrismicSlice<'video'> {
         secondary_label?: string;
     };
 
-    // helpers to define elements outside of slice
+    // helpers to define component elements outside of slice
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
