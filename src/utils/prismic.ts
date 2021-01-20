@@ -256,3 +256,11 @@ export const mapPrismicSelect = <TargetType extends string>(
     }
     return alias;
 };
+
+export const isPrismicLinkEmpty = (prismicLink: PrismicLink) => {
+    return prismicLink.link_type === 'Any';
+};
+
+export const isRichTextEmpty = (prismicRichText: PrismicRichText) => {
+    return prismicRichText.length === 1 && prismicRichText[0].text === '';
+};
