@@ -138,14 +138,16 @@ const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                             primaryAction(
                                 isInverted,
                                 RichText.asText(primary_label),
-                                resolveUnknownLink(primary_link) || ''
+                                resolveUnknownLink(primary_link) || '',
+                                isPrismicLinkExternal(primary_link)
                             ),
                         secondaryAction: (isInverted) =>
                             secondaryAction &&
                             secondaryAction(
                                 isInverted,
                                 RichText.asText(secondary_label),
-                                resolveUnknownLink(secondary_link) || ''
+                                resolveUnknownLink(secondary_link) || '',
+                                isPrismicLinkExternal(secondary_link)
                             ),
                     };
                 }
