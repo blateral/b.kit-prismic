@@ -11,6 +11,7 @@ import {
     mapPrismicSelect,
     linkResolver,
     resolveUnknownLink,
+    isPrismicLinkExternal,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { ImageCarousel } from '@blateral/b.kit';
@@ -41,12 +42,14 @@ export interface ImageCarouselSliceType
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     secondaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     controlNext?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
     controlPrev?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
@@ -113,7 +116,8 @@ const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
-                    resolveUnknownLink(primary_link) || ''
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
                 )
             }
             secondaryAction={(isInverted) =>
@@ -121,7 +125,8 @@ const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
-                    resolveUnknownLink(secondary_link) || ''
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
                 )
             }
             controlNext={controlNext}

@@ -11,6 +11,7 @@ import {
     PrismicSelectField,
     AliasMapperType,
     mapPrismicSelect,
+    isPrismicLinkExternal,
 } from 'utils/prismic';
 
 import { RichText } from 'prismic-dom';
@@ -36,12 +37,14 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     secondaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
 }
 
@@ -78,7 +81,8 @@ const ArticleSlice: React.FC<ArticleSliceType> = ({
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
-                    resolveUnknownLink(primary_link) || ''
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
                 )
             }
             secondaryAction={(isInverted) =>
@@ -86,7 +90,8 @@ const ArticleSlice: React.FC<ArticleSliceType> = ({
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
-                    resolveUnknownLink(secondary_link) || ''
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
                 )
             }
         />

@@ -8,6 +8,7 @@ import {
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
+    isPrismicLinkExternal,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { Video } from '@blateral/b.kit';
@@ -31,12 +32,14 @@ export interface VideoSliceType extends PrismicSlice<'Video'> {
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     secondaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     playIcon?: React.ReactChild;
 }
@@ -78,7 +81,8 @@ const VideoSlice: React.FC<VideoSliceType> = ({
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
-                    resolveUnknownLink(primary_link) || ''
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
                 )
             }
             secondaryAction={(isInverted) =>
@@ -86,7 +90,8 @@ const VideoSlice: React.FC<VideoSliceType> = ({
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
-                    resolveUnknownLink(secondary_link) || ''
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
                 )
             }
         />

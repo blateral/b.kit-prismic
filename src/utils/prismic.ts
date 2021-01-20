@@ -261,8 +261,9 @@ export const isPrismicLinkEmpty = (prismicLink: PrismicLink) => {
     return prismicLink.link_type === 'Any';
 };
 
-export const isPrismicLinkExternal = (prismicLink: PrismicLink) => {
-    return (prismicLink as any).target &&
+export const isPrismicLinkExternal = (prismicLink?: PrismicLink | string) => {
+    return prismicLink &&
+        (prismicLink as any).target &&
         (prismicLink as any).target === '_blank'
         ? true
         : false;

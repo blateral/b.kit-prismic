@@ -11,6 +11,7 @@ import {
     PrismicSelectField,
     mapPrismicSelect,
     AliasMapperType,
+    isPrismicLinkExternal,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { Gallery } from '@blateral/b.kit';
@@ -40,12 +41,14 @@ export interface GallerySliceType
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     secondaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
 }
 
@@ -91,7 +94,8 @@ const GallerySlice: React.FC<GallerySliceType> = ({
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
-                    resolveUnknownLink(primary_link) || ''
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
                 )
             }
             secondaryAction={(isInverted) =>
@@ -99,7 +103,8 @@ const GallerySlice: React.FC<GallerySliceType> = ({
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
-                    resolveUnknownLink(secondary_link) || ''
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
                 )
             }
         />

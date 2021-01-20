@@ -11,6 +11,7 @@ import {
     AliasMapperType,
     PrismicSelectField,
     mapPrismicSelect,
+    isPrismicLinkExternal,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { FeatureList } from '@blateral/b.kit';
@@ -50,12 +51,14 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     secondaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
 }
 
@@ -91,7 +94,8 @@ const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
-                    resolveUnknownLink(primary_link) || ''
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
                 )
             }
             secondaryAction={(isInverted) =>
@@ -99,7 +103,8 @@ const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
-                    resolveUnknownLink(secondary_link) || ''
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
                 )
             }
             features={items.map(
