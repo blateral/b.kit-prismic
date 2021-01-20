@@ -257,8 +257,9 @@ export const mapPrismicSelect = <TargetType extends string>(
     return alias;
 };
 
-export const isPrismicLinkEmpty = (prismicLink: PrismicLink) => {
-    return prismicLink.link_type === 'Any';
+export const isPrismicLinkEmpty = (prismicLink: PrismicLink | string) => {
+    const type = (prismicLink as PrismicLink).link_type;
+    return type ? type === 'Any' : prismicLink === '';
 };
 
 export const isPrismicLinkExternal = (prismicLink?: PrismicLink | string) => {
