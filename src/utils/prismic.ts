@@ -261,6 +261,13 @@ export const isPrismicLinkEmpty = (prismicLink: PrismicLink) => {
     return prismicLink.link_type === 'Any';
 };
 
+export const isPrismicLinkExternal = (prismicLink: PrismicLink) => {
+    return (prismicLink as any).target &&
+        (prismicLink as any).target === '_blank'
+        ? true
+        : false;
+};
+
 export const isRichTextEmpty = (prismicRichText: PrismicRichText) => {
     return prismicRichText.length === 1 && prismicRichText[0].text === '';
 };
