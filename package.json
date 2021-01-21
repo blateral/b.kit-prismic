@@ -32,7 +32,7 @@
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "^0.2.8",
+        "@blateral/b.kit": "^0.2.9",
         "@rollup/plugin-commonjs": "^17.0.0",
         "@rollup/plugin-node-resolve": "^11.0.0",
         "@types/prismic-dom": "^2.1.1",
