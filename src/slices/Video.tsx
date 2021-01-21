@@ -13,7 +13,7 @@ import {
 import { RichText } from 'prismic-dom';
 import { Video } from '@blateral/b.kit';
 
-export interface VideoSliceType extends PrismicSlice<'Video'> {
+export interface VideoSliceType extends PrismicSlice<'video'> {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;

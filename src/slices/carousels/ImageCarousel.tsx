@@ -21,7 +21,7 @@ type BgMode = 'full' | 'splitted';
 type Spacing = 'large' | 'normal';
 
 export interface ImageCarouselSliceType
-    extends PrismicSlice<'ImageCarousel', PrismicImage> {
+    extends PrismicSlice<'image_carousel', PrismicImage> {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
