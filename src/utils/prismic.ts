@@ -82,22 +82,16 @@ export interface PrismicGeopoint {
     latitude: number;
     longitude: number;
 }
-export interface PrismicImage {
-    url?: string;
-    alt?: string;
-    ExtraLarge?: {
-        url?: string;
-        alt?: string;
-    };
-    Large?: {
-        url?: string;
-        alt?: string;
-    };
-    Medium?: {
-        url?: string;
-        alt?: string;
-    };
+
+interface PrismicImageProps {
+    url: string;
+    alt: string;
 }
+
+export interface PrismicImage extends PrismicImageProps {
+    [key: string]: string | { [key in keyof PrismicImageProps]: string };
+}
+
 export interface DefaultMappedImage {
     small: string;
     alt: string;
@@ -241,6 +235,10 @@ export type AliasMapperType<TargetType extends string> = {
     [key in TargetType]: string;
 };
 
+export type AliasInterfaceMapperType<TargetType> = {
+    [key in keyof TargetType]: string;
+};
+
 export const mapPrismicSelect = <TargetType extends string>(
     aliasMapper: AliasMapperType<TargetType>,
     prismicSelectValue?: PrismicSelectField
@@ -255,6 +253,23 @@ export const mapPrismicSelect = <TargetType extends string>(
         }
     }
     return alias;
+};
+
+// Try to get generic sub image from prismic image object
+export const getSubPrismicImage = (
+    prismicImage: PrismicImage,
+    key?: string
+) => {
+    try {
+        if (!key || key === '') throw new Error();
+        if (!prismicImage?.[key] || typeof prismicImage?.[key] !== 'object')
+            throw new Error();
+
+        return prismicImage?.[key] as PrismicImage;
+    } catch {
+        // return default prismic image (main)
+        return prismicImage;
+    }
 };
 
 export const isPrismicLinkEmpty = (prismicLink: PrismicLink | string) => {

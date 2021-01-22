@@ -48,7 +48,7 @@ export interface ArticleSliceType extends PrismicSlice<'article'> {
     ) => React.ReactNode;
 }
 
-const ArticleSlice: React.FC<ArticleSliceType> = ({
+export const ArticleSlice: React.FC<ArticleSliceType> = ({
     primary: {
         super_title,
         title,
@@ -97,5 +97,3 @@ const ArticleSlice: React.FC<ArticleSliceType> = ({
         />
     );
 };
-
-export default ArticleSlice;
