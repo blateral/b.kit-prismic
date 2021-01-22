@@ -11,15 +11,19 @@ import {
     PrismicSelectField,
     mapPrismicSelect,
     AliasMapperType,
+    isPrismicLinkExternal,
+    AliasInterfaceMapperType,
+    getSubPrismicImage as getSubImg,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { Gallery } from '@blateral/b.kit';
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 type Sizes = 'half' | 'full';
 
 export interface GallerySliceType
     extends PrismicSlice<
-        'Gallery',
+        'gallery',
         PrismicImage & { size: PrismicSelectField }
     > {
     primary: {
@@ -37,19 +41,44 @@ export interface GallerySliceType
 
     // helpers to define component elements outside of slice
     sizeSelectAlias?: AliasMapperType<Sizes>;
+    imageSizeFullAlias?: AliasInterfaceMapperType<ImageProps>;
+    imageSizeHalfAlias?: AliasInterfaceMapperType<ImageProps>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     secondaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
 }
 
-const GallerySlice: React.FC<GallerySliceType> = ({
+// default alias mapper objects
+const defaultAlias = {
+    sizeSelect: {
+        full: 'full',
+        half: 'half',
+    },
+    imageSizeFull: {
+        small: '',
+        medium: 'full_medium',
+        large: 'full_large',
+        xlarge: 'full_xlarge',
+    },
+    imageSizeHalf: {
+        small: 'main_half',
+        medium: 'half_medium',
+        large: 'half_large',
+        xlarge: 'half_xlarge',
+    },
+};
+export { defaultAlias as galleryDefaultAlias };
+
+export const GallerySlice: React.FC<GallerySliceType> = ({
     primary: {
         super_title,
         title,
@@ -62,10 +91,9 @@ const GallerySlice: React.FC<GallerySliceType> = ({
         secondary_label,
     },
     items,
-    sizeSelectAlias = {
-        full: 'full',
-        half: 'half',
-    },
+    sizeSelectAlias = { ...defaultAlias.sizeSelect },
+    imageSizeFullAlias = { ...defaultAlias.imageSizeFull },
+    imageSizeHalfAlias = { ...defaultAlias.imageSizeHalf },
     primaryAction,
     secondaryAction,
 }) => {
@@ -77,13 +105,17 @@ const GallerySlice: React.FC<GallerySliceType> = ({
             superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
             images={items.map((item) => {
+                const size = mapPrismicSelect(sizeSelectAlias, item?.size);
+                const alias =
+                    size === 'full' ? imageSizeFullAlias : imageSizeHalfAlias;
+
                 return {
-                    small: item?.url || '',
-                    medium: item?.Medium?.url || '',
-                    large: item?.Large?.url || '',
-                    xlarge: item?.ExtraLarge?.url || '',
+                    small: getSubImg(item, alias.small).url,
+                    medium: getSubImg(item, alias.medium).url,
+                    large: getSubImg(item, alias.large).url,
+                    xlarge: getSubImg(item, alias.xlarge).url,
                     alt: item?.alt && RichText.asText(item.alt),
-                    size: mapPrismicSelect(sizeSelectAlias, item?.size),
+                    size: size,
                 };
             })}
             primaryAction={(isInverted) =>
@@ -91,7 +123,8 @@ const GallerySlice: React.FC<GallerySliceType> = ({
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
-                    resolveUnknownLink(primary_link) || ''
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
                 )
             }
             secondaryAction={(isInverted) =>
@@ -99,11 +132,10 @@ const GallerySlice: React.FC<GallerySliceType> = ({
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
-                    resolveUnknownLink(secondary_link) || ''
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
                 )
             }
         />
     );
 };
-
-export default GallerySlice;

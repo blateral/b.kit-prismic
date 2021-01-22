@@ -8,11 +8,15 @@ import {
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
+    isPrismicLinkExternal,
+    AliasInterfaceMapperType,
+    getSubPrismicImage as getSubImg,
 } from 'utils/prismic';
 import { RichText } from 'prismic-dom';
 import { Video } from '@blateral/b.kit';
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
-export interface VideoSliceType extends PrismicSlice<'Video'> {
+export interface VideoSliceType extends PrismicSlice<'video'> {
     primary: {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
@@ -28,20 +32,34 @@ export interface VideoSliceType extends PrismicSlice<'Video'> {
     };
 
     // helpers to define component elements outside of slice
+    imageSizeAlias?: AliasInterfaceMapperType<ImageProps>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     secondaryAction?: (
         isInverted?: boolean,
         label?: string,
-        href?: string
+        href?: string,
+        isExternal?: boolean
     ) => React.ReactNode;
     playIcon?: React.ReactChild;
 }
 
-const VideoSlice: React.FC<VideoSliceType> = ({
+// default alias mapper objects
+const defaultAlias = {
+    imageSize: {
+        small: '',
+        medium: 'medium',
+        large: 'large',
+        xlarge: 'xlarge',
+    },
+};
+export { defaultAlias as videoDefaultAlias };
+
+export const VideoSlice: React.FC<VideoSliceType> = ({
     primary: {
         super_title,
         title,
@@ -54,23 +72,26 @@ const VideoSlice: React.FC<VideoSliceType> = ({
         secondary_link,
         secondary_label,
     },
+    imageSizeAlias = { ...defaultAlias.imageSize },
     primaryAction,
     secondaryAction,
     playIcon,
 }) => {
+    const mappedImage: ImageProps = {
+        small: bg_image ? getSubImg(bg_image, imageSizeAlias.small).url : '',
+        medium: bg_image && getSubImg(bg_image, imageSizeAlias.medium).url,
+        large: bg_image && getSubImg(bg_image, imageSizeAlias.large).url,
+        xlarge: bg_image && getSubImg(bg_image, imageSizeAlias.xlarge).url,
+        alt: bg_image?.alt && RichText.asText(bg_image.alt),
+    };
+
     return (
         <Video
             isInverted={is_inverted}
             title={RichText.asText(title)}
             superTitle={RichText.asText(super_title)}
             text={RichText.asHtml(text, linkResolver)}
-            bgImage={{
-                small: bg_image?.url || '',
-                medium: bg_image?.Medium?.url || '',
-                large: bg_image?.Large?.url || '',
-                xlarge: bg_image?.ExtraLarge?.url || '',
-                alt: bg_image?.alt && RichText.asText(bg_image.alt),
-            }}
+            bgImage={mappedImage}
             embedId={RichText.asText(embed_id)}
             playIcon={playIcon}
             primaryAction={(isInverted) =>
@@ -78,7 +99,8 @@ const VideoSlice: React.FC<VideoSliceType> = ({
                 primaryAction(
                     isInverted,
                     RichText.asText(primary_label),
-                    resolveUnknownLink(primary_link) || ''
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
                 )
             }
             secondaryAction={(isInverted) =>
@@ -86,11 +108,10 @@ const VideoSlice: React.FC<VideoSliceType> = ({
                 secondaryAction(
                     isInverted,
                     RichText.asText(secondary_label),
-                    resolveUnknownLink(secondary_link) || ''
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
                 )
             }
         />
     );
 };
-
-export default VideoSlice;
