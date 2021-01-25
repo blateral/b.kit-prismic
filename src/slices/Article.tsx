@@ -72,15 +72,15 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
         <Article
             isInverted={is_inverted}
             bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
-            title={RichText.asText(title)}
-            superTitle={RichText.asText(super_title)}
-            text={RichText.asHtml(text, linkResolver)}
-            asideText={RichText.asHtml(aside_text, linkResolver)}
+            title={title && RichText.asText(title)}
+            superTitle={super_title && RichText.asText(super_title)}
+            text={text && RichText.asHtml(text, linkResolver)}
+            asideText={aside_text && RichText.asHtml(aside_text, linkResolver)}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    RichText.asText(primary_label),
+                    primary_label && RichText.asText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -89,7 +89,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    RichText.asText(secondary_label),
+                    secondary_label && RichText.asText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

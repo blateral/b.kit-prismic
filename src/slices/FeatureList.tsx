@@ -142,14 +142,14 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         <FeatureList
             isInverted={is_inverted}
             bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
-            title={RichText.asText(title)}
-            superTitle={RichText.asText(super_title)}
-            text={RichText.asHtml(text, linkResolver)}
+            title={title && RichText.asText(title)}
+            superTitle={super_title && RichText.asText(super_title)}
+            text={text && RichText.asHtml(text, linkResolver)}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    RichText.asText(primary_label),
+                    primary_label && RichText.asText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -158,7 +158,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    RichText.asText(secondary_label),
+                    secondary_label && RichText.asText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
@@ -176,10 +176,12 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                     secondary_link,
                 }) => {
                     return {
-                        title: RichText.asText(title),
-                        text: RichText.asHtml(text),
-                        description: RichText.asHtml(description, linkResolver),
-                        intro: RichText.asHtml(intro),
+                        title: title && RichText.asText(title),
+                        text: text && RichText.asHtml(text),
+                        description:
+                            description &&
+                            RichText.asHtml(description, linkResolver),
+                        intro: intro && RichText.asHtml(intro),
 
                         image: {
                             small: getSubImg(image, imgAlias.small).url,
@@ -193,7 +195,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                             primaryAction &&
                             primaryAction(
                                 isInverted,
-                                RichText.asText(primary_label),
+                                primary_label && RichText.asText(primary_label),
                                 resolveUnknownLink(primary_link) || '',
                                 isPrismicLinkExternal(primary_link)
                             ),
@@ -201,7 +203,8 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                             secondaryAction &&
                             secondaryAction(
                                 isInverted,
-                                RichText.asText(secondary_label),
+                                secondary_label &&
+                                    RichText.asText(secondary_label),
                                 resolveUnknownLink(secondary_link) || '',
                                 isPrismicLinkExternal(secondary_link)
                             ),

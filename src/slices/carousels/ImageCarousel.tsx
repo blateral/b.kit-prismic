@@ -155,9 +155,9 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
             isInverted={is_inverted}
             bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
             spacing={mapPrismicSelect(spacingSelectAlias, spacing)}
-            title={RichText.asText(title)}
-            superTitle={RichText.asText(super_title)}
-            text={RichText.asHtml(text, linkResolver)}
+            title={title && RichText.asText(title)}
+            superTitle={super_title && RichText.asText(super_title)}
+            text={text && RichText.asHtml(text, linkResolver)}
             images={items.map((item) => {
                 return {
                     small: getSubImg(item, imgAlias.small).url,
@@ -171,7 +171,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    RichText.asText(primary_label),
+                    primary_label && RichText.asText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -180,7 +180,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    RichText.asText(secondary_label),
+                    secondary_label && RichText.asText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
