@@ -101,9 +101,9 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
         <Gallery
             isInverted={is_inverted}
             hasBack={has_back}
-            title={RichText.asText(title)}
-            superTitle={RichText.asText(super_title)}
-            text={RichText.asHtml(text, linkResolver)}
+            title={title && RichText.asText(title)}
+            superTitle={super_title && RichText.asText(super_title)}
+            text={text && RichText.asHtml(text, linkResolver)}
             images={items.map((item) => {
                 const size = mapPrismicSelect(sizeSelectAlias, item?.size);
                 const alias =
@@ -122,7 +122,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    RichText.asText(primary_label),
+                    primary_label && RichText.asText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -131,7 +131,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    RichText.asText(secondary_label),
+                    secondary_label && RichText.asText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

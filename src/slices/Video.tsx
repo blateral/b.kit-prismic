@@ -88,17 +88,17 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     return (
         <Video
             isInverted={is_inverted}
-            title={RichText.asText(title)}
-            superTitle={RichText.asText(super_title)}
-            text={RichText.asHtml(text, linkResolver)}
+            title={title && RichText.asText(title)}
+            superTitle={super_title && RichText.asText(super_title)}
+            text={text && RichText.asHtml(text, linkResolver)}
             bgImage={mappedImage}
-            embedId={RichText.asText(embed_id)}
+            embedId={embed_id ? RichText.asText(embed_id) : ''}
             playIcon={playIcon}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    RichText.asText(primary_label),
+                    primary_label && RichText.asText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -107,7 +107,7 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    RichText.asText(secondary_label),
+                    secondary_label && RichText.asText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
