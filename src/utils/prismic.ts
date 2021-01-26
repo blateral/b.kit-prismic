@@ -270,11 +270,11 @@ export const mapPrismicSelect = <TargetType extends string>(
 // Try to get generic sub image from prismic image object
 export const getPrismicImage = (prismicImage: PrismicImage, key?: string) => {
     try {
-        if (!key || key === '') throw new Error();
-        if (!prismicImage?.[key] || typeof prismicImage?.[key] !== 'object')
+        if (!key || !prismicImage) throw new Error();
+        if (!(key in prismicImage) || typeof prismicImage?.[key] !== 'object')
             throw new Error();
 
-        return prismicImage?.[key] as PrismicImage;
+        return prismicImage[key] as PrismicImage;
     } catch {
         // return default prismic image (main)
         return prismicImage;

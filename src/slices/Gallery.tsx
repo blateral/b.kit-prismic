@@ -27,7 +27,7 @@ interface ImageFormats {
 export interface GallerySliceType
     extends PrismicSlice<
         'Gallery',
-        PrismicImage & { size: PrismicSelectField }
+        { image: PrismicImage; size: PrismicSelectField }
     > {
     primary: {
         is_active?: PrismicBoolean;
@@ -108,7 +108,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
 
                 // get image url
                 const url = getImg(
-                    item,
+                    item.image,
                     imageFormatAlias?.[format || 'full-width']
                 ).url;
 
@@ -116,7 +116,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                     ...getImageFromUrl(
                         url,
                         imageSizes[format || 'full-width'],
-                        item?.alt && RichText.asText(item.alt)
+                        item?.image.alt && RichText.asText(item.image.alt)
                     ),
                     size: format === 'half-width' ? 'half' : 'full',
                 };
