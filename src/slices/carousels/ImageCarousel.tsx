@@ -150,10 +150,8 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
             text={text && RichText.asHtml(text, linkResolver)}
             images={items.map((item) => {
                 // get image urls
-                const imgUrlLandscape = getImg(
-                    item,
-                    imageFormatAlias?.landscape
-                ).url;
+                const imgUrlLandscape = getImg(item, imageFormatAlias.landscape)
+                    .url;
 
                 const imgUrl = getImg(
                     item,
