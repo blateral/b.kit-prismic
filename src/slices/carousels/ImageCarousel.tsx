@@ -33,7 +33,7 @@ interface ImageFormats {
 }
 
 export interface ImageCarouselSliceType
-    extends PrismicSlice<'ImageCarousel', PrismicImage> {
+    extends PrismicSlice<'ImageCarousel', { image: PrismicImage }> {
     primary: {
         is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
@@ -150,11 +150,13 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
             text={text && RichText.asHtml(text, linkResolver)}
             images={items.map((item) => {
                 // get image urls
-                const imgUrlLandscape = getImg(item, imageFormatAlias.landscape)
-                    .url;
+                const imgUrlLandscape = getImg(
+                    item.image,
+                    imageFormatAlias.landscape
+                ).url;
 
                 const imgUrl = getImg(
-                    item,
+                    item.image,
                     imageFormatAlias?.[imgFormat || 'square']
                 ).url;
 
@@ -167,7 +169,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                             xlarge: imgUrl,
                         },
                         imageSizes[imgFormat || 'square'],
-                        item?.alt && RichText.asText(item.alt)
+                        item?.image.alt && RichText.asText(item.image.alt)
                     ),
                 };
             })}
