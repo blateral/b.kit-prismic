@@ -10,14 +10,14 @@ import {
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
 
-interface FactListEntries {
+interface FactListEntryItems {
     icon?: PrismicSelectField;
     title?: PrismicHeading;
     text?: PrismicRichText;
 }
 
-export interface ArticleSliceType
-    extends PrismicSlice<'Article', FactListEntries> {
+export interface FactListSliceType
+    extends PrismicSlice<'FactList', FactListEntryItems> {
     primary: {
         is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
@@ -44,7 +44,7 @@ export interface ArticleSliceType
     ) => React.ReactNode;
 }
 
-export const ArticleSlice: React.FC<ArticleSliceType> = ({
+export const FactListSlice: React.FC<FactListSliceType> = ({
     primary,
     // primary: {
     //     super_title,
