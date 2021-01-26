@@ -10,6 +10,7 @@ import { GallerySliceType } from 'slices/Gallery';
 import { ArticleSliceType } from 'slices/Article';
 import { FeatureListSliceType } from 'slices/FeatureList';
 import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
+import { VideoSliceType } from 'slices/Video';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -134,6 +135,7 @@ export interface PrismicPage extends Document {
             | GallerySliceType
             | FeatureListSliceType
             | ImageCarouselSliceType
+            | VideoSliceType
         >;
     };
 }
