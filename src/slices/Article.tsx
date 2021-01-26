@@ -9,10 +9,10 @@ import {
     PrismicLink,
     resolveUnknownLink,
     PrismicSelectField,
-    AliasMapperType,
     mapPrismicSelect,
     isPrismicLinkExternal,
 } from 'utils/prismic';
+import { AliasMapperType, assignTo } from 'utils/mapping';
 
 import { RichText } from 'prismic-dom';
 import { Article } from '@blateral/b.kit';
@@ -48,6 +48,14 @@ export interface ArticleSliceType extends PrismicSlice<'article'> {
     ) => React.ReactNode;
 }
 
+// default alias mapper objects
+const defaultAlias = {
+    bgModeSelect: {
+        full: 'full',
+        splitted: 'splitted',
+    },
+};
+
 export const ArticleSlice: React.FC<ArticleSliceType> = ({
     primary: {
         super_title,
@@ -61,17 +69,20 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
         secondary_link,
         secondary_label,
     },
-    bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
-    },
+    bgModeSelectAlias,
     primaryAction,
     secondaryAction,
 }) => {
+    // spread settings props onto default values
+    bgModeSelectAlias = assignTo(bgModeSelectAlias, defaultAlias.bgModeSelect);
+
     return (
         <Article
             isInverted={is_inverted}
-            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
+            bgMode={mapPrismicSelect<BgMode | undefined>(
+                bgModeSelectAlias,
+                bg_mode
+            )}
             title={title && RichText.asText(title)}
             superTitle={super_title && RichText.asText(super_title)}
             text={text && RichText.asHtml(text, linkResolver)}

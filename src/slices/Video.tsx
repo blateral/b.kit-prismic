@@ -9,13 +9,14 @@ import {
     resolveUnknownLink,
     PrismicImage,
     isPrismicLinkExternal,
-    AliasInterfaceMapperType,
-    getSubPrismicImage as getSubImg,
+    getPrismicImage as getImg,
+    getImageFromUrl,
 } from 'utils/prismic';
+import { ImageSizeSettings } from 'utils/mapping';
+
 import { RichText } from 'prismic-dom';
 import { Video } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-
 export interface VideoSliceType extends PrismicSlice<'video'> {
     primary: {
         super_title?: PrismicHeading;
@@ -32,7 +33,6 @@ export interface VideoSliceType extends PrismicSlice<'video'> {
     };
 
     // helpers to define component elements outside of slice
-    imageSizeAlias?: AliasInterfaceMapperType<ImageProps>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -48,16 +48,15 @@ export interface VideoSliceType extends PrismicSlice<'video'> {
     playIcon?: React.ReactChild;
 }
 
-// default alias mapper objects
-const defaultAlias = {
-    imageSize: {
-        small: '',
-        medium: 'medium',
-        large: 'large',
-        xlarge: 'xlarge',
+// for this component defines image sizes
+const imageSizes = {
+    main: {
+        small: { width: 640, height: 480 },
+        medium: { width: 1024, height: 576 },
+        large: { width: 1440, height: 810 },
+        xlarge: { width: 1680, height: 810 },
     },
-};
-export { defaultAlias as videoDefaultAlias };
+} as ImageSizeSettings<{ main: string }>;
 
 export const VideoSlice: React.FC<VideoSliceType> = ({
     primary: {
@@ -72,17 +71,19 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         secondary_link,
         secondary_label,
     },
-    imageSizeAlias = { ...defaultAlias.imageSize },
     primaryAction,
     secondaryAction,
     playIcon,
 }) => {
+    // get image url
+    const url = bg_image ? getImg(bg_image, 'main').url : '';
+
     const mappedImage: ImageProps = {
-        small: bg_image ? getSubImg(bg_image, imageSizeAlias.small).url : '',
-        medium: bg_image && getSubImg(bg_image, imageSizeAlias.medium).url,
-        large: bg_image && getSubImg(bg_image, imageSizeAlias.large).url,
-        xlarge: bg_image && getSubImg(bg_image, imageSizeAlias.xlarge).url,
-        alt: bg_image?.alt && RichText.asText(bg_image.alt),
+        ...getImageFromUrl(
+            url,
+            imageSizes.main,
+            bg_image?.alt && RichText.asText(bg_image.alt)
+        ),
     };
 
     return (
