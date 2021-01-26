@@ -251,14 +251,18 @@ export const mapPrismicSelect = <TargetType>(
     prismicSelectValue?: PrismicSelectField
 ) => {
     let alias = undefined;
-    if (!aliasMapper) return alias;
-    for (const key in aliasMapper) {
-        // check if mapper contains alias (value) that matches with prismic select value
-        if (aliasMapper[key] === prismicSelectValue) {
-            // if found use key of mapper (= key of TargetType)
-            alias = key;
-            break;
+    try {
+        if (!aliasMapper || !prismicSelectValue) throw new Error();
+        for (const key in aliasMapper) {
+            // check if mapper contains alias (value) that matches with prismic select value
+            if (aliasMapper?.[key] && aliasMapper[key] === prismicSelectValue) {
+                // if found use key of mapper (= key of TargetType)
+                alias = key;
+                break;
+            }
         }
+    } catch (e) {
+        console.log(e);
     }
     return alias;
 };
