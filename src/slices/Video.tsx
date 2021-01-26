@@ -17,8 +17,9 @@ import { ImageSizeSettings } from 'utils/mapping';
 import { RichText } from 'prismic-dom';
 import { Video } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-export interface VideoSliceType extends PrismicSlice<'video'> {
+export interface VideoSliceType extends PrismicSlice<'Video'> {
     primary: {
+        is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;

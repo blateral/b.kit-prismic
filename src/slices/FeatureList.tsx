@@ -26,8 +26,9 @@ interface ImageFormats {
     portrait: string;
 }
 
-export interface FeatureListSliceType extends PrismicSlice<'featurelist'> {
+export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
     primary: {
+        is_active?: PrismicBoolean;
         title?: PrismicHeading;
         super_title?: PrismicRichText;
         text?: PrismicRichText;

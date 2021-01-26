@@ -26,10 +26,11 @@ interface ImageFormats {
 
 export interface GallerySliceType
     extends PrismicSlice<
-        'gallery',
+        'Gallery',
         PrismicImage & { size: PrismicSelectField }
     > {
     primary: {
+        is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;

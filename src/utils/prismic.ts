@@ -1,12 +1,15 @@
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { Document } from 'prismic-javascript/types/documents';
-
-import { ArticleSliceType } from '../slices/Article';
 import {
     AliasMapperType,
     ImageSettingsProps,
     updateUrlParameters,
 } from './mapping';
+
+import { GallerySliceType } from 'slices/Gallery';
+import { ArticleSliceType } from 'slices/Article';
+import { FeatureListSliceType } from 'slices/FeatureList';
+import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -126,7 +129,12 @@ export interface PrismicPage extends Document {
         navpoints: PrismicPage;
         pulled: PrismicBoolean;
         uid: string;
-        body: Array<ArticleSliceType>;
+        body: Array<
+            | ArticleSliceType
+            | GallerySliceType
+            | FeatureListSliceType
+            | ImageCarouselSliceType
+        >;
     };
 }
 

@@ -29,8 +29,9 @@ interface ImageFormats {
 }
 
 export interface ImageCarouselSliceType
-    extends PrismicSlice<'imagecarousel', PrismicImage> {
+    extends PrismicSlice<'ImageCarousel', PrismicImage> {
     primary: {
+        is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
