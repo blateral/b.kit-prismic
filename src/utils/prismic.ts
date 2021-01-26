@@ -1,7 +1,7 @@
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { Document } from 'prismic-javascript/types/documents';
 import {
-    AliasMapperType,
+    AliasSelectMapperType,
     ImageSettingsProps,
     updateUrlParameters,
 } from './mapping';
@@ -246,8 +246,8 @@ export const getHtmlElementFromPrismicType = (
     }
 };
 
-export const mapPrismicSelect = <TargetType>(
-    aliasMapper?: AliasMapperType<TargetType>,
+export const mapPrismicSelect = <TargetType extends string>(
+    aliasMapper?: AliasSelectMapperType<TargetType>,
     prismicSelectValue?: PrismicSelectField
 ) => {
     let alias = undefined;

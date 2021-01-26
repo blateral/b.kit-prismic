@@ -1,5 +1,9 @@
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
+export type AliasSelectMapperType<TargetType extends string> = {
+    [key in TargetType]: string;
+};
+
 export type AliasMapperType<TargetType> = {
     [key in keyof TargetType]: string;
 };
