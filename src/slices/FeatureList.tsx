@@ -14,7 +14,11 @@ import {
     getPrismicImage as getImg,
     getImageFromUrls,
 } from 'utils/prismic';
-import { AliasMapperType, assignTo, ImageSizeSettings } from 'utils/mapping';
+import {
+    AliasMapperType,
+    AliasSelectMapperType,
+    ImageSizeSettings,
+} from 'utils/mapping';
 
 import { RichText } from 'prismic-dom';
 import { FeatureList } from '@blateral/b.kit';
@@ -57,7 +61,7 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
     }[];
 
     // helpers to define elements outside of slice
-    bgModeSelectAlias?: AliasMapperType<BgMode>;
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (
         isInverted?: boolean,
@@ -72,19 +76,6 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
         isExternal?: boolean
     ) => React.ReactNode;
 }
-
-// default alias mapper objects
-const defaultAlias = {
-    bgModeSelect: {
-        full: 'full',
-        splitted: 'splitted',
-    },
-    imageFormat: {
-        square: 'square',
-        landscape: 'landscape',
-        portrait: 'portrait',
-    } as ImageFormats,
-};
 
 // for this component defines image sizes
 const imageSizes = {
@@ -122,25 +113,25 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         secondary_label,
     },
     items,
-    bgModeSelectAlias,
-    imageFormatAlias,
+    bgModeSelectAlias = {
+        full: 'full',
+        splitted: 'splitted',
+    },
+    imageFormatAlias = {
+        square: 'square',
+        landscape: 'landscape',
+        portrait: 'portrait',
+    },
     primaryAction,
     secondaryAction,
 }) => {
-    // spread settings props onto default values
-    bgModeSelectAlias = assignTo(bgModeSelectAlias, defaultAlias.bgModeSelect);
-    imageFormatAlias = assignTo(imageFormatAlias, defaultAlias.imageFormat);
-
     // get image format for all images
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
 
     return (
         <FeatureList
             isInverted={is_inverted}
-            bgMode={mapPrismicSelect<BgMode | undefined>(
-                bgModeSelectAlias,
-                bg_mode
-            )}
+            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
             title={title && RichText.asText(title)}
             superTitle={super_title && RichText.asText(super_title)}
             text={text && RichText.asHtml(text, linkResolver)}

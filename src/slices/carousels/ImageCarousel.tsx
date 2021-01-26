@@ -14,7 +14,11 @@ import {
     getPrismicImage as getImg,
     getImageFromUrls,
 } from 'utils/prismic';
-import { AliasMapperType, assignTo, ImageSizeSettings } from 'utils/mapping';
+import {
+    AliasMapperType,
+    AliasSelectMapperType,
+    ImageSizeSettings,
+} from 'utils/mapping';
 
 import { RichText } from 'prismic-dom';
 import { ImageCarousel } from '@blateral/b.kit';
@@ -47,8 +51,8 @@ export interface ImageCarouselSliceType
     };
 
     // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasMapperType<BgMode>;
-    spacingSelectAlias?: AliasMapperType<Spacing>;
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
+    spacingSelectAlias?: AliasSelectMapperType<Spacing>;
     imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (
         isInverted?: boolean,
@@ -71,22 +75,6 @@ export interface ImageCarouselSliceType
     slidesToShow?: number;
     responsive?: ResponsiveObject[];
 }
-
-const defaultAlias = {
-    bgModeSelect: {
-        full: 'full',
-        splitted: 'splitted',
-    },
-    spacingSelect: {
-        normal: 'normal',
-        large: 'large',
-    },
-    imageFormat: {
-        square: 'square',
-        landscape: 'landscape',
-        portrait: 'portrait',
-    } as ImageFormats,
-};
 
 // for this component defines image sizes
 const imageSizes = {
@@ -125,9 +113,19 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
         secondary_label,
     },
     items,
-    bgModeSelectAlias,
-    spacingSelectAlias,
-    imageFormatAlias,
+    bgModeSelectAlias = {
+        full: 'full',
+        splitted: 'splitted',
+    },
+    spacingSelectAlias = {
+        normal: 'normal',
+        large: 'large',
+    },
+    imageFormatAlias = {
+        square: 'square',
+        landscape: 'landscape',
+        portrait: 'portrait',
+    },
     primaryAction,
     secondaryAction,
     controlNext,
@@ -139,28 +137,14 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
     slidesToShow,
     responsive,
 }) => {
-    // spread settings props onto default values
-    bgModeSelectAlias = assignTo(bgModeSelectAlias, defaultAlias.bgModeSelect);
-    spacingSelectAlias = assignTo(
-        spacingSelectAlias,
-        defaultAlias.spacingSelect
-    );
-    imageFormatAlias = assignTo(imageFormatAlias, defaultAlias.imageFormat);
-
     // get image format for all images
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
 
     return (
         <ImageCarousel
             isInverted={is_inverted}
-            bgMode={mapPrismicSelect<BgMode | undefined>(
-                bgModeSelectAlias,
-                bg_mode
-            )}
-            spacing={mapPrismicSelect<Spacing | undefined>(
-                spacingSelectAlias,
-                spacing
-            )}
+            bgMode={mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode)}
+            spacing={mapPrismicSelect<Spacing>(spacingSelectAlias, spacing)}
             title={title && RichText.asText(title)}
             superTitle={super_title && RichText.asText(super_title)}
             text={text && RichText.asHtml(text, linkResolver)}

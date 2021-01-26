@@ -14,7 +14,7 @@ import {
     getPrismicImage as getImg,
     getImageFromUrl,
 } from 'utils/prismic';
-import { AliasMapperType, assignTo, ImageSizeSettings } from 'utils/mapping';
+import { AliasMapperType, ImageSizeSettings } from 'utils/mapping';
 
 import { RichText } from 'prismic-dom';
 import { Gallery } from '@blateral/b.kit';
@@ -59,14 +59,6 @@ export interface GallerySliceType
     ) => React.ReactNode;
 }
 
-// default alias mapper objects for prismic values
-const defaultAlias = {
-    imageFormat: {
-        'full-width': '',
-        'half-width': 'half-width',
-    } as ImageFormats,
-};
-
 // for this component defines image sizes
 const imageSizes = {
     'full-width': {
@@ -96,13 +88,13 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
         secondary_label,
     },
     items,
-    imageFormatAlias,
+    imageFormatAlias = {
+        'full-width': '',
+        'half-width': 'half-width',
+    },
     primaryAction,
     secondaryAction,
 }) => {
-    // spread settings props onto default values
-    imageFormatAlias = assignTo(imageFormatAlias, defaultAlias.imageFormat);
-
     return (
         <Gallery
             isInverted={is_inverted}
