@@ -1,7 +1,17 @@
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { Document } from 'prismic-javascript/types/documents';
+import {
+    AliasMapperType,
+    ImageSettingsProps,
+    updateUrlParameters,
+} from './mapping';
 
-import { ArticleSliceType } from '../slices/Article';
+import { GallerySliceType } from 'slices/Gallery';
+import { ArticleSliceType } from 'slices/Article';
+import { FeatureListSliceType } from 'slices/FeatureList';
+import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 
+/****** Types ******/
 export interface PrismicSlice<S, I = any> {
     slice_type: S;
     primary: Record<string, unknown>;
@@ -119,7 +129,12 @@ export interface PrismicPage extends Document {
         navpoints: PrismicPage;
         pulled: PrismicBoolean;
         uid: string;
-        body: Array<ArticleSliceType>;
+        body: Array<
+            | ArticleSliceType
+            | GallerySliceType
+            | FeatureListSliceType
+            | ImageCarouselSliceType
+        >;
     };
 }
 
@@ -231,19 +246,12 @@ export const getHtmlElementFromPrismicType = (
     }
 };
 
-export type AliasMapperType<TargetType extends string> = {
-    [key in TargetType]: string;
-};
-
-export type AliasInterfaceMapperType<TargetType> = {
-    [key in keyof TargetType]: string;
-};
-
-export const mapPrismicSelect = <TargetType extends string>(
-    aliasMapper: AliasMapperType<TargetType>,
+export const mapPrismicSelect = <TargetType>(
+    aliasMapper?: AliasMapperType<TargetType>,
     prismicSelectValue?: PrismicSelectField
 ) => {
     let alias = undefined;
+    if (!aliasMapper) return alias;
     for (const key in aliasMapper) {
         // check if mapper contains alias (value) that matches with prismic select value
         if (aliasMapper[key] === prismicSelectValue) {
@@ -256,10 +264,7 @@ export const mapPrismicSelect = <TargetType extends string>(
 };
 
 // Try to get generic sub image from prismic image object
-export const getSubPrismicImage = (
-    prismicImage: PrismicImage,
-    key?: string
-) => {
+export const getPrismicImage = (prismicImage: PrismicImage, key?: string) => {
     try {
         if (!key || key === '') throw new Error();
         if (!prismicImage?.[key] || typeof prismicImage?.[key] !== 'object')
@@ -270,6 +275,91 @@ export const getSubPrismicImage = (
         // return default prismic image (main)
         return prismicImage;
     }
+};
+
+// getting default image from prismic image url
+export const getImageFromUrl = (
+    url: string,
+    sizeSettings: ImageSettingsProps,
+    altText = ''
+) => {
+    const newImage: ImageProps = {
+        small: updateUrlParameters(url, {
+            w: `${sizeSettings.small.width}`,
+            h: `${sizeSettings.small.height}`,
+        }),
+        medium:
+            sizeSettings.medium &&
+            updateUrlParameters(url, {
+                w: `${sizeSettings.medium?.width}`,
+                h: `${sizeSettings.medium?.height}`,
+            }),
+        semilarge:
+            sizeSettings.semilarge &&
+            updateUrlParameters(url, {
+                w: `${sizeSettings.semilarge?.width}`,
+                h: `${sizeSettings.semilarge?.height}`,
+            }),
+        large:
+            sizeSettings.large &&
+            updateUrlParameters(url, {
+                w: `${sizeSettings.large?.width}`,
+                h: `${sizeSettings.large?.height}`,
+            }),
+        xlarge:
+            sizeSettings.xlarge &&
+            updateUrlParameters(url, {
+                w: `${sizeSettings.xlarge?.width}`,
+                h: `${sizeSettings.xlarge?.height}`,
+            }),
+        alt: altText,
+    };
+
+    return newImage;
+};
+
+export const getImageFromUrls = (
+    urls: { [key in keyof Omit<ImageProps, 'coverSpace' | 'alt'>]: string },
+    sizeSettings: ImageSettingsProps,
+    altText = ''
+) => {
+    const newImage: ImageProps = {
+        small: updateUrlParameters(urls.small, {
+            w: `${sizeSettings.small.width}`,
+            h: `${sizeSettings.small.height}`,
+        }),
+        medium:
+            sizeSettings.medium &&
+            urls.medium &&
+            updateUrlParameters(urls.medium, {
+                w: `${sizeSettings.medium?.width}`,
+                h: `${sizeSettings.medium?.height}`,
+            }),
+        semilarge:
+            sizeSettings.semilarge &&
+            urls.semilarge &&
+            updateUrlParameters(urls.semilarge, {
+                w: `${sizeSettings.semilarge?.width}`,
+                h: `${sizeSettings.semilarge?.height}`,
+            }),
+        large:
+            sizeSettings.large &&
+            urls.large &&
+            updateUrlParameters(urls.large, {
+                w: `${sizeSettings.large?.width}`,
+                h: `${sizeSettings.large?.height}`,
+            }),
+        xlarge:
+            sizeSettings.xlarge &&
+            urls.xlarge &&
+            updateUrlParameters(urls.xlarge, {
+                w: `${sizeSettings.xlarge?.width}`,
+                h: `${sizeSettings.xlarge?.height}`,
+            }),
+        alt: altText,
+    };
+
+    return newImage;
 };
 
 export const isPrismicLinkEmpty = (prismicLink: PrismicLink | string) => {

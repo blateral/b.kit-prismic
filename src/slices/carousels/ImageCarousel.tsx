@@ -7,26 +7,31 @@ import {
     PrismicLink,
     PrismicImage,
     PrismicSelectField,
-    AliasMapperType,
     mapPrismicSelect,
     linkResolver,
     resolveUnknownLink,
     isPrismicLinkExternal,
-    AliasInterfaceMapperType,
-    getSubPrismicImage as getSubImg,
+    getPrismicImage as getImg,
+    getImageFromUrls,
 } from 'utils/prismic';
+import { AliasMapperType, assignTo, ImageSizeSettings } from 'utils/mapping';
+
 import { RichText } from 'prismic-dom';
 import { ImageCarousel } from '@blateral/b.kit';
 import { ResponsiveObject } from 'slices/carousels/slick';
-import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 type BgMode = 'full' | 'splitted';
 type Spacing = 'large' | 'normal';
-type ImageFormat = 'square' | 'wide' | 'tall';
+interface ImageFormats {
+    square: string;
+    landscape: string;
+    portrait: string;
+}
 
 export interface ImageCarouselSliceType
-    extends PrismicSlice<'imagecarousel', PrismicImage> {
+    extends PrismicSlice<'ImageCarousel', PrismicImage> {
     primary: {
+        is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
@@ -44,10 +49,7 @@ export interface ImageCarouselSliceType
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasMapperType<BgMode>;
     spacingSelectAlias?: AliasMapperType<Spacing>;
-    imgFormatSelectAlias?: AliasMapperType<ImageFormat>;
-    imageSizeAlias?: AliasInterfaceMapperType<ImageProps>; // alias for image square
-    imageSizeWideAlias?: AliasInterfaceMapperType<ImageProps>; // alias for image 4:3
-    imageSizeTallAlias?: AliasInterfaceMapperType<ImageProps>; // alias for image 3:4
+    imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -79,31 +81,34 @@ const defaultAlias = {
         normal: 'normal',
         large: 'large',
     },
-    imgFormatSelect: {
+    imageFormat: {
         square: 'square',
-        tall: '3:4',
-        wide: '4:3',
-    },
-    imageSize: {
-        small: '',
-        medium: 'medium',
-        large: 'large',
-        xlarge: 'xlarge',
-    },
-    imageSizeWide: {
-        small: 'main_wide',
-        medium: 'wide_medium',
-        large: 'wide_large',
-        xlarge: 'wide_xlarge',
-    },
-    imageSizeTall: {
-        small: 'main_tall',
-        medium: 'tall_medium',
-        large: 'tall_large',
-        xlarge: 'tall_xlarge',
-    },
+        landscape: 'landscape',
+        portrait: 'portrait',
+    } as ImageFormats,
 };
-export { defaultAlias as imageCarouselDefaultAlias };
+
+// for this component defines image sizes
+const imageSizes = {
+    square: {
+        small: { width: 553, height: 431 },
+        medium: { width: 357, height: 357 },
+        large: { width: 507, height: 507 },
+        xlarge: { width: 680, height: 680 },
+    },
+    landscape: {
+        small: { width: 553, height: 431 },
+        medium: { width: 357, height: 278 },
+        large: { width: 507, height: 395 },
+        xlarge: { width: 680, height: 529 },
+    },
+    portrait: {
+        small: { width: 553, height: 431 },
+        medium: { width: 357, height: 476 },
+        large: { width: 507, height: 676 },
+        xlarge: { width: 680, height: 906 },
+    },
+} as ImageSizeSettings<ImageFormats>;
 
 export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
     primary: {
@@ -120,12 +125,9 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
         secondary_label,
     },
     items,
-    bgModeSelectAlias = { ...defaultAlias.bgModeSelect },
-    spacingSelectAlias = { ...defaultAlias.spacingSelect },
-    imgFormatSelectAlias = { ...defaultAlias.imgFormatSelect },
-    imageSizeAlias = { ...defaultAlias.imageSize },
-    imageSizeWideAlias = { ...defaultAlias.imageSizeWide },
-    imageSizeTallAlias = { ...defaultAlias.imageSizeTall },
+    bgModeSelectAlias,
+    spacingSelectAlias,
+    imageFormatAlias,
     primaryAction,
     secondaryAction,
     controlNext,
@@ -137,34 +139,54 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
     slidesToShow,
     responsive,
 }) => {
-    // get image format for all images
-    const imgFormat = mapPrismicSelect(imgFormatSelectAlias, image_format);
+    // spread settings props onto default values
+    bgModeSelectAlias = assignTo(bgModeSelectAlias, defaultAlias.bgModeSelect);
+    spacingSelectAlias = assignTo(
+        spacingSelectAlias,
+        defaultAlias.spacingSelect
+    );
+    imageFormatAlias = assignTo(imageFormatAlias, defaultAlias.imageFormat);
 
-    // set correct size alias mapper for all images
-    let imgAlias = imageSizeAlias;
-    switch (imgFormat) {
-        case 'wide':
-            imgAlias = imageSizeWideAlias;
-            break;
-        case 'tall':
-            imgAlias = imageSizeTallAlias;
-    }
+    // get image format for all images
+    const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
 
     return (
         <ImageCarousel
             isInverted={is_inverted}
-            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
-            spacing={mapPrismicSelect(spacingSelectAlias, spacing)}
+            bgMode={mapPrismicSelect<BgMode | undefined>(
+                bgModeSelectAlias,
+                bg_mode
+            )}
+            spacing={mapPrismicSelect<Spacing | undefined>(
+                spacingSelectAlias,
+                spacing
+            )}
             title={title && RichText.asText(title)}
             superTitle={super_title && RichText.asText(super_title)}
             text={text && RichText.asHtml(text, linkResolver)}
             images={items.map((item) => {
+                // get image urls
+                const imgUrlLandscape = getImg(
+                    item,
+                    imageFormatAlias?.landscape
+                ).url;
+
+                const imgUrl = getImg(
+                    item,
+                    imageFormatAlias?.[imgFormat || 'square']
+                ).url;
+
                 return {
-                    small: getSubImg(item, imgAlias.small).url,
-                    medium: getSubImg(item, imgAlias.medium).url,
-                    large: getSubImg(item, imgAlias.large).url,
-                    xlarge: getSubImg(item, imgAlias.xlarge).url,
-                    alt: item?.alt && RichText.asText(item.alt),
+                    ...getImageFromUrls(
+                        {
+                            small: imgUrlLandscape,
+                            medium: imgUrl,
+                            large: imgUrl,
+                            xlarge: imgUrl,
+                        },
+                        imageSizes[imgFormat || 'square'],
+                        item?.alt && RichText.asText(item.alt)
+                    ),
                 };
             })}
             primaryAction={(isInverted) =>

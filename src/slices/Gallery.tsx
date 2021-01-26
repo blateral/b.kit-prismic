@@ -10,23 +10,27 @@ import {
     PrismicImage,
     PrismicSelectField,
     mapPrismicSelect,
-    AliasMapperType,
     isPrismicLinkExternal,
-    AliasInterfaceMapperType,
-    getSubPrismicImage as getSubImg,
+    getPrismicImage as getImg,
+    getImageFromUrl,
 } from 'utils/prismic';
+import { AliasMapperType, assignTo, ImageSizeSettings } from 'utils/mapping';
+
 import { RichText } from 'prismic-dom';
 import { Gallery } from '@blateral/b.kit';
-import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
-type Sizes = 'half' | 'full';
+interface ImageFormats {
+    'full-width': string;
+    'half-width': string;
+}
 
 export interface GallerySliceType
     extends PrismicSlice<
-        'gallery',
+        'Gallery',
         PrismicImage & { size: PrismicSelectField }
     > {
     primary: {
+        is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
@@ -40,9 +44,7 @@ export interface GallerySliceType
     };
 
     // helpers to define component elements outside of slice
-    sizeSelectAlias?: AliasMapperType<Sizes>;
-    imageSizeFullAlias?: AliasInterfaceMapperType<ImageProps>;
-    imageSizeHalfAlias?: AliasInterfaceMapperType<ImageProps>;
+    imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -57,26 +59,29 @@ export interface GallerySliceType
     ) => React.ReactNode;
 }
 
-// default alias mapper objects
+// default alias mapper objects for prismic values
 const defaultAlias = {
-    sizeSelect: {
-        full: 'full',
-        half: 'half',
-    },
-    imageSizeFull: {
-        small: '',
-        medium: 'full_medium',
-        large: 'full_large',
-        xlarge: 'full_xlarge',
-    },
-    imageSizeHalf: {
-        small: 'main_half',
-        medium: 'half_medium',
-        large: 'half_large',
-        xlarge: 'half_xlarge',
-    },
+    imageFormat: {
+        'full-width': '',
+        'half-width': 'half-width',
+    } as ImageFormats,
 };
-export { defaultAlias as galleryDefaultAlias };
+
+// for this component defines image sizes
+const imageSizes = {
+    'full-width': {
+        small: { width: 500, height: 246 },
+        medium: { width: 640, height: 315 },
+        large: { width: 1024, height: 504 },
+        xlarge: { width: 1440, height: 710 },
+    },
+    'half-width': {
+        small: { width: 610, height: 457 },
+        medium: { width: 507, height: 380 },
+        large: { width: 507, height: 380 },
+        xlarge: { width: 710, height: 533 },
+    },
+} as ImageSizeSettings<ImageFormats>;
 
 export const GallerySlice: React.FC<GallerySliceType> = ({
     primary: {
@@ -91,12 +96,13 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
         secondary_label,
     },
     items,
-    sizeSelectAlias = { ...defaultAlias.sizeSelect },
-    imageSizeFullAlias = { ...defaultAlias.imageSizeFull },
-    imageSizeHalfAlias = { ...defaultAlias.imageSizeHalf },
+    imageFormatAlias,
     primaryAction,
     secondaryAction,
 }) => {
+    // spread settings props onto default values
+    imageFormatAlias = assignTo(imageFormatAlias, defaultAlias.imageFormat);
+
     return (
         <Gallery
             isInverted={is_inverted}
@@ -105,17 +111,22 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
             superTitle={super_title && RichText.asText(super_title)}
             text={text && RichText.asHtml(text, linkResolver)}
             images={items.map((item) => {
-                const size = mapPrismicSelect(sizeSelectAlias, item?.size);
-                const alias =
-                    size === 'full' ? imageSizeFullAlias : imageSizeHalfAlias;
+                // get image format
+                const format = mapPrismicSelect(imageFormatAlias, item?.size);
+
+                // get image url
+                const url = getImg(
+                    item,
+                    imageFormatAlias?.[format || 'full-width']
+                ).url;
 
                 return {
-                    small: getSubImg(item, alias.small).url,
-                    medium: getSubImg(item, alias.medium).url,
-                    large: getSubImg(item, alias.large).url,
-                    xlarge: getSubImg(item, alias.xlarge).url,
-                    alt: item?.alt && RichText.asText(item.alt),
-                    size: size,
+                    ...getImageFromUrl(
+                        url,
+                        imageSizes[format || 'full-width'],
+                        item?.alt && RichText.asText(item.alt)
+                    ),
+                    size: format === 'half-width' ? 'half' : 'full',
                 };
             })}
             primaryAction={(isInverted) =>

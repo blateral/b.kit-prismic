@@ -8,22 +8,27 @@ import {
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
-    AliasMapperType,
     PrismicSelectField,
     mapPrismicSelect,
     isPrismicLinkExternal,
-    AliasInterfaceMapperType,
-    getSubPrismicImage as getSubImg,
+    getPrismicImage as getImg,
+    getImageFromUrls,
 } from 'utils/prismic';
+import { AliasMapperType, assignTo, ImageSizeSettings } from 'utils/mapping';
+
 import { RichText } from 'prismic-dom';
 import { FeatureList } from '@blateral/b.kit';
-import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 type BgMode = 'full' | 'splitted';
-type ImageFormat = 'square' | 'wide' | 'tall';
+interface ImageFormats {
+    square: string;
+    landscape: string;
+    portrait: string;
+}
 
-export interface FeatureListSliceType extends PrismicSlice<'featurelist'> {
+export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
     primary: {
+        is_active?: PrismicBoolean;
         title?: PrismicHeading;
         super_title?: PrismicRichText;
         text?: PrismicRichText;
@@ -53,10 +58,7 @@ export interface FeatureListSliceType extends PrismicSlice<'featurelist'> {
 
     // helpers to define elements outside of slice
     bgModeSelectAlias?: AliasMapperType<BgMode>;
-    imgFormatSelectAlias?: AliasMapperType<ImageFormat>;
-    imageSizeAlias?: AliasInterfaceMapperType<ImageProps>; // alias for image square
-    imageSizeWideAlias?: AliasInterfaceMapperType<ImageProps>; // alias for image 4:3
-    imageSizeTallAlias?: AliasInterfaceMapperType<ImageProps>; // alias for image 3:4
+    imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (
         isInverted?: boolean,
         label?: string,
@@ -77,31 +79,34 @@ const defaultAlias = {
         full: 'full',
         splitted: 'splitted',
     },
-    imgFormatSelect: {
+    imageFormat: {
         square: 'square',
-        tall: '3:4',
-        wide: '4:3',
-    },
-    imageSize: {
-        small: '',
-        medium: 'medium',
-        large: 'large',
-        xlarge: 'xlarge',
-    },
-    imageSizeWide: {
-        small: 'main_wide',
-        medium: 'wide_medium',
-        large: 'wide_large',
-        xlarge: 'wide_xlarge',
-    },
-    imageSizeTall: {
-        small: 'main_tall',
-        medium: 'tall_medium',
-        large: 'tall_large',
-        xlarge: 'tall_xlarge',
-    },
+        landscape: 'landscape',
+        portrait: 'portrait',
+    } as ImageFormats,
 };
-export { defaultAlias as featureListDefaultAlias };
+
+// for this component defines image sizes
+const imageSizes = {
+    square: {
+        small: { width: 599, height: 450 },
+        medium: { width: 789, height: 789 },
+        large: { width: 591, height: 591 },
+        xlarge: { width: 592, height: 592 },
+    },
+    landscape: {
+        small: { width: 599, height: 450 },
+        medium: { width: 688, height: 593 },
+        large: { width: 591, height: 444 },
+        xlarge: { width: 592, height: 445 },
+    },
+    portrait: {
+        small: { width: 599, height: 450 },
+        medium: { width: 791, height: 1070 },
+        large: { width: 591, height: 801 },
+        xlarge: { width: 592, height: 802 },
+    },
+} as ImageSizeSettings<ImageFormats>;
 
 export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
     primary: {
@@ -117,31 +122,25 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         secondary_label,
     },
     items,
-    bgModeSelectAlias = { ...defaultAlias.bgModeSelect },
-    imgFormatSelectAlias = { ...defaultAlias.imgFormatSelect },
-    imageSizeAlias = { ...defaultAlias.imageSize },
-    imageSizeWideAlias = { ...defaultAlias.imageSizeWide },
-    imageSizeTallAlias = { ...defaultAlias.imageSizeTall },
+    bgModeSelectAlias,
+    imageFormatAlias,
     primaryAction,
     secondaryAction,
 }) => {
-    // get image format for all images
-    const imgFormat = mapPrismicSelect(imgFormatSelectAlias, image_format);
+    // spread settings props onto default values
+    bgModeSelectAlias = assignTo(bgModeSelectAlias, defaultAlias.bgModeSelect);
+    imageFormatAlias = assignTo(imageFormatAlias, defaultAlias.imageFormat);
 
-    // set correct size alias mapper for all images
-    let imgAlias = imageSizeAlias;
-    switch (imgFormat) {
-        case 'wide':
-            imgAlias = imageSizeWideAlias;
-            break;
-        case 'tall':
-            imgAlias = imageSizeTallAlias;
-    }
+    // get image format for all images
+    const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
 
     return (
         <FeatureList
             isInverted={is_inverted}
-            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
+            bgMode={mapPrismicSelect<BgMode | undefined>(
+                bgModeSelectAlias,
+                bg_mode
+            )}
             title={title && RichText.asText(title)}
             superTitle={super_title && RichText.asText(super_title)}
             text={text && RichText.asHtml(text, linkResolver)}
@@ -175,6 +174,17 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                     secondary_label,
                     secondary_link,
                 }) => {
+                    // get image urls
+                    const imgUrlLandscape = getImg(
+                        image,
+                        imageFormatAlias?.landscape
+                    ).url;
+
+                    const imgUrl = getImg(
+                        image,
+                        imageFormatAlias?.[imgFormat || 'square']
+                    ).url;
+
                     return {
                         title: title && RichText.asText(title),
                         text: text && RichText.asHtml(text),
@@ -184,11 +194,16 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                         intro: intro && RichText.asHtml(intro),
 
                         image: {
-                            small: getSubImg(image, imgAlias.small).url,
-                            medium: getSubImg(image, imgAlias.medium).url,
-                            large: getSubImg(image, imgAlias.large).url,
-                            xlarge: getSubImg(image, imgAlias.xlarge).url,
-                            alt: image?.alt && RichText.asText(image.alt),
+                            ...getImageFromUrls(
+                                {
+                                    small: imgUrlLandscape,
+                                    medium: imgUrl,
+                                    large: imgUrl,
+                                    xlarge: imgUrl,
+                                },
+                                imageSizes[imgFormat || 'square'],
+                                image?.alt && RichText.asText(image.alt)
+                            ),
                         },
 
                         primaryAction: (isInverted) =>
