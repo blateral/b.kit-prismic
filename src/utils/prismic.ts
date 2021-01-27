@@ -10,6 +10,7 @@ import { FactListSliceType } from 'slices/FactList';
 import { FeatureListSliceType } from 'slices/FeatureList';
 import { FooterSliceType } from 'slices/Footer';
 import { GallerySliceType } from 'slices/Gallery';
+import { IconListSliceType } from 'slices/IconList';
 import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
@@ -143,6 +144,7 @@ export interface PrismicPage extends Document {
             | PosterSliceType
             | FooterSliceType
             | FactListSliceType
+            | IconListSliceType
         >;
     };
 }
