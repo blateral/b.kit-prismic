@@ -1,11 +1,14 @@
 import {
+    isPrismicLinkExternal,
     PrismicBoolean,
     PrismicHeading,
     PrismicImage,
+    PrismicKeyText,
     PrismicLink,
     PrismicRichText,
     PrismicSelectField,
     PrismicSlice,
+    resolveUnknownLink,
 } from '../utils/prismic';
 
 import { IconList } from '@blateral/b.kit';
@@ -20,17 +23,33 @@ interface IconListImages {
 export interface IconListSliceType
     extends PrismicSlice<'IconList', IconListImages> {
     primary: {
+        is_active?: PrismicBoolean;
+
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
         is_centered?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
-        primary_label?: string;
-        secondary_label?: string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
     };
+
+    // helpers to define component elements outside of slice
+    primaryAction?: (
+        isInverted?: boolean,
+        label?: string,
+        href?: string,
+        isExternal?: boolean
+    ) => React.ReactNode;
+    secondaryAction?: (
+        isInverted?: boolean,
+        label?: string,
+        href?: string,
+        isExternal?: boolean
+    ) => React.ReactNode;
 }
 
 export const IconListSlice: React.FC<IconListSliceType> = ({
@@ -46,6 +65,8 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
         secondary_label,
     },
     items,
+    primaryAction,
+    secondaryAction,
 }) => {
     return (
         <IconList
@@ -64,6 +85,24 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                           };
                       })
                     : undefined
+            }
+            primaryAction={(isInverted) =>
+                primaryAction &&
+                primaryAction(
+                    isInverted,
+                    (primary_label && RichText.asText(primary_label)) || '',
+                    resolveUnknownLink(primary_link) || '',
+                    isPrismicLinkExternal(primary_link)
+                )
+            }
+            secondaryAction={(isInverted) =>
+                secondaryAction &&
+                secondaryAction(
+                    isInverted,
+                    (secondary_label && RichText.asText(secondary_label)) || '',
+                    resolveUnknownLink(secondary_link) || '',
+                    isPrismicLinkExternal(secondary_link)
+                )
             }
         />
     );

@@ -13,6 +13,7 @@ import {
     isPrismicLinkExternal,
     getPrismicImage as getImg,
     getImageFromUrls,
+    PrismicKeyText,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -30,7 +31,22 @@ interface ImageFormats {
     portrait: string;
 }
 
-export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
+interface FeatureItemType {
+    title?: PrismicHeading;
+    text?: PrismicRichText;
+
+    description?: PrismicRichText;
+    intro?: PrismicRichText;
+    image: PrismicImage;
+
+    primary_link?: PrismicLink;
+    secondary_link?: PrismicLink;
+    primary_label?: string;
+    secondary_label?: string;
+}
+
+export interface FeatureListSliceType
+    extends PrismicSlice<'FeatureList', FeatureItemType> {
     primary: {
         is_active?: PrismicBoolean;
         title?: PrismicHeading;
@@ -41,24 +57,11 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
         bg_mode?: PrismicSelectField;
         image_format?: PrismicSelectField;
 
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
-        primary_label?: string;
-        secondary_label?: string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
     };
-    items: {
-        title?: PrismicHeading;
-        text?: PrismicRichText;
-
-        description?: PrismicRichText;
-        intro?: PrismicRichText;
-        image: PrismicImage;
-
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
-        primary_label?: string;
-        secondary_label?: string;
-    }[];
 
     // helpers to define elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
@@ -139,7 +142,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label && RichText.asText(primary_label),
+                    (primary_label && RichText.asText(primary_label)) || '',
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -148,7 +151,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label && RichText.asText(secondary_label),
+                    (secondary_label && RichText.asText(secondary_label)) || '',
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

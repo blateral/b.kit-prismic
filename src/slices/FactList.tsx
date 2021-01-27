@@ -24,8 +24,8 @@ export interface FactListSliceType
         title?: PrismicHeading;
         intro?: PrismicRichText;
         is_inverted?: PrismicBoolean;
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
         primary_label?: string;
         secondary_label?: string;
     };

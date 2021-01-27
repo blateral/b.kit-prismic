@@ -1,4 +1,4 @@
-// Version: 0.1.15
+// Version: 0.1.16
 
 // export util types and functions
 export * from 'utils/prismic';

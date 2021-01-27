@@ -13,6 +13,7 @@ import {
     isPrismicLinkExternal,
     getPrismicImage as getImg,
     getImageFromUrl,
+    PrismicKeyText,
 } from 'utils/prismic';
 import { AliasMapperType, ImageSizeSettings } from 'utils/mapping';
 
@@ -37,10 +38,10 @@ export interface GallerySliceType
         is_inverted?: PrismicBoolean;
         has_back?: PrismicBoolean;
 
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
-        primary_label?: string;
-        secondary_label?: string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
     };
 
     // helpers to define component elements outside of slice
@@ -125,7 +126,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label && RichText.asText(primary_label),
+                    (primary_label && RichText.asText(primary_label)) || '',
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -134,7 +135,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label && RichText.asText(secondary_label),
+                    (secondary_label && RichText.asText(secondary_label)) || '',
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

@@ -1,21 +1,21 @@
-import React from 'react';
-
 import {
     PrismicBoolean,
     PrismicHeading,
-    PrismicRichText,
-    PrismicSlice,
-    linkResolver,
+    PrismicKeyText,
     PrismicLink,
-    resolveUnknownLink,
+    PrismicRichText,
     PrismicSelectField,
-    mapPrismicSelect,
+    PrismicSlice,
     isPrismicLinkExternal,
+    linkResolver,
+    mapPrismicSelect,
+    resolveUnknownLink,
 } from 'utils/prismic';
-import { AliasSelectMapperType } from 'utils/mapping';
 
-import { RichText } from 'prismic-dom';
+import { AliasSelectMapperType } from 'utils/mapping';
 import { Article } from '@blateral/b.kit';
+import React from 'react';
+import { RichText } from 'prismic-dom';
 
 type BgMode = 'full' | 'splitted';
 
@@ -28,10 +28,10 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
         aside_text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
-        primary_label?: string;
-        secondary_label?: string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
@@ -81,7 +81,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label && RichText.asText(primary_label),
+                    (primary_label && RichText.asText(primary_label)) || '',
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -90,7 +90,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label && RichText.asText(secondary_label),
+                    (secondary_label && RichText.asText(secondary_label)) || '',
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
