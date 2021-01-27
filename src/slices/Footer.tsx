@@ -54,7 +54,7 @@ export interface FooterSliceType extends PrismicSlice<'Footer'> {
 
 export const FooterSlice: React.FC<FooterSliceType> = ({
     primary: {
-        domain,
+        // domain,
         contact,
         logo_image,
         logo_href,
@@ -70,7 +70,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
 
         footer_bottomlinks,
 
-        body,
+        // body,
     },
 }) => {
     return (
@@ -81,7 +81,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             // })}
 
             isInverted={is_inverted}
-            columnTopSpace={columntop_space && '40px'}
+            columnTopSpace={columntop_space ? '40px' : ''}
             logo={{
                 image: logo_image,
                 link: (logo_href && resolveUnknownLink(logo_href)) || '',
@@ -106,20 +106,25 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                 footer_newsletter_text &&
                 RichText.asHtml(footer_newsletter_text, linkResolver)
             }
-            bottomLinks={footer_bottomlinks.map((botLink) => {
-                const isExternal = Boolean(
-                    botLink.href &&
-                        botLink.href.link_type === 'Web' &&
-                        botLink.href.target
-                );
-                return {
-                    href:
-                        (botLink.href && resolveUnknownLink(botLink.href)) ||
-                        '',
-                    label: botLink.label || '',
-                    isExternal,
-                };
-            })}
+            bottomLinks={
+                footer_bottomlinks && footer_bottomlinks.length > 0
+                    ? footer_bottomlinks.map((botLink) => {
+                          const isExternal = Boolean(
+                              botLink.href &&
+                                  botLink.href.link_type === 'Web' &&
+                                  botLink.href.target
+                          );
+                          return {
+                              href:
+                                  (botLink.href &&
+                                      resolveUnknownLink(botLink.href)) ||
+                                  '',
+                              label: botLink.label || '',
+                              isExternal,
+                          };
+                      })
+                    : undefined
+            }
         />
     );
 };
@@ -132,23 +137,23 @@ const mapSocials = ({
     youtube?: PrismicLink;
     facebook?: PrismicLink;
     instagram?: PrismicLink;
-}) => {
+}): { href: string; icon: any }[] => {
     const socials = [];
 
     youtube &&
         socials.push({
-            href: resolveUnknownLink(youtube),
+            href: resolveUnknownLink(youtube) || '',
             icon: <img src="https://via.placeholder.com/50" />,
         });
     facebook &&
         socials.push({
-            href: resolveUnknownLink(facebook),
+            href: resolveUnknownLink(facebook) || '',
             icon: <img src="https://via.placeholder.com/50" />,
         });
 
     instagram &&
         socials.push({
-            href: resolveUnknownLink(instagram),
+            href: resolveUnknownLink(instagram) || '',
             icon: <img src="https://via.placeholder.com/50" />,
         });
 
