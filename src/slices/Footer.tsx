@@ -85,9 +85,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             isInverted={is_inverted}
             columnTopSpace={columntop_space ? '40px' : ''}
             logo={{
-                image: logo_image && (
-                    <Image small={resolveUnknownLink(logo_href) || ''} />
-                ),
+                img: logo_href && resolveUnknownLink(logo_href),
                 link: (logo_href && resolveUnknownLink(logo_href)) || '',
             }}
             socials={mapSocials({ facebook, instagram, youtube })}
