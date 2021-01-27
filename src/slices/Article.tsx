@@ -1,21 +1,20 @@
-import React from 'react';
-
 import {
     PrismicBoolean,
     PrismicHeading,
-    PrismicRichText,
-    PrismicSlice,
-    linkResolver,
     PrismicLink,
-    resolveUnknownLink,
+    PrismicRichText,
     PrismicSelectField,
-    mapPrismicSelect,
+    PrismicSlice,
     isPrismicLinkExternal,
+    linkResolver,
+    mapPrismicSelect,
+    resolveUnknownLink,
 } from 'utils/prismic';
-import { AliasSelectMapperType } from 'utils/mapping';
 
-import { RichText } from 'prismic-dom';
+import { AliasSelectMapperType } from 'utils/mapping';
 import { Article } from '@blateral/b.kit';
+import React from 'react';
+import { RichText } from 'prismic-dom';
 
 type BgMode = 'full' | 'splitted';
 
@@ -28,8 +27,8 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
         aside_text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
         primary_label?: string;
         secondary_label?: string;
     };

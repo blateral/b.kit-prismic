@@ -1,4 +1,5 @@
 import {
+    PrismicBoolean,
     PrismicHeading,
     PrismicImage,
     PrismicKeyText,
@@ -16,6 +17,8 @@ type BgMode = 'full' | 'splitted';
 
 export interface PosterSliceType extends PrismicSlice<'Article'> {
     primary: {
+        is_active?: PrismicBoolean;
+
         image?: PrismicImage;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
