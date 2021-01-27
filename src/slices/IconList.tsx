@@ -90,7 +90,7 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    (primary_label && RichText.asText(primary_label)) || '',
+                    primary_label ? RichText.asText(primary_label) : '',
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -99,7 +99,7 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    (secondary_label && RichText.asText(secondary_label)) || '',
+                    secondary_label ? RichText.asText(secondary_label) : '',
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
