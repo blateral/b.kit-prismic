@@ -74,7 +74,6 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
     },
 }) => {
     return (
-        // <FactList />
         <Footer
             // siteLinks={body.map(entry=>{
 
@@ -85,19 +84,12 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             isInverted={is_inverted}
             columnTopSpace={columntop_space ? '40px' : ''}
             logo={{
-                image: logo_image,
+                img: logo_image.url,
                 link: (logo_href && resolveUnknownLink(logo_href)) || '',
             }}
             socials={mapSocials({ facebook, instagram, youtube })}
             contactData={
-                <div
-                    dangerouslySetInnerHTML={{
-                        __html:
-                            (contact &&
-                                RichText.asHtml(contact, linkResolver)) ||
-                            '',
-                    }}
-                />
+                (contact && RichText.asHtml(contact, linkResolver)) || ''
             }
             newsTitle={
                 (footer_newsletter_heading &&
