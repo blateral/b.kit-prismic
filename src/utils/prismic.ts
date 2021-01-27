@@ -1,15 +1,15 @@
-import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-import { Document } from 'prismic-javascript/types/documents';
 import {
     AliasSelectMapperType,
     ImageSettingsProps,
     updateUrlParameters,
 } from './mapping';
 
-import { GallerySliceType } from 'slices/Gallery';
 import { ArticleSliceType } from 'slices/Article';
+import { Document } from 'prismic-javascript/types/documents';
 import { FeatureListSliceType } from 'slices/FeatureList';
+import { GallerySliceType } from 'slices/Gallery';
 import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { VideoSliceType } from 'slices/Video';
 
 /****** Types ******/
@@ -42,6 +42,7 @@ export type PrismicLink =
     | {
           link_type: 'Web';
           url: string;
+          target?: '_blank';
       }
     | {
           link_type: 'Media';
@@ -142,49 +143,24 @@ export interface PrismicPage extends Document {
 
 export interface PrismicNavigationSliceType {
     primary: {
-        label?: PrismicHeading;
-        link?: PrismicLink;
+        footer_nav_title?: PrismicHeading;
+        footer_nav_link?: PrismicLink;
     };
     items: never[];
 }
 export interface PrismicSettingsPage extends Document {
     data: {
-        logo?: PrismicImage;
-        logohref?: PrismicLink;
-        menudecorator?: PrismicImage;
-        booking?: [
-            {
-                actionlabel?: PrismicKeyText;
-                actionlink?: PrismicLink;
-            }
-        ];
+        domain?: PrismicLink;
+        contact?: PrismicRichText;
 
-        conttitle?: PrismicHeading;
-        conttext?: PrismicRichText;
-        maillabel?: PrismicKeyText;
-        emaillink?: PrismicLink;
-        phonenumber?: PrismicKeyText;
-        phonenumberlink?: PrismicLink;
-        mobilenumber?: PrismicKeyText;
-        mobilelink?: PrismicLink;
-
-        website?: PrismicKeyText;
-        websitelink?: PrismicLink;
-        youtube?: PrismicLink;
-        instagram?: PrismicLink;
         facebook?: PrismicLink;
+        instagram?: PrismicLink;
+        youtube?: PrismicLink;
 
-        certtitle?: PrismicHeading;
-        certtext?: PrismicRichText;
-        certificates?: { certlogo: PrismicImage }[];
-        sponstitle?: PrismicHeading;
-        sponstext?: PrismicRichText;
-        sponsinfo?: PrismicKeyText;
-        sponsinfolink?: PrismicLink;
-        sponsors?: { logo: PrismicImage }[];
-        policy?: PrismicLink;
-        impressum?: PrismicLink;
-        terms?: PrismicLink;
+        footer_newsletter_text?: PrismicRichText;
+
+        footer_impressum?: PrismicLink;
+        footer_policy?: PrismicLink;
 
         body?: PrismicNavigationSliceType[];
     };
