@@ -27,8 +27,8 @@ export interface VideoSliceType extends PrismicSlice<'Video'> {
         embed_id?: string;
         is_inverted?: PrismicBoolean;
 
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
         primary_label?: string;
         secondary_label?: string;
     };

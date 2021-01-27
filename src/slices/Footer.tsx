@@ -23,6 +23,7 @@ interface BottomLink {
 
 export interface FooterSliceType extends PrismicSlice<'Footer'> {
     primary: {
+        is_active?: PrismicBoolean;
         domain?: PrismicLink;
         contact?: PrismicRichText;
 
