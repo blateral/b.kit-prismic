@@ -14,7 +14,7 @@ import { Poster } from '@blateral/b.kit';
 import React from 'react';
 import { RichText } from 'prismic-dom';
 
-export interface PosterSliceType extends PrismicSlice<'Article'> {
+export interface PosterSliceType extends PrismicSlice<'Poster'> {
     primary: {
         is_active?: PrismicBoolean;
 
