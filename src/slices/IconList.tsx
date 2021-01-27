@@ -28,8 +28,8 @@ export interface IconListSliceType
         is_inverted?: PrismicBoolean;
         is_centered?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
         primary_label?: string;
         secondary_label?: string;
     };

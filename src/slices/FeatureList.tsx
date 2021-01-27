@@ -41,8 +41,8 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
         bg_mode?: PrismicSelectField;
         image_format?: PrismicSelectField;
 
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
         primary_label?: string;
         secondary_label?: string;
     };
@@ -54,8 +54,8 @@ export interface FeatureListSliceType extends PrismicSlice<'FeatureList'> {
         intro?: PrismicRichText;
         image: PrismicImage;
 
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
         primary_label?: string;
         secondary_label?: string;
     }[];
