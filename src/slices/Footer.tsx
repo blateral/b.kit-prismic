@@ -70,14 +70,30 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
 
         footer_bottomlinks,
 
-        // body,
+        body,
     },
 }) => {
     return (
         <Footer
-            // siteLinks={body.map(entry=>{
-
-            // })}
+            siteLinks={body?.map((navSlice) => {
+                const item = navSlice.primary;
+                const isExternal = Boolean(
+                    item.footer_nav_link &&
+                        item.footer_nav_link.link_type === 'Web' &&
+                        item.footer_nav_link.target
+                );
+                return {
+                    label:
+                        item.footer_nav_title &&
+                        RichText.asText(item.footer_nav_title),
+                    href:
+                        (item.footer_nav_link &&
+                            resolveUnknownLink(item.footer_nav_link)) ||
+                        undefined,
+                    isExternal: isExternal,
+                    isActive: false,
+                };
+            })}
             newsForm={(is_inverted) => {
                 return <span>Newsform WIP. Inverted? {is_inverted}</span>;
             }}
@@ -101,23 +117,22 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                 RichText.asHtml(footer_newsletter_text, linkResolver)
             }
             bottomLinks={
-                footer_bottomlinks && footer_bottomlinks.length > 0
-                    ? footer_bottomlinks.map((botLink) => {
-                          const isExternal = Boolean(
-                              botLink.href &&
-                                  botLink.href.link_type === 'Web' &&
-                                  botLink.href.target
-                          );
-                          return {
-                              href:
-                                  (botLink.href &&
-                                      resolveUnknownLink(botLink.href)) ||
-                                  '',
-                              label: botLink.label || '',
-                              isExternal,
-                          };
-                      })
-                    : undefined
+                footer_bottomlinks &&
+                footer_bottomlinks.map((botLink) => {
+                    const isExternal = Boolean(
+                        botLink.href &&
+                            botLink.href.link_type === 'Web' &&
+                            botLink.href.target
+                    );
+                    return {
+                        href:
+                            (botLink.href &&
+                                resolveUnknownLink(botLink.href)) ||
+                            '',
+                        label: botLink.label || '',
+                        isExternal,
+                    };
+                })
             }
         />
     );
