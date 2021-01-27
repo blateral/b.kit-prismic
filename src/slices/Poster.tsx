@@ -64,7 +64,7 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
             primaryAction={
                 primaryAction &&
                 primaryAction(
-                    (primary_label && RichText.asText(primary_label)) || '',
+                    primary_label ? RichText.asText(primary_label) : '',
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -72,7 +72,7 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
             secondaryAction={
                 secondaryAction &&
                 secondaryAction(
-                    (secondary_label && RichText.asText(secondary_label)) || '',
+                    secondary_label ? RichText.asText(secondary_label) : '',
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

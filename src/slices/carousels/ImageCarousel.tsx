@@ -13,6 +13,7 @@ import {
     isPrismicLinkExternal,
     getPrismicImage as getImg,
     getImageFromUrls,
+    PrismicKeyText,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -46,8 +47,8 @@ export interface ImageCarouselSliceType
 
         primary_link?: PrismicLink | string;
         secondary_link?: PrismicLink | string;
-        primary_label?: string;
-        secondary_label?: string;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
     };
 
     // helpers to define component elements outside of slice
@@ -177,7 +178,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label && RichText.asText(primary_label),
+                    primary_label ? RichText.asText(primary_label) : '',
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -186,7 +187,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label && RichText.asText(secondary_label),
+                    secondary_label ? RichText.asText(secondary_label) : '',
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
