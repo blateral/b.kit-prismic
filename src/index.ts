@@ -1,4 +1,4 @@
-// Version: 0.1.17
+// Version: 0.1.18
 
 // export util types and functions
 export * from 'utils/prismic';
@@ -8,6 +8,7 @@ export * from 'slices/Article';
 export * from 'slices/Video';
 export * from 'slices/Gallery';
 export * from 'slices/FeatureList';
+export * from 'slices/IconList';
 
 export * from 'slices/carousels/ImageCarousel';
 

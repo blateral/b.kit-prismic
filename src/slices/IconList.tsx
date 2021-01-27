@@ -76,7 +76,7 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
             isCentered={is_centered}
             isInverted={is_inverted}
             bgMode={is_inverted ? 'full' : 'splitted'}
-            secondaryItems={
+            primaryItems={
                 items && items.length > 0
                     ? items.map((item) => {
                           return {
