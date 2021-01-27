@@ -12,7 +12,6 @@ import {
 } from '../utils/prismic';
 
 import { Footer } from '@blateral/b.kit';
-import Image from '@blateral/b.kit/lib/components/blocks/Image';
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
 import { RichText } from 'prismic-dom';
@@ -85,7 +84,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             isInverted={is_inverted}
             columnTopSpace={columntop_space ? '40px' : ''}
             logo={{
-                img: logo_href && resolveUnknownLink(logo_href),
+                img: logo_image && logo_image.url,
                 link: (logo_href && resolveUnknownLink(logo_href)) || '',
             }}
             socials={mapSocials({ facebook, instagram, youtube })}
