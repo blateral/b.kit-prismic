@@ -1,4 +1,3 @@
-import { Gallery, IconList } from '@blateral/b.kit';
 import {
     PrismicBoolean,
     PrismicHeading,
@@ -9,14 +8,9 @@ import {
     PrismicSlice,
 } from '../utils/prismic';
 
-import { ImageSizeSettings } from '../utils/mapping';
+import { IconList } from '@blateral/b.kit';
 import React from 'react';
 import { RichText } from 'prismic-dom';
-
-interface ImageFormats {
-    'full-width': string;
-    'half-width': string;
-}
 
 interface IconListImages {
     image: PrismicImage;
@@ -38,22 +32,6 @@ export interface IconListSliceType
         secondary_label?: string;
     };
 }
-
-// for this component defines image sizes
-const imageSizes = {
-    'full-width': {
-        small: { width: 500, height: 246 },
-        medium: { width: 640, height: 315 },
-        large: { width: 1024, height: 504 },
-        xlarge: { width: 1440, height: 710 },
-    },
-    'half-width': {
-        small: { width: 610, height: 457 },
-        medium: { width: 507, height: 380 },
-        large: { width: 507, height: 380 },
-        xlarge: { width: 710, height: 533 },
-    },
-} as ImageSizeSettings<ImageFormats>;
 
 export const IconListSlice: React.FC<IconListSliceType> = ({
     primary: {
