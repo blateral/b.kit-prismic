@@ -28,7 +28,8 @@
     "homepage": "https://github.com/blateral/b.kit-prismic#readme",
     "husky": {
         "hooks": {
-            "pre-push": "yarn tc"
+            "pre-push": "yarn tc",
+            "pre-commit": "yalc check || echo Skipping yalc check"
         }
     },
     "devDependencies": {
