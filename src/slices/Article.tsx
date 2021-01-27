@@ -1,6 +1,7 @@
 import {
     PrismicBoolean,
     PrismicHeading,
+    PrismicKeyText,
     PrismicLink,
     PrismicRichText,
     PrismicSelectField,
@@ -29,8 +30,8 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
         bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
-        primary_label?: string;
-        secondary_label?: string;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
@@ -80,7 +81,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label && RichText.asText(primary_label),
+                    (primary_label && RichText.asText(primary_label)) || '',
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -89,7 +90,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label && RichText.asText(secondary_label),
+                    (secondary_label && RichText.asText(secondary_label)) || '',
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
