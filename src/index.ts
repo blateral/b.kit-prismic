@@ -8,6 +8,7 @@ export * from 'slices/Article';
 export * from 'slices/Video';
 export * from 'slices/Gallery';
 export * from 'slices/FeatureList';
+export * from 'slices/IconList';
 
 export * from 'slices/carousels/ImageCarousel';
 
