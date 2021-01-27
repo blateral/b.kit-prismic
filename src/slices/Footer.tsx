@@ -79,7 +79,9 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             // siteLinks={body.map(entry=>{
 
             // })}
-
+            newsForm={(is_inverted) => {
+                return <span>Newsform WIP. Inverted? {is_inverted}</span>;
+            }}
             isInverted={is_inverted}
             columnTopSpace={columntop_space ? '40px' : ''}
             logo={{
