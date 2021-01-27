@@ -6,10 +6,13 @@ import {
 
 import { ArticleSliceType } from 'slices/Article';
 import { Document } from 'prismic-javascript/types/documents';
+import { FactListSliceType } from 'slices/FactList';
 import { FeatureListSliceType } from 'slices/FeatureList';
+import { FooterSliceType } from 'slices/Footer';
 import { GallerySliceType } from 'slices/Gallery';
 import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { PosterSliceType } from 'slices/Poster';
 import { VideoSliceType } from 'slices/Video';
 
 /****** Types ******/
@@ -137,6 +140,9 @@ export interface PrismicPage extends Document {
             | FeatureListSliceType
             | ImageCarouselSliceType
             | VideoSliceType
+            | PosterSliceType
+            | FooterSliceType
+            | FactListSliceType
         >;
     };
 }
