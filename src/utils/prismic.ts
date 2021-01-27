@@ -11,6 +11,7 @@ import { GallerySliceType } from 'slices/Gallery';
 import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { VideoSliceType } from 'slices/Video';
+import { FooterSliceType } from 'slices/Footer';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -137,6 +138,7 @@ export interface PrismicPage extends Document {
             | FeatureListSliceType
             | ImageCarouselSliceType
             | VideoSliceType
+            | FooterSliceType
         >;
     };
 }
