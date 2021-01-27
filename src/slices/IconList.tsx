@@ -20,6 +20,8 @@ interface IconListImages {
 export interface IconListSliceType
     extends PrismicSlice<'IconList', IconListImages> {
     primary: {
+        is_active?: PrismicBoolean;
+
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
