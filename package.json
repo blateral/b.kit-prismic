@@ -13,7 +13,8 @@
         "watch": "rollup -c -w",
         "tc": "tsc --noEmit",
         "check-publish": "yarn pack && tar -xvzf *.tgz && rm -rf package *.tgz",
-        "deploy": "yarn tc && yarn build && yarn publish"
+        "deploy": "yarn tc && yarn build && yarn publish",
+        "check-yalc": "if yalc --version; then yalc check; else echo Skipping yalc check; fi"
     },
     "repository": {
         "type": "git",
@@ -28,8 +29,7 @@
     "homepage": "https://github.com/blateral/b.kit-prismic#readme",
     "husky": {
         "hooks": {
-            "pre-push": "yarn tc",
-            "pre-commit": "yalc check || echo Skipping yalc check"
+            "pre-push": "yarn tc && yarn check-yalc"
         }
     },
     "devDependencies": {
