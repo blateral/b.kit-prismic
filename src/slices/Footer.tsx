@@ -21,15 +21,18 @@ interface BottomLink {
     href?: PrismicLink;
 }
 
+interface SocialsItem {
+    platform?: PrismicKeyText;
+    link?: PrismicLink;
+}
+
 export interface FooterSliceType extends PrismicSlice<'Footer'> {
     primary: {
         is_active?: PrismicBoolean;
         domain?: PrismicLink;
         contact?: PrismicRichText;
 
-        facebook?: PrismicLink;
-        instagram?: PrismicLink;
-        youtube?: PrismicLink;
+        socials?: Array<SocialsItem>;
 
         logo_image?: PrismicImage;
         logo_href?: PrismicLink;
@@ -59,9 +62,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
         contact,
         logo_image,
         logo_href,
-        facebook,
-        instagram,
-        youtube,
+        socials,
 
         is_inverted,
         columntop_space,
@@ -104,7 +105,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                 img: logo_image && logo_image.url,
                 link: (logo_href && resolveUnknownLink(logo_href)) || '',
             }}
-            socials={mapSocials({ facebook, instagram, youtube })}
+            socials={socials && mapSocials(socials)}
             contactData={
                 (contact && RichText.asHtml(contact, linkResolver)) || ''
             }
@@ -139,33 +140,13 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
     );
 };
 
-const mapSocials = ({
-    youtube,
-    facebook,
-    instagram,
-}: {
-    youtube?: PrismicLink;
-    facebook?: PrismicLink;
-    instagram?: PrismicLink;
-}): { href: string; icon: any }[] => {
-    const socials = [];
-
-    youtube &&
-        socials.push({
-            href: resolveUnknownLink(youtube) || '',
-            icon: <img src="https://via.placeholder.com/50" />,
-        });
-    facebook &&
-        socials.push({
-            href: resolveUnknownLink(facebook) || '',
-            icon: <img src="https://via.placeholder.com/50" />,
-        });
-
-    instagram &&
-        socials.push({
-            href: resolveUnknownLink(instagram) || '',
-            icon: <img src="https://via.placeholder.com/50" />,
-        });
-
-    return socials;
+const mapSocials = (
+    socials: Array<SocialsItem>
+): Array<{ href: string; icon: any }> => {
+    return socials.map((social) => {
+        return {
+            href: (social.link && resolveUnknownLink(social.link)) || '',
+            icon: <span>ICON PLACEHOLDER</span>,
+        };
+    });
 };
