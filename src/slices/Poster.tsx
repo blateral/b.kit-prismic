@@ -10,10 +10,14 @@ import {
     PrismicRichText,
     PrismicSlice,
     resolveUnknownLink,
+    getPrismicImage as getImg,
+    getImageFromUrl,
 } from '../utils/prismic';
 
 import { Poster } from '@blateral/b.kit';
 import React from 'react';
+import { ImageSizeSettings } from 'utils/mapping';
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 export interface PosterSliceType extends PrismicSlice<'Poster'> {
     primary: {
@@ -41,6 +45,16 @@ export interface PosterSliceType extends PrismicSlice<'Poster'> {
     ) => React.ReactNode;
 }
 
+// for this component defines image sizes
+const imageSizes = {
+    main: {
+        small: { width: 680, height: 300 },
+        medium: { width: 680, height: 300 },
+        large: { width: 1024, height: 364 },
+        xlarge: { width: 2400, height: 854 },
+    },
+} as ImageSizeSettings<{ main: string }>;
+
 export const PosterSlice: React.FC<PosterSliceType> = ({
     primary: {
         image,
@@ -55,10 +69,16 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    // get image url
+    const url = image ? getImg(image, 'main').url : '';
+
+    const mappedImage: ImageProps = {
+        ...getImageFromUrl(url, imageSizes.main, getText(image?.alt)),
+    };
+
     return (
-        //TODO: Image sizes
         <Poster
-            image={{ small: (image && image.url) || '' }}
+            image={mappedImage}
             title={getText(title)}
             superTitle={getText(super_title)}
             text={getHtmlText(text)}

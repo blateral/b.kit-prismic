@@ -1,6 +1,6 @@
 {
     "name": "@blateral/b.kit-prismic",
-    "version": "0.1.20",
+    "version": "0.1.21",
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
@@ -14,7 +14,8 @@
         "tc": "tsc --noEmit",
         "check-publish": "yarn pack && tar -xvzf *.tgz && rm -rf package *.tgz",
         "deploy": "yarn tc && yarn build && yarn publish",
-        "check-yalc": "if yalc --version; then yalc check; else echo Skipping yalc check; fi"
+        "check-yalc": "if yalc --version; then yalc check; else echo Skipping yalc check; fi",
+        "lookup": "yarn --check-files"
     },
     "repository": {
         "type": "git",
@@ -29,8 +30,7 @@
     "homepage": "https://github.com/blateral/b.kit-prismic#readme",
     "husky": {
         "hooks": {
-            "pre-push": "yarn tc",
-            "pre-commit": "yarn check-yalc"
+            "pre-push": " yarn check-yalc && yarn tc"
         }
     },
     "devDependencies": {
