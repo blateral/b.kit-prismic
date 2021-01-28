@@ -15,5 +15,6 @@ Inside project that should use the library:
 -   Run `yalc add <repository-name>` in target lokal repository to link library from yalc store.
 -   Use `yalc update` or `yalc update <repository-name>` to update all linked packages.
 -   use `yalc remove <repository-name>` to remove linked package.
+-   use `yarn --check-files` afterwards to install packages from npm
 
     Before each push to git `yalc check` performs a check to ensure that all linked packages are removed from package.json. To delete package linking from package.json but not from yalc.lock `yalc retreat [--all]` / `yalc restore`
