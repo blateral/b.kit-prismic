@@ -394,7 +394,7 @@ export const getHtmlText = (prismicValue?: PrismicRichText) => {
         if (!prismicValue) throw new Error();
         if (typeof prismicValue !== 'string') {
             if (isRichTextEmpty(prismicValue)) text = '';
-            else RichText.asHtml(prismicValue, linkResolver);
+            else text = RichText.asHtml(prismicValue, linkResolver);
         } else {
             text = prismicValue;
         }
