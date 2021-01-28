@@ -81,11 +81,7 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     const url = bg_image ? getImg(bg_image, 'main').url : '';
 
     const mappedImage: ImageProps = {
-        ...getImageFromUrl(
-            url,
-            imageSizes.main,
-            bg_image?.alt && getText(bg_image.alt)
-        ),
+        ...getImageFromUrl(url, imageSizes.main, getText(bg_image?.alt)),
     };
 
     return (
