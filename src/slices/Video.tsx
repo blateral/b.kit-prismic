@@ -4,7 +4,6 @@ import {
     PrismicHeading,
     PrismicRichText,
     PrismicSlice,
-    linkResolver,
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
@@ -12,10 +11,11 @@ import {
     getPrismicImage as getImg,
     getImageFromUrl,
     PrismicKeyText,
+    getText,
+    getHtmlText,
 } from 'utils/prismic';
 import { ImageSizeSettings } from 'utils/mapping';
 
-import { RichText } from 'prismic-dom';
 import { Video } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 export interface VideoSliceType extends PrismicSlice<'Video'> {
@@ -25,7 +25,7 @@ export interface VideoSliceType extends PrismicSlice<'Video'> {
         title?: PrismicHeading;
         text?: PrismicRichText;
         bg_image?: PrismicImage;
-        embed_id?: string;
+        embed_id?: PrismicKeyText;
         is_inverted?: PrismicBoolean;
 
         primary_link?: PrismicLink;
@@ -84,24 +84,24 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         ...getImageFromUrl(
             url,
             imageSizes.main,
-            bg_image?.alt && RichText.asText(bg_image.alt)
+            bg_image?.alt && getText(bg_image.alt)
         ),
     };
 
     return (
         <Video
             isInverted={is_inverted}
-            title={title && RichText.asText(title)}
-            superTitle={super_title && RichText.asText(super_title)}
-            text={text && RichText.asHtml(text, linkResolver)}
+            title={getText(title)}
+            superTitle={getText(super_title)}
+            text={getHtmlText(text)}
             bgImage={mappedImage}
-            embedId={embed_id ? RichText.asText(embed_id) : ''}
+            embedId={getText(embed_id)}
             playIcon={playIcon}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label ? RichText.asText(primary_label) : '',
+                    getText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -110,7 +110,7 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label ? RichText.asText(secondary_label) : '',
+                    getText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

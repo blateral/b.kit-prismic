@@ -8,12 +8,13 @@ import {
     PrismicImage,
     PrismicSelectField,
     mapPrismicSelect,
-    linkResolver,
     resolveUnknownLink,
     isPrismicLinkExternal,
     getPrismicImage as getImg,
     getImageFromUrls,
     PrismicKeyText,
+    getText,
+    getHtmlText,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -21,7 +22,6 @@ import {
     ImageSizeSettings,
 } from 'utils/mapping';
 
-import { RichText } from 'prismic-dom';
 import { ImageCarousel } from '@blateral/b.kit';
 import { ResponsiveObject } from 'slices/carousels/slick';
 
@@ -45,8 +45,8 @@ export interface ImageCarouselSliceType
         spacing?: PrismicSelectField;
         image_format?: PrismicSelectField;
 
-        primary_link?: PrismicLink | string;
-        secondary_link?: PrismicLink | string;
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
@@ -146,9 +146,9 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
             isInverted={is_inverted}
             bgMode={mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode)}
             spacing={mapPrismicSelect<Spacing>(spacingSelectAlias, spacing)}
-            title={title && RichText.asText(title)}
-            superTitle={super_title && RichText.asText(super_title)}
-            text={text && RichText.asHtml(text, linkResolver)}
+            title={getText(title)}
+            superTitle={getText(super_title)}
+            text={getHtmlText(text)}
             images={items.map((item) => {
                 // get image urls
                 const imgUrlLandscape = getImg(
@@ -170,7 +170,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                             xlarge: imgUrl,
                         },
                         imageSizes[imgFormat || 'square'],
-                        item?.image.alt && RichText.asText(item.image.alt)
+                        getText(item.image.alt)
                     ),
                 };
             })}
@@ -178,7 +178,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label ? RichText.asText(primary_label) : '',
+                    getText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -187,7 +187,7 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label ? RichText.asText(secondary_label) : '',
+                    getText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

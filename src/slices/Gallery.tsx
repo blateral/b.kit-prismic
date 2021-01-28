@@ -4,7 +4,6 @@ import {
     PrismicHeading,
     PrismicRichText,
     PrismicSlice,
-    linkResolver,
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
@@ -14,10 +13,11 @@ import {
     getPrismicImage as getImg,
     getImageFromUrl,
     PrismicKeyText,
+    getText,
+    getHtmlText,
 } from 'utils/prismic';
 import { AliasMapperType, ImageSizeSettings } from 'utils/mapping';
 
-import { RichText } from 'prismic-dom';
 import { Gallery } from '@blateral/b.kit';
 
 interface ImageFormats {
@@ -100,9 +100,9 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
         <Gallery
             isInverted={is_inverted}
             hasBack={has_back}
-            title={title && RichText.asText(title)}
-            superTitle={super_title && RichText.asText(super_title)}
-            text={text && RichText.asHtml(text, linkResolver)}
+            title={getText(title)}
+            superTitle={getText(super_title)}
+            text={getHtmlText(text)}
             images={items.map((item) => {
                 // get image format
                 const format = mapPrismicSelect(imageFormatAlias, item?.size);
@@ -117,7 +117,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                     ...getImageFromUrl(
                         url,
                         imageSizes[format || 'full-width'],
-                        item?.image.alt && RichText.asText(item.image.alt)
+                        getText(item.image.alt)
                     ),
                     size: format === 'half-width' ? 'half' : 'full',
                 };
@@ -126,7 +126,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label ? RichText.asText(primary_label) : '',
+                    getText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -135,7 +135,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label ? RichText.asText(secondary_label) : '',
+                    getText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

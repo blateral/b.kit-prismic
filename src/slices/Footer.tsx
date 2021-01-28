@@ -7,18 +7,23 @@ import {
     PrismicNavigationSliceType,
     PrismicRichText,
     PrismicSlice,
-    linkResolver,
     resolveUnknownLink,
+    getText,
+    getHtmlText,
 } from '../utils/prismic';
 
 import { Footer } from '@blateral/b.kit';
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
-import { RichText } from 'prismic-dom';
 
 interface BottomLink {
     label?: PrismicKeyText;
     href?: PrismicLink;
+}
+
+interface SocialsItem {
+    platform?: PrismicKeyText;
+    link?: PrismicLink;
 }
 
 export interface FooterSliceType extends PrismicSlice<'Footer'> {
@@ -27,9 +32,7 @@ export interface FooterSliceType extends PrismicSlice<'Footer'> {
         domain?: PrismicLink;
         contact?: PrismicRichText;
 
-        facebook?: PrismicLink;
-        instagram?: PrismicLink;
-        youtube?: PrismicLink;
+        socials?: Array<SocialsItem>;
 
         logo_image?: PrismicImage;
         logo_href?: PrismicLink;
@@ -59,9 +62,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
         contact,
         logo_image,
         logo_href,
-        facebook,
-        instagram,
-        youtube,
+        socials,
 
         is_inverted,
         columntop_space,
@@ -84,9 +85,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                         item.footer_nav_link.target
                 );
                 return {
-                    label:
-                        item.footer_nav_title &&
-                        RichText.asText(item.footer_nav_title),
+                    label: getText(item.footer_nav_title),
                     href:
                         (item.footer_nav_link &&
                             resolveUnknownLink(item.footer_nav_link)) ||
@@ -104,19 +103,10 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                 img: logo_image && logo_image.url,
                 link: (logo_href && resolveUnknownLink(logo_href)) || '',
             }}
-            socials={mapSocials({ facebook, instagram, youtube })}
-            contactData={
-                (contact && RichText.asHtml(contact, linkResolver)) || ''
-            }
-            newsTitle={
-                (footer_newsletter_heading &&
-                    RichText.asText(footer_newsletter_heading)) ||
-                ''
-            }
-            newsText={
-                footer_newsletter_text &&
-                RichText.asHtml(footer_newsletter_text, linkResolver)
-            }
+            socials={socials && mapSocials(socials)}
+            contactData={getHtmlText(contact)}
+            newsTitle={getText(footer_newsletter_heading)}
+            newsText={getHtmlText(footer_newsletter_text)}
             bottomLinks={
                 footer_bottomlinks &&
                 footer_bottomlinks.map((botLink) => {
@@ -139,33 +129,13 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
     );
 };
 
-const mapSocials = ({
-    youtube,
-    facebook,
-    instagram,
-}: {
-    youtube?: PrismicLink;
-    facebook?: PrismicLink;
-    instagram?: PrismicLink;
-}): { href: string; icon: any }[] => {
-    const socials = [];
-
-    youtube &&
-        socials.push({
-            href: resolveUnknownLink(youtube) || '',
-            icon: <img src="https://via.placeholder.com/50" />,
-        });
-    facebook &&
-        socials.push({
-            href: resolveUnknownLink(facebook) || '',
-            icon: <img src="https://via.placeholder.com/50" />,
-        });
-
-    instagram &&
-        socials.push({
-            href: resolveUnknownLink(instagram) || '',
-            icon: <img src="https://via.placeholder.com/50" />,
-        });
-
-    return socials;
+const mapSocials = (
+    socials: Array<SocialsItem>
+): Array<{ href: string; icon: any }> => {
+    return socials.map((social) => {
+        return {
+            href: (social.link && resolveUnknownLink(social.link)) || '',
+            icon: <span>ICON PLACEHOLDER</span>,
+        };
+    });
 };

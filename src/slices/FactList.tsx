@@ -1,6 +1,7 @@
 import {
     PrismicBoolean,
     PrismicHeading,
+    PrismicKeyText,
     PrismicLink,
     PrismicRichText,
     PrismicSelectField,
@@ -26,8 +27,8 @@ export interface FactListSliceType
         is_inverted?: PrismicBoolean;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
-        primary_label?: string;
-        secondary_label?: string;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
     primaryAction?: (

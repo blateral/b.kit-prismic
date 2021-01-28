@@ -1,4 +1,6 @@
 import {
+    getHtmlText,
+    getText,
     isPrismicLinkExternal,
     PrismicBoolean,
     PrismicHeading,
@@ -12,9 +14,8 @@ import {
 
 import { Poster } from '@blateral/b.kit';
 import React from 'react';
-import { RichText } from 'prismic-dom';
 
-export interface PosterSliceType extends PrismicSlice<'Article'> {
+export interface PosterSliceType extends PrismicSlice<'Poster'> {
     primary: {
         is_active?: PrismicBoolean;
 
@@ -58,13 +59,13 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
         //TODO: Image sizes
         <Poster
             image={{ small: (image && image.url) || '' }}
-            title={title && RichText.asText(title)}
-            superTitle={super_title && RichText.asText(super_title)}
-            text={text && RichText.asHtml(text)}
+            title={getText(title)}
+            superTitle={getText(super_title)}
+            text={getHtmlText(text)}
             primaryAction={
                 primaryAction &&
                 primaryAction(
-                    primary_label ? RichText.asText(primary_label) : '',
+                    getText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -72,7 +73,7 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
             secondaryAction={
                 secondaryAction &&
                 secondaryAction(
-                    secondary_label ? RichText.asText(secondary_label) : '',
+                    getText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
