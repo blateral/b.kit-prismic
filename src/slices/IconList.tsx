@@ -1,4 +1,6 @@
 import {
+    getHtmlText,
+    getText,
     isPrismicLinkExternal,
     PrismicBoolean,
     PrismicHeading,
@@ -13,7 +15,6 @@ import {
 
 import { IconList } from '@blateral/b.kit';
 import React from 'react';
-import { RichText } from 'prismic-dom';
 
 interface IconListImages {
     image: PrismicImage;
@@ -70,9 +71,9 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
 }) => {
     return (
         <IconList
-            superTitle={super_title && RichText.asText(super_title)}
-            title={title && RichText.asText(title)}
-            text={text && RichText.asHtml(text)}
+            superTitle={super_title && getText(super_title)}
+            title={title && getText(title)}
+            text={text && getHtmlText(text)}
             isCentered={is_centered}
             isInverted={is_inverted}
             bgMode={is_inverted ? 'full' : 'splitted'}
@@ -90,7 +91,7 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label ? RichText.asText(primary_label) : '',
+                    getText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -99,7 +100,7 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label ? RichText.asText(secondary_label) : '',
+                    getText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

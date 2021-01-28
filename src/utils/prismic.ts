@@ -15,6 +15,7 @@ import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
 import { VideoSliceType } from 'slices/Video';
+import { RichText } from 'prismic-dom';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -367,4 +368,38 @@ export const isPrismicLinkExternal = (prismicLink?: PrismicLink | string) => {
 
 export const isRichTextEmpty = (prismicRichText: PrismicRichText) => {
     return prismicRichText.length === 1 && prismicRichText[0].text === '';
+};
+
+export const getText = (
+    prismicValue?: PrismicRichText | PrismicKeyText | string
+) => {
+    let text: string;
+    try {
+        if (!prismicValue) throw new Error();
+        if (typeof prismicValue !== 'string') {
+            if (isRichTextEmpty(prismicValue)) text = '';
+            else text = RichText.asText(prismicValue);
+        } else {
+            text = prismicValue;
+        }
+    } catch {
+        text = '';
+    }
+    return text;
+};
+
+export const getHtmlText = (prismicValue?: PrismicRichText) => {
+    let text = '';
+    try {
+        if (!prismicValue) throw new Error();
+        if (typeof prismicValue !== 'string') {
+            if (isRichTextEmpty(prismicValue)) text = '';
+            else RichText.asHtml(prismicValue, linkResolver);
+        } else {
+            text = prismicValue;
+        }
+    } catch {
+        text = '';
+    }
+    return text;
 };

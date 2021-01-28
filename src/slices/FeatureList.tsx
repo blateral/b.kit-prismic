@@ -4,7 +4,6 @@ import {
     PrismicHeading,
     PrismicRichText,
     PrismicSlice,
-    linkResolver,
     PrismicLink,
     resolveUnknownLink,
     PrismicImage,
@@ -14,6 +13,8 @@ import {
     getPrismicImage as getImg,
     getImageFromUrls,
     PrismicKeyText,
+    getText,
+    getHtmlText,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -21,7 +22,6 @@ import {
     ImageSizeSettings,
 } from 'utils/mapping';
 
-import { RichText } from 'prismic-dom';
 import { FeatureList } from '@blateral/b.kit';
 
 type BgMode = 'full' | 'splitted';
@@ -135,14 +135,14 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         <FeatureList
             isInverted={is_inverted}
             bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
-            title={title && RichText.asText(title)}
-            superTitle={super_title && RichText.asText(super_title)}
-            text={text && RichText.asHtml(text, linkResolver)}
+            title={getText(title)}
+            superTitle={getText(super_title)}
+            text={getHtmlText(text)}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label ? RichText.asText(primary_label) : '',
+                    getText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -151,7 +151,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label ? RichText.asText(secondary_label) : '',
+                    getText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )
@@ -180,13 +180,10 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                     ).url;
 
                     return {
-                        title: title && RichText.asText(title),
-                        text: text && RichText.asHtml(text),
-                        description:
-                            description &&
-                            RichText.asHtml(description, linkResolver),
-                        intro: intro && RichText.asHtml(intro),
-
+                        title: getText(title),
+                        text: getHtmlText(text),
+                        description: getHtmlText(description),
+                        intro: getHtmlText(intro),
                         image: {
                             ...getImageFromUrls(
                                 {
@@ -196,7 +193,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                                     xlarge: imgUrl,
                                 },
                                 imageSizes[imgFormat || 'square'],
-                                image?.alt && RichText.asText(image.alt)
+                                getText(image.alt)
                             ),
                         },
 
@@ -204,7 +201,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                             primaryAction &&
                             primaryAction(
                                 isInverted,
-                                primary_label && RichText.asText(primary_label),
+                                getText(primary_label),
                                 resolveUnknownLink(primary_link) || '',
                                 isPrismicLinkExternal(primary_link)
                             ),
@@ -212,8 +209,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                             secondaryAction &&
                             secondaryAction(
                                 isInverted,
-                                secondary_label &&
-                                    RichText.asText(secondary_label),
+                                getText(secondary_label),
                                 resolveUnknownLink(secondary_link) || '',
                                 isPrismicLinkExternal(secondary_link)
                             ),

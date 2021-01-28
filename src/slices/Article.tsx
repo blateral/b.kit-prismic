@@ -7,15 +7,15 @@ import {
     PrismicSelectField,
     PrismicSlice,
     isPrismicLinkExternal,
-    linkResolver,
     mapPrismicSelect,
     resolveUnknownLink,
+    getText,
+    getHtmlText,
 } from 'utils/prismic';
 
 import { AliasSelectMapperType } from 'utils/mapping';
 import { Article } from '@blateral/b.kit';
 import React from 'react';
-import { RichText } from 'prismic-dom';
 
 type BgMode = 'full' | 'splitted';
 
@@ -73,15 +73,15 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
         <Article
             isInverted={is_inverted}
             bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
-            title={title && RichText.asText(title)}
-            superTitle={super_title && RichText.asText(super_title)}
-            text={text && RichText.asHtml(text, linkResolver)}
-            asideText={aside_text && RichText.asHtml(aside_text, linkResolver)}
+            title={getText(title)}
+            superTitle={getText(super_title)}
+            text={getHtmlText(text)}
+            asideText={getHtmlText(aside_text)}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction(
                     isInverted,
-                    primary_label ? RichText.asText(primary_label) : '',
+                    getText(primary_label),
                     resolveUnknownLink(primary_link) || '',
                     isPrismicLinkExternal(primary_link)
                 )
@@ -90,7 +90,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                 secondaryAction &&
                 secondaryAction(
                     isInverted,
-                    secondary_label ? RichText.asText(secondary_label) : '',
+                    getText(secondary_label),
                     resolveUnknownLink(secondary_link) || '',
                     isPrismicLinkExternal(secondary_link)
                 )

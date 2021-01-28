@@ -7,14 +7,14 @@ import {
     PrismicNavigationSliceType,
     PrismicRichText,
     PrismicSlice,
-    linkResolver,
     resolveUnknownLink,
+    getText,
+    getHtmlText,
 } from '../utils/prismic';
 
 import { Footer } from '@blateral/b.kit';
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
-import { RichText } from 'prismic-dom';
 
 interface BottomLink {
     label?: PrismicKeyText;
@@ -85,9 +85,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                         item.footer_nav_link.target
                 );
                 return {
-                    label:
-                        item.footer_nav_title &&
-                        RichText.asText(item.footer_nav_title),
+                    label: getText(item.footer_nav_title),
                     href:
                         (item.footer_nav_link &&
                             resolveUnknownLink(item.footer_nav_link)) ||
@@ -106,18 +104,9 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                 link: (logo_href && resolveUnknownLink(logo_href)) || '',
             }}
             socials={socials && mapSocials(socials)}
-            contactData={
-                (contact && RichText.asHtml(contact, linkResolver)) || ''
-            }
-            newsTitle={
-                (footer_newsletter_heading &&
-                    RichText.asText(footer_newsletter_heading)) ||
-                ''
-            }
-            newsText={
-                footer_newsletter_text &&
-                RichText.asHtml(footer_newsletter_text, linkResolver)
-            }
+            contactData={getHtmlText(contact)}
+            newsTitle={getText(footer_newsletter_heading)}
+            newsText={getHtmlText(footer_newsletter_text)}
             bottomLinks={
                 footer_bottomlinks &&
                 footer_bottomlinks.map((botLink) => {
