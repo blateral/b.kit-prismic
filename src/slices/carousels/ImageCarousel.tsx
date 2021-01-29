@@ -55,22 +55,31 @@ export interface ImageCarouselSliceType
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     spacingSelectAlias?: AliasSelectMapperType<Spacing>;
     imageFormatAlias?: AliasMapperType<ImageFormats>;
-    primaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
-    secondaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
-    controlNext?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
-    controlPrev?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
-    dot?: (isInverted?: boolean, isActive?: boolean) => React.ReactNode;
-    beforeChange?: (currentStep: number, nextStep: number) => void;
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    controlNext?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    controlPrev?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    dot?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    beforeChange?: (props: { currentStep: number; nextStep: number }) => void;
     afterChange?: (currentStep: number) => void;
     onInit?: (steps: number) => void;
     slidesToShow?: number;
@@ -176,21 +185,21 @@ export const ImageCarouselSlice: React.FC<ImageCarouselSliceType> = ({
             })}
             primaryAction={(isInverted) =>
                 primaryAction &&
-                primaryAction(
+                primaryAction({
                     isInverted,
-                    getText(primary_label),
-                    resolveUnknownLink(primary_link) || '',
-                    isPrismicLinkExternal(primary_link)
-                )
+                    label: getText(primary_label),
+                    href: resolveUnknownLink(primary_link) || '',
+                    isExternal: isPrismicLinkExternal(primary_link),
+                })
             }
             secondaryAction={(isInverted) =>
                 secondaryAction &&
-                secondaryAction(
+                secondaryAction({
                     isInverted,
-                    getText(secondary_label),
-                    resolveUnknownLink(secondary_link) || '',
-                    isPrismicLinkExternal(secondary_link)
-                )
+                    label: getText(secondary_label),
+                    href: resolveUnknownLink(secondary_link) || '',
+                    isExternal: isPrismicLinkExternal(secondary_link),
+                })
             }
             controlNext={controlNext}
             controlPrev={controlPrev}
