@@ -12,5 +12,6 @@ export * from 'slices/FeatureList';
 export * from 'slices/IconList';
 
 export * from 'slices/carousels/ImageCarousel';
+export * from 'slices/Header';
 
 export * from 'slices/Footer';
