@@ -33,24 +33,24 @@ export interface PosterSliceType extends PrismicSlice<'Poster'> {
         secondary_link?: PrismicLink;
     };
     // helpers to define component elements outside of slice
-    primaryAction?: (
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
-    secondaryAction?: (
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
+    primaryAction?: (props: {
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryAction?: (props: {
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
 }
 
 // for this component defines image sizes
 const imageSizes = {
     main: {
-        small: { width: 680, height: 300 },
-        medium: { width: 680, height: 300 },
-        large: { width: 1024, height: 364 },
+        small: { width: 639, height: 500 },
+        medium: { width: 1023, height: 500 },
+        large: { width: 1439, height: 511 },
         xlarge: { width: 2400, height: 854 },
     },
 } as ImageSizeSettings<{ main: string }>;
@@ -84,19 +84,19 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
             text={getHtmlText(text)}
             primaryAction={
                 primaryAction &&
-                primaryAction(
-                    getText(primary_label),
-                    resolveUnknownLink(primary_link) || '',
-                    isPrismicLinkExternal(primary_link)
-                )
+                primaryAction({
+                    label: getText(primary_label),
+                    href: resolveUnknownLink(primary_link) || '',
+                    isExternal: isPrismicLinkExternal(primary_link),
+                })
             }
             secondaryAction={
                 secondaryAction &&
-                secondaryAction(
-                    getText(secondary_label),
-                    resolveUnknownLink(secondary_link) || '',
-                    isPrismicLinkExternal(secondary_link)
-                )
+                secondaryAction({
+                    label: getText(secondary_label),
+                    href: resolveUnknownLink(secondary_link) || '',
+                    isExternal: isPrismicLinkExternal(secondary_link),
+                })
             }
         />
     );

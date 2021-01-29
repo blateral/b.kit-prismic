@@ -32,18 +32,18 @@ export interface HeaderSliceType extends PrismicSlice<'Header', PrismicImage> {
     };
 
     // helpers to define component elements outside of slice
-    primaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
-    secondaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
     settingsPage?: PrismicSettingsPage;
 }
 
@@ -65,24 +65,26 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
 }) => {
     const settings = settingsPage?.data;
 
-
-    console.log("SETTINGS", settings);
-    console.log("Nav items map", settings?.main_nav?.map((navItem, index) => {
-        return {
-            id: `main-nav-group-${index}`,
-            name: navItem.primary.name,
-            isSmall: navItem.primary.is_small,
-            items: navItem?.items?.map((item, subindex)=>{
-                return {
-                    id: `nav-group-${subindex}`,
-                    label: item.label || "",
-                    link: {
-                        href: resolveUnknownLink(item.link) || ""
-                    }
-                }
-            })
-        }
-    }))
+    console.log('SETTINGS', settings);
+    console.log(
+        'Nav items map',
+        settings?.main_nav?.map((navItem, index) => {
+            return {
+                id: `main-nav-group-${index}`,
+                name: navItem.primary.name,
+                isSmall: navItem.primary.is_small,
+                items: navItem?.items?.map((item, subindex) => {
+                    return {
+                        id: `nav-group-${subindex}`,
+                        label: item.label || '',
+                        link: {
+                            href: resolveUnknownLink(item.link) || '',
+                        },
+                    };
+                }),
+            };
+        })
+    );
     return (
         <Header
             size={size ? (size as 'small') || 'full' : 'full'}
@@ -107,52 +109,53 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 showOnMobile: true,
             }}
             menu={{
-                primaryCta: primaryAction,
-                secondaryCta: secondaryAction,
+                // TODO: da brauchen wir noch weiter props da die Actions im Menu != die im Header
+                // primaryCta: (isInverted) =>
+                //     primaryAction && primaryAction({ isInverted }),
+                // secondaryCta: (isInverted) =>
+                //     secondaryAction && secondaryAction({ isInverted }),
                 logo: {
                     link: resolveUnknownLink(settings?.logo_href) || '',
                 },
                 isNavInverted: nav_inverted,
-                socials: settings?.socials?.map(social=>{
+                socials: settings?.socials?.map((social) => {
                     return {
-                        href: resolveUnknownLink(social.link) || "",
-                        icon: social.platform 
-                    }
+                        href: resolveUnknownLink(social.link) || '',
+                        icon: social.platform,
+                    };
                 }),
                 navItems: settings?.main_nav?.map((navItem, index) => {
                     return {
                         id: `main-nav-group-${index}`,
-                        items: navItem?.items?.map((item, subindex)=>{
+                        items: navItem?.items?.map((item, subindex) => {
                             return {
                                 id: `nav-group-${subindex}`,
-                                label: item.label || "",
+                                label: item.label || '',
                                 link: {
-                                    href: resolveUnknownLink(item.link) || ""
-                                }
-                            }
-                        })
-                    }
-                })
-                
-                
+                                    href: resolveUnknownLink(item.link) || '',
+                                },
+                            };
+                        }),
+                    };
+                }),
             }}
             primaryCta={(isInverted) =>
                 primaryAction &&
-                primaryAction(
+                primaryAction({
                     isInverted,
-                    getText(primary_label),
-                    resolveUnknownLink(primary_link) || '',
-                    isPrismicLinkExternal(primary_link)
-                )
+                    label: getText(primary_label),
+                    href: resolveUnknownLink(primary_link) || '',
+                    isExternal: isPrismicLinkExternal(primary_link),
+                })
             }
             secondaryCta={(isInverted) =>
                 secondaryAction &&
-                secondaryAction(
+                secondaryAction({
                     isInverted,
-                    getText(secondary_label),
-                    resolveUnknownLink(secondary_link) || '',
-                    isPrismicLinkExternal(secondary_link)
-                )
+                    label: getText(secondary_label),
+                    href: resolveUnknownLink(secondary_link) || '',
+                    isExternal: isPrismicLinkExternal(secondary_link),
+                })
             }
         />
     );

@@ -42,18 +42,17 @@ export interface FooterSliceType extends PrismicSlice<'Footer'> {
 
         footer_newsletter_heading?: PrismicHeading;
         footer_newsletter_text?: PrismicRichText;
+        footer_newsletter_placeholder?: PrismicKeyText;
 
         footer_bottomlinks?: Array<BottomLink>;
 
         body?: Array<PrismicNavigationSliceType>;
     };
     // helpers to define component elements outside of slice
-    primaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
+    newsForm?: (props: {
+        isInverted?: boolean;
+        placeholder?: string;
+    }) => React.ReactNode;
 }
 
 export const FooterSlice: React.FC<FooterSliceType> = ({
@@ -69,11 +68,13 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
 
         footer_newsletter_heading,
         footer_newsletter_text,
+        footer_newsletter_placeholder,
 
         footer_bottomlinks,
 
         body,
     },
+    newsForm,
 }) => {
     return (
         <Footer
@@ -94,9 +95,13 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                     isActive: false,
                 };
             })}
-            newsForm={(is_inverted) => {
-                return <span>Newsform WIP. Inverted? {is_inverted}</span>;
-            }}
+            newsForm={(isInverted) =>
+                newsForm &&
+                newsForm({
+                    isInverted,
+                    placeholder: getText(footer_newsletter_placeholder),
+                })
+            }
             isInverted={is_inverted}
             columnTopSpace={columntop_space ? '40px' : ''}
             logo={{
