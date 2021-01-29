@@ -39,18 +39,18 @@ export interface IconListSliceType
     };
 
     // helpers to define component elements outside of slice
-    primaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
-    secondaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
 }
 
 export const IconListSlice: React.FC<IconListSliceType> = ({
@@ -89,21 +89,21 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
             }
             primaryAction={(isInverted) =>
                 primaryAction &&
-                primaryAction(
+                primaryAction({
                     isInverted,
-                    getText(primary_label),
-                    resolveUnknownLink(primary_link) || '',
-                    isPrismicLinkExternal(primary_link)
-                )
+                    label: getText(primary_label),
+                    href: resolveUnknownLink(primary_link) || '',
+                    isExternal: isPrismicLinkExternal(primary_link),
+                })
             }
             secondaryAction={(isInverted) =>
                 secondaryAction &&
-                secondaryAction(
+                secondaryAction({
                     isInverted,
-                    getText(secondary_label),
-                    resolveUnknownLink(secondary_link) || '',
-                    isPrismicLinkExternal(secondary_link)
-                )
+                    label: getText(secondary_label),
+                    href: resolveUnknownLink(secondary_link) || '',
+                    isExternal: isPrismicLinkExternal(secondary_link),
+                })
             }
         />
     );
