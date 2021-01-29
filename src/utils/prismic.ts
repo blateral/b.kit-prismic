@@ -160,14 +160,29 @@ export interface PrismicNavigationSliceType {
     };
     items: never[];
 }
+
+export interface PrismicMainNavigationSliceType {
+    primary: {
+        name?: PrismicKeyText;
+        is_small?: PrismicBoolean;
+    };
+    items?: Array<{
+        label?: PrismicKeyText;
+        link?: PrismicLink;
+    }>;
+}
 export interface PrismicSettingsPage extends Document {
     data: {
         domain?: PrismicLink;
         contact?: PrismicRichText;
 
-        facebook?: PrismicLink;
-        instagram?: PrismicLink;
-        youtube?: PrismicLink;
+        socials?: Array<{
+            platform?: PrismicKeyText;
+            link?: PrismicLink;
+        }>;
+
+        logo_image?: PrismicImage;
+        logo_href?: PrismicLink;
 
         footer_newsletter_text?: PrismicRichText;
 
@@ -175,6 +190,8 @@ export interface PrismicSettingsPage extends Document {
         footer_policy?: PrismicLink;
 
         body?: PrismicNavigationSliceType[];
+
+        main_nav?: PrismicMainNavigationSliceType[];
     };
 }
 
