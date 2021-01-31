@@ -17,6 +17,7 @@ import { Header } from '@blateral/b.kit';
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
 
+
 export interface HeaderSliceType extends PrismicSlice<'Header', PrismicImage> {
     primary: {
         is_active?: PrismicBoolean;
@@ -64,14 +65,13 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     secondaryAction,
 }) => {
     const settings = settingsPage?.data;
-
     console.log('SETTINGS', settings);
     console.log(
         'Nav items map',
         settings?.main_nav?.map((navItem, index) => {
             return {
                 id: `main-nav-group-${index}`,
-                name: navItem.primary.name,
+                name: navItem.primary.name || '',
                 isSmall: navItem.primary.is_small,
                 items: navItem?.items?.map((item, subindex) => {
                     return {
@@ -85,9 +85,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             };
         })
     );
+
+    
     return (
         <Header
-            size={size ? (size as 'small') || 'full' : 'full'}
+            size={size ? (size === 'small' ? 'small' : 'full') : 'full'}
             images={items.map((image) => {
                 return {
                     small: image.url || '',
@@ -109,6 +111,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 showOnMobile: true,
             }}
             menu={{
+                isTopInverted: is_inverted,
+                isNavInverted: nav_inverted,
+                
+                isLarge: size === "full",
+                
                 // TODO: da brauchen wir noch weiter props da die Actions im Menu != die im Header
                 // primaryCta: (isInverted) =>
                 //     primaryAction && primaryAction({ isInverted }),
@@ -117,7 +124,6 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 logo: {
                     link: resolveUnknownLink(settings?.logo_href) || '',
                 },
-                isNavInverted: nav_inverted,
                 socials: settings?.socials?.map((social) => {
                     return {
                         href: resolveUnknownLink(social.link) || '',
