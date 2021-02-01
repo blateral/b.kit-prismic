@@ -184,6 +184,11 @@ export interface PrismicSettingsPage extends Document {
         logo_image?: PrismicImage;
         logo_href?: PrismicLink;
 
+        nav_primary_label?: PrismicKeyText;
+        nav_primary_link?: PrismicLink;
+        nav_secondary_label?: PrismicKeyText;
+        nav_secondary_link?: PrismicLink;
+
         footer_newsletter_text?: PrismicRichText;
 
         footer_impressum?: PrismicLink;
