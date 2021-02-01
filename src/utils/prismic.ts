@@ -13,7 +13,6 @@ import { GallerySliceType } from 'slices/Gallery';
 import { IconListSliceType } from 'slices/IconList';
 import { HeaderSliceType } from 'slices/Header';
 
-import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
 import { VideoSliceType } from 'slices/Video';
@@ -142,7 +141,6 @@ export interface PrismicPage extends Document {
             | ArticleSliceType
             | GallerySliceType
             | FeatureListSliceType
-            | ImageCarouselSliceType
             | VideoSliceType
             | PosterSliceType
             | FooterSliceType
@@ -183,6 +181,11 @@ export interface PrismicSettingsPage extends Document {
 
         logo_image?: PrismicImage;
         logo_href?: PrismicLink;
+
+        nav_primary_label?: PrismicKeyText;
+        nav_primary_link?: PrismicLink;
+        nav_secondary_label?: PrismicKeyText;
+        nav_secondary_link?: PrismicLink;
 
         footer_newsletter_text?: PrismicRichText;
 

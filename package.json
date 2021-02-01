@@ -1,6 +1,6 @@
 {
     "name": "@blateral/b.kit-prismic",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
@@ -15,7 +15,8 @@
         "check-publish": "yarn pack && tar -xvzf *.tgz && rm -rf package *.tgz",
         "deploy": "yarn tc && yarn build && yarn publish",
         "check-yalc": "if yalc --version; then yalc check; else echo Skipping yalc check; fi",
-        "lookup": "yarn --check-files"
+        "lookup": "yarn --check-files",
+        "publish-yalc": "rm -rf lib && yarn build && yalc publish"
     },
     "repository": {
         "type": "git",

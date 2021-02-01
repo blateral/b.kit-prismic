@@ -69,6 +69,7 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const images = splitItemsIntoMultiples(items);
     return (
         <IconList
             superTitle={super_title && getText(super_title)}
@@ -77,16 +78,8 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
             isCentered={is_centered}
             isInverted={is_inverted}
             bgMode={is_inverted ? 'full' : 'splitted'}
-            primaryItems={
-                items && items.length > 0
-                    ? items.map((item) => {
-                          return {
-                              src: item?.image?.url || '',
-                              alt: item?.image?.alt || '',
-                          };
-                      })
-                    : undefined
-            }
+            primaryItems={images.primaryItems}
+            secondaryItems={images.secondaryItems}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction({
@@ -108,3 +101,34 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
         />
     );
 };
+
+function splitItemsIntoMultiples(
+    iconListItems: IconListImages[],
+    maxPrimaryItems = 15
+) {
+    const firstHalf = [];
+    const secondHalf = [];
+
+    for (let index = 0; index < maxPrimaryItems; index++) {
+        const item = iconListItems[index];
+
+        firstHalf.push({
+            src: item?.image?.url || '',
+            alt: item?.image?.alt || '',
+        });
+    }
+
+    for (let index = maxPrimaryItems; index < iconListItems.length; index++) {
+        const item = iconListItems[index];
+
+        secondHalf.push({
+            src: item?.image?.url || '',
+            alt: item?.image?.alt || '',
+        });
+    }
+
+    return {
+        primaryItems: firstHalf,
+        secondaryItems: secondHalf,
+    };
+}

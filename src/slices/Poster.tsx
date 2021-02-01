@@ -11,14 +11,18 @@ import {
     PrismicSlice,
     resolveUnknownLink,
     getPrismicImage as getImg,
-    getImageFromUrl,
+    getImageFromUrls,
 } from '../utils/prismic';
 
 import { Poster } from '@blateral/b.kit';
 import React from 'react';
-import { ImageSizeSettings } from 'utils/mapping';
+import { AliasMapperType, ImageSizeSettings } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
+interface ImageFormats {
+    landscape: string;
+    'landscape-wide': string;
+}
 export interface PosterSliceType extends PrismicSlice<'Poster'> {
     primary: {
         is_active?: PrismicBoolean;
@@ -33,6 +37,7 @@ export interface PosterSliceType extends PrismicSlice<'Poster'> {
         secondary_link?: PrismicLink;
     };
     // helpers to define component elements outside of slice
+    imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (props: {
         label?: string;
         href?: string;
@@ -48,12 +53,12 @@ export interface PosterSliceType extends PrismicSlice<'Poster'> {
 // for this component defines image sizes
 const imageSizes = {
     main: {
-        small: { width: 639, height: 500 },
+        small: { width: 1023, height: 500 },
         medium: { width: 1023, height: 500 },
-        large: { width: 1439, height: 511 },
+        large: { width: 1439, height: 512 },
         xlarge: { width: 2400, height: 854 },
     },
-} as ImageSizeSettings<{ main: string }>;
+} as ImageSizeSettings<{ main: ImageProps }>;
 
 export const PosterSlice: React.FC<PosterSliceType> = ({
     primary: {
@@ -66,14 +71,29 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
         primary_link,
         secondary_link,
     },
+    imageFormatAlias = {
+        landscape: '',
+        'landscape-wide': 'landscape-wide',
+    },
     primaryAction,
     secondaryAction,
 }) => {
-    // get image url
-    const url = image ? getImg(image, 'main').url : '';
+    // get image urls for different formats / ratios
+    const landscapeUrl = image && getImg(image, imageFormatAlias.landscape).url;
+    const landscapeWideUrl =
+        image && getImg(image, imageFormatAlias['landscape-wide']).url;
 
     const mappedImage: ImageProps = {
-        ...getImageFromUrl(url, imageSizes.main, getText(image?.alt)),
+        ...getImageFromUrls(
+            {
+                small: landscapeWideUrl || '',
+                medium: landscapeWideUrl,
+                large: landscapeUrl,
+                xlarge: landscapeUrl,
+            },
+            imageSizes.main,
+            getText(image?.alt)
+        ),
     };
 
     return (
