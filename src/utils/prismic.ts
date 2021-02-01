@@ -13,7 +13,6 @@ import { GallerySliceType } from 'slices/Gallery';
 import { IconListSliceType } from 'slices/IconList';
 import { HeaderSliceType } from 'slices/Header';
 
-import { ImageCarouselSliceType } from 'slices/carousels/ImageCarousel';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
 import { VideoSliceType } from 'slices/Video';
@@ -142,7 +141,6 @@ export interface PrismicPage extends Document {
             | ArticleSliceType
             | GallerySliceType
             | FeatureListSliceType
-            | ImageCarouselSliceType
             | VideoSliceType
             | PosterSliceType
             | FooterSliceType
