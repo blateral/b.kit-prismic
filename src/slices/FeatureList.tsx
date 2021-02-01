@@ -22,7 +22,8 @@ import {
     ImageSizeSettings,
 } from 'utils/mapping';
 
-import { FeatureList } from '@blateral/b.kit';
+import { FeatureCarousel, FeatureList } from '@blateral/b.kit';
+import { ResponsiveObject } from './slick';
 
 type BgMode = 'full' | 'splitted';
 interface ImageFormats {
@@ -49,6 +50,7 @@ export interface FeatureListSliceType
     extends PrismicSlice<'FeatureList', FeatureItemType> {
     primary: {
         is_active?: PrismicBoolean;
+        is_carousel?: PrismicBoolean;
         title?: PrismicHeading;
         super_title?: PrismicRichText;
         text?: PrismicRichText;
@@ -78,6 +80,23 @@ export interface FeatureListSliceType
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
+    controlNext?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    controlPrev?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    dot?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    beforeChange?: (props: { currentStep: number; nextStep: number }) => void;
+    afterChange?: (currentStep: number) => void;
+    onInit?: (steps: number) => void;
+    slidesToShow?: number;
+    responsive?: ResponsiveObject[];
 }
 
 // for this component defines image sizes
@@ -104,6 +123,7 @@ const imageSizes = {
 
 export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
     primary: {
+        is_carousel,
         title,
         super_title,
         text,
@@ -127,97 +147,117 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
     },
     primaryAction,
     secondaryAction,
+    controlNext,
+    controlPrev,
+    dot,
+    beforeChange,
+    afterChange,
+    onInit,
+    slidesToShow,
+    responsive,
 }) => {
     // get image format for all images
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
 
-    return (
-        <FeatureList
-            isInverted={is_inverted}
-            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
-            title={getText(title)}
-            superTitle={getText(super_title)}
-            text={getHtmlText(text)}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
-            }
-            secondaryAction={(isInverted) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
-            }
-            features={items.map(
-                ({
-                    title,
-                    text,
-                    description,
-                    intro,
+    const sharedProps = {
+        isInverted: is_inverted,
+        bgMode: mapPrismicSelect(bgModeSelectAlias, bg_mode),
+        title: getText(title),
+        superTitle: getText(super_title),
+        text: getHtmlText(text),
+        primaryAction: (isInverted: boolean) =>
+            primaryAction &&
+            primaryAction({
+                isInverted,
+                label: getText(primary_label),
+                href: resolveUnknownLink(primary_link) || '',
+                isExternal: isPrismicLinkExternal(primary_link),
+            }),
+        secondaryAction: (isInverted: boolean) =>
+            secondaryAction &&
+            secondaryAction({
+                isInverted,
+                label: getText(secondary_label),
+                href: resolveUnknownLink(secondary_link) || '',
+                isExternal: isPrismicLinkExternal(secondary_link),
+            }),
+        features: items.map(
+            ({
+                title,
+                text,
+                description,
+                intro,
+                image,
+                primary_label,
+                primary_link,
+                secondary_label,
+                secondary_link,
+            }) => {
+                // get image urls
+                const imgUrlLandscape = getImg(
                     image,
-                    primary_label,
-                    primary_link,
-                    secondary_label,
-                    secondary_link,
-                }) => {
-                    // get image urls
-                    const imgUrlLandscape = getImg(
-                        image,
-                        imageFormatAlias?.landscape
-                    ).url;
+                    imageFormatAlias?.landscape
+                ).url;
 
-                    const imgUrl = getImg(
-                        image,
-                        imageFormatAlias?.[imgFormat || 'square']
-                    ).url;
+                const imgUrl = getImg(
+                    image,
+                    imageFormatAlias?.[imgFormat || 'square']
+                ).url;
 
-                    return {
-                        title: getText(title),
-                        text: getHtmlText(text),
-                        description: getHtmlText(description),
-                        intro: getHtmlText(intro),
-                        image: {
-                            ...getImageFromUrls(
-                                {
-                                    small: imgUrlLandscape,
-                                    medium: imgUrl,
-                                    large: imgUrl,
-                                    xlarge: imgUrl,
-                                },
-                                imageSizes[imgFormat || 'square'],
-                                getText(image.alt)
-                            ),
-                        },
+                return {
+                    title: getText(title),
+                    text: getHtmlText(text),
+                    description: getHtmlText(description),
+                    intro: getHtmlText(intro),
+                    image: {
+                        ...getImageFromUrls(
+                            {
+                                small: imgUrlLandscape,
+                                medium: imgUrl,
+                                large: imgUrl,
+                                xlarge: imgUrl,
+                            },
+                            imageSizes[imgFormat || 'square'],
+                            getText(image.alt)
+                        ),
+                    },
 
-                        primaryAction: (isInverted) =>
-                            primaryAction &&
-                            primaryAction({
-                                isInverted,
-                                label: getText(primary_label),
-                                href: resolveUnknownLink(primary_link) || '',
-                                isExternal: isPrismicLinkExternal(primary_link),
-                            }),
-                        secondaryAction: (isInverted) =>
-                            secondaryAction &&
-                            secondaryAction({
-                                isInverted,
-                                label: getText(secondary_label),
-                                href: resolveUnknownLink(secondary_link) || '',
-                                isExternal: isPrismicLinkExternal(
-                                    secondary_link
-                                ),
-                            }),
-                    };
-                }
-            )}
-        />
-    );
+                    primaryAction: (isInverted: boolean) =>
+                        primaryAction &&
+                        primaryAction({
+                            isInverted,
+                            label: getText(primary_label),
+                            href: resolveUnknownLink(primary_link) || '',
+                            isExternal: isPrismicLinkExternal(primary_link),
+                        }),
+                    secondaryAction: (isInverted: boolean) =>
+                        secondaryAction &&
+                        secondaryAction({
+                            isInverted,
+                            label: getText(secondary_label),
+                            href: resolveUnknownLink(secondary_link) || '',
+                            isExternal: isPrismicLinkExternal(secondary_link),
+                        }),
+                };
+            }
+        ),
+    };
+
+    if (is_carousel) {
+        return (
+            <FeatureCarousel
+                {...sharedProps}
+                controlNext={controlNext}
+                controlPrev={controlPrev}
+                beforeChange={beforeChange}
+                afterChange={afterChange}
+                onInit={onInit}
+                dot={dot}
+                slidesToShow={slidesToShow}
+                responsive={responsive}
+            />
+        );
+    } else {
+        return <FeatureList {...sharedProps} />;
+    }
 };
