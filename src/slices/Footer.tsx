@@ -137,10 +137,10 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
 const mapSocials = (
     socials: Array<SocialsItem>
 ): Array<{ href: string; icon: any }> => {
-    return socials.map((social) => {
+    return socials?.map((social: any) => {
         return {
-            href: (social.link && resolveUnknownLink(social.link)) || '',
-            icon: <span>ICON PLACEHOLDER</span>,
+            href: resolveUnknownLink(social.link) || '',
+            icon: social.icon,
         };
     });
 };
