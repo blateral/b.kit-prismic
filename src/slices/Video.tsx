@@ -13,20 +13,28 @@ import {
     PrismicKeyText,
     getText,
     getHtmlText,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
-import { ImageSizeSettings } from 'utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 
-import { Video } from '@blateral/b.kit';
+import { Video, VideoCarousel } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-export interface VideoSliceType extends PrismicSlice<'Video'> {
+import { ResponsiveObject } from './slick';
+
+type BgMode = 'full' | 'splitted';
+export interface VideoCardItem {
+    bg_image: PrismicImage;
+    embed_id: PrismicKeyText;
+}
+export interface VideoSliceType extends PrismicSlice<'Video', VideoCardItem> {
     primary: {
         is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        bg_image?: PrismicImage;
-        embed_id?: PrismicKeyText;
         is_inverted?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
 
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
@@ -35,6 +43,7 @@ export interface VideoSliceType extends PrismicSlice<'Video'> {
     };
 
     // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -47,6 +56,23 @@ export interface VideoSliceType extends PrismicSlice<'Video'> {
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
+    controlNext?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    controlPrev?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    dot?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+    }) => React.ReactNode;
+    beforeChange?: (props: { currentStep: number; nextStep: number }) => void;
+    afterChange?: (currentStep: number) => void;
+    onInit?: (steps: number) => void;
+    slidesToShow?: number;
+    responsive?: ResponsiveObject[];
     playIcon?: React.ReactChild;
 }
 
@@ -65,52 +91,111 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         super_title,
         title,
         text,
-        bg_image,
-        embed_id,
         is_inverted,
+        bg_mode,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
+    items,
+    bgModeSelectAlias = {
+        full: 'full',
+        splitted: 'splitted',
+    },
     primaryAction,
     secondaryAction,
+    controlNext,
+    controlPrev,
+    dot,
+    beforeChange,
+    afterChange,
+    onInit,
+    slidesToShow,
+    responsive,
     playIcon,
 }) => {
-    // get image url
-    const url = bg_image ? getImg(bg_image, 'main').url : '';
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
 
-    const mappedImage: ImageProps = {
-        ...getImageFromUrl(url, imageSizes.main, getText(bg_image?.alt)),
+    const shardProps = {
+        isInverted: is_inverted,
+        title: getText(title),
+        superTitle: getText(super_title),
+        text: getHtmlText(text),
+        primaryAction: (isInverted: boolean) =>
+            primaryAction &&
+            primaryAction({
+                isInverted,
+                label: getText(primary_label),
+                href: resolveUnknownLink(primary_link) || '',
+                isExternal: isPrismicLinkExternal(primary_link),
+            }),
+        secondaryAction: (isInverted: boolean) =>
+            secondaryAction &&
+            secondaryAction({
+                isInverted,
+                label: getText(secondary_label),
+                href: resolveUnknownLink(secondary_link) || '',
+                isExternal: isPrismicLinkExternal(secondary_link),
+            }),
     };
 
-    return (
-        <Video
-            isInverted={is_inverted}
-            title={getText(title)}
-            superTitle={getText(super_title)}
-            text={getHtmlText(text)}
-            bgImage={mappedImage}
-            embedId={getText(embed_id)}
-            playIcon={playIcon}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
-            }
-            secondaryAction={(isInverted) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
-            }
-        />
-    );
+    console.log(items.length);
+
+    // if more than one items are defined create a carousel
+    if (items.length > 1) {
+        return (
+            <VideoCarousel
+                {...shardProps}
+                bgMode={bgMode}
+                videos={items.map((item) => {
+                    // get image url
+                    const url = item.bg_image
+                        ? getImg(item.bg_image, 'main').url
+                        : '';
+                    const mappedImage: ImageProps = {
+                        ...getImageFromUrl(
+                            url,
+                            imageSizes.main,
+                            getText(item.bg_image?.alt)
+                        ),
+                    };
+
+                    return {
+                        embedId: getText(item.embed_id),
+                        bgImage: mappedImage,
+                        playIcon: playIcon,
+                    };
+                })}
+                controlNext={controlNext}
+                controlPrev={controlPrev}
+                beforeChange={beforeChange}
+                afterChange={afterChange}
+                onInit={onInit}
+                dot={dot}
+                slidesToShow={slidesToShow}
+                responsive={responsive}
+            />
+        );
+    } else {
+        // get first video item
+        const embedId = items[0] && items[0].embed_id;
+        const bgImage = items[0] && items[0].bg_image;
+
+        // get image url
+        const url = bgImage ? getImg(bgImage, 'main').url : '';
+        const mappedImage: ImageProps = {
+            ...getImageFromUrl(url, imageSizes.main, getText(bgImage?.alt)),
+        };
+
+        return (
+            <Video
+                {...shardProps}
+                bgImage={mappedImage}
+                embedId={getText(embedId)}
+                playIcon={playIcon}
+            />
+        );
+    }
 };
