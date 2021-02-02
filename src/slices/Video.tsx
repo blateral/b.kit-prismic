@@ -141,8 +141,6 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
             }),
     };
 
-    console.log(items.length);
-
     // if more than one items are defined create a carousel
     if (items.length > 1) {
         return (
