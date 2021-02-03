@@ -32,8 +32,6 @@ export interface FooterSliceType extends PrismicSlice<'Footer'> {
         domain?: PrismicLink;
         contact?: PrismicRichText;
 
-        socials?: Array<SocialsItem>;
-
         logo_image?: PrismicImage;
         logo_href?: PrismicLink;
 
@@ -49,6 +47,7 @@ export interface FooterSliceType extends PrismicSlice<'Footer'> {
         body?: Array<PrismicNavigationSliceType>;
     };
     // helpers to define component elements outside of slice
+    socials?: Array<SocialsItem>;
     newsForm?: (props: {
         isInverted?: boolean;
         placeholder?: string;
@@ -61,7 +60,6 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
         contact,
         logo_image,
         logo_href,
-        socials,
 
         is_inverted,
         columntop_space,
@@ -74,6 +72,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
 
         body,
     },
+    socials,
     newsForm,
 }) => {
     return (
