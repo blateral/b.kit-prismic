@@ -17,6 +17,7 @@ import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
 import { VideoSliceType } from 'slices/Video';
 import { RichText } from 'prismic-dom';
+import { TeaserSliceType } from 'slices/Teaser';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -147,6 +148,7 @@ export interface PrismicPage extends Document {
             | FactListSliceType
             | IconListSliceType
             | HeaderSliceType
+            | TeaserSliceType
         >;
     };
 }
