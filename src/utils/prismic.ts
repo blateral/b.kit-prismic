@@ -12,7 +12,7 @@ import { FooterSliceType } from 'slices/Footer';
 import { GallerySliceType } from 'slices/Gallery';
 import { IconListSliceType } from 'slices/IconList';
 import { HeaderSliceType } from 'slices/Header';
-
+import { CrossPromotionSliceType } from 'slices/CrossPromotion';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
 import { VideoSliceType } from 'slices/Video';
@@ -149,6 +149,7 @@ export interface PrismicPage extends Document {
             | IconListSliceType
             | HeaderSliceType
             | TeaserSliceType
+            | CrossPromotionSliceType
         >;
     };
 }
