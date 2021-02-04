@@ -1,16 +1,9 @@
 import {
-    FacebookIcon,
-    InstagramIcon,
-    LinkedInIcon,
-    YoutubeIcon,
-} from '@blateral/b.kit';
-import {
     PrismicKeyText,
     PrismicLink,
     PrismicSettingsPage,
     getHtmlText,
     getText,
-    isPrismicLinkEmpty,
     resolveUnknownLink,
 } from '../utils/prismic';
 
@@ -21,21 +14,28 @@ import React from 'react';
 export interface FooterSliceType {
     settingsPage?: PrismicSettingsPage;
     injectForm?: (isInverted?: boolean) => React.ReactNode;
+    mapSocials?: (
+        socials: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
+    ) => Array<{
+        href: string;
+        icon: JSX.Element;
+    }>;
 }
 
 export const FooterSlice: React.FC<FooterSliceType> = ({
     settingsPage,
     injectForm,
+    mapSocials,
 }) => {
     const settingsData = settingsPage?.data;
 
     const mappedSocials =
+        mapSocials &&
         settingsData &&
         settingsData.socials &&
         settingsData.socials.length > 0 &&
         mapSocials(settingsData.socials);
 
-    console.log(mappedSocials);
     return (
         <Footer
             socials={mappedSocials || undefined}
@@ -85,45 +85,4 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             })}
         />
     );
-};
-
-const mapSocials = (
-    socials: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
-) => {
-    const mappedSocials = socials
-        .filter((social) => {
-            return (
-                social.link &&
-                !isPrismicLinkEmpty(social.link) &&
-                social.platform
-            );
-        })
-        .map((social) => {
-            let iconNode = null;
-            switch (social.platform && social.platform.toLocaleLowerCase()) {
-                case 'facebook':
-                    iconNode = <FacebookIcon />;
-                    break;
-                case 'youtube':
-                    iconNode = <YoutubeIcon />;
-                    break;
-                case 'instagram':
-                    iconNode = <InstagramIcon />;
-                    break;
-                case 'linkedin':
-                    iconNode = <LinkedInIcon />;
-                    break;
-
-                default:
-                    iconNode = <span>{social.platform}</span>;
-                    break;
-            }
-
-            return {
-                href: resolveUnknownLink(social.link) || '',
-                icon: iconNode,
-            };
-        });
-
-    return mappedSocials?.filter((social) => social !== null);
 };
