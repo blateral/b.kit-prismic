@@ -17,6 +17,7 @@ import { PosterSliceType } from 'slices/Poster';
 import { RichText } from 'prismic-dom';
 import { TeaserSliceType } from 'slices/Teaser';
 import { VideoSliceType } from 'slices/Video';
+import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -148,6 +149,7 @@ export interface PrismicPage extends Document {
             | HeaderSliceType
             | TeaserSliceType
             | CrossPromotionSliceType
+            | PromotionCarouselSliceType
         >;
     };
 }
