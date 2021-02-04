@@ -169,6 +169,7 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
             title: getText(item.title),
             superTitle: isFull && getText(item.super_title),
             text: isFull && getHtmlText(item.text),
+            href: resolveUnknownLink(item.link) || '',
         } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
     };
 

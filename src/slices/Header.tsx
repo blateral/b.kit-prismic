@@ -1,7 +1,4 @@
 import {
-    getHtmlElementFromPrismicType,
-    getText,
-    isPrismicLinkExternal,
     PrismicBoolean,
     PrismicHeading,
     PrismicImage,
@@ -10,12 +7,14 @@ import {
     PrismicSelectField,
     PrismicSettingsPage,
     PrismicSlice,
+    getHtmlElementFromPrismicType,
+    getText,
+    isPrismicLinkExternal,
     resolveUnknownLink,
 } from '../utils/prismic';
 
 import { Header } from '@blateral/b.kit';
 import React from 'react';
-
 
 interface HeaderImages {
     images?: PrismicImage;
@@ -30,6 +29,8 @@ export interface HeaderSliceType extends PrismicSlice<'Header', HeaderImages> {
         secondary_link?: PrismicLink;
         badge?: PrismicImage;
         title?: PrismicHeading;
+        is_nav_large?: PrismicBoolean;
+
         nav_inverted?: PrismicBoolean;
         size?: PrismicSelectField;
         is_inverted?: PrismicBoolean;
@@ -48,7 +49,6 @@ export interface HeaderSliceType extends PrismicSlice<'Header', HeaderImages> {
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
-
 
     nav_primaryAction?: (props: {
         isInverted?: boolean;
@@ -70,6 +70,13 @@ export interface HeaderSliceType extends PrismicSlice<'Header', HeaderImages> {
         isExternal?: boolean;
     }) => React.ReactNode;
 
+    mapSocials?: (
+        socials: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
+    ) => Array<{
+        href: string;
+        icon: JSX.Element;
+    }>;
+
     settingsPage?: PrismicSettingsPage;
 }
 
@@ -81,17 +88,21 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         secondary_link,
         badge,
         title,
+        is_nav_large,
+        is_inverted,
         nav_inverted,
         size,
-        is_inverted,
     },
     items,
     settingsPage,
     primaryAction,
     secondaryAction,
-    iconFunction
+    nav_primaryAction,
+    nav_secondaryAction,
+    iconFunction,
+    mapSocials,
 }) => {
-    const settings = settingsPage?.data;
+    const settingsData = settingsPage?.data;
     const headerImageMap = items.map((imageObj) => {
         return {
             small: imageObj?.images?.url || '',
@@ -109,7 +120,40 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             titleAs={title && getHtmlElementFromPrismicType(title[0] as any)}
             title={getText(title)}
             badge={headerBadge(badge)}
-            menu={createMenu({ settings,iconFunction, is_inverted, nav_inverted })}
+            menu={createMenu({
+                settingsData,
+                mapSocials,
+                iconFunction,
+                is_inverted,
+                nav_inverted,
+                is_nav_large,
+                nav_primaryCtaFn: (isInverted?: boolean) =>
+                    nav_primaryAction &&
+                    nav_primaryAction({
+                        isInverted,
+                        label: getText(settingsData?.nav_primary_label),
+                        href:
+                            resolveUnknownLink(
+                                settingsData?.nav_primary_link
+                            ) || '',
+                        isExternal: isPrismicLinkExternal(
+                            settingsData?.nav_primary_link
+                        ),
+                    }),
+                nav_secondaryCtaFn: (isInverted?: boolean) =>
+                    nav_secondaryAction &&
+                    nav_secondaryAction({
+                        isInverted,
+                        label: getText(settingsData?.nav_secondary_label),
+                        href:
+                            resolveUnknownLink(
+                                settingsData?.nav_secondary_link
+                            ) || '',
+                        isExternal: isPrismicLinkExternal(
+                            settingsData?.nav_secondary_link
+                        ),
+                    }),
+            })}
             primaryCta={(isInverted) =>
                 primaryAction &&
                 primaryAction({
@@ -145,25 +189,29 @@ function headerBadge(badge?: PrismicImage, showOnMobile = false) {
     };
 }
 
-function createMenu({ settings, iconFunction, is_inverted, nav_inverted, size }: any) {
-    console.log(settings);
+function createMenu({
+    settingsData,
+    iconFunction,
+    is_inverted,
+    nav_inverted,
+    nav_primaryCtaFn,
+    nav_secondaryCtaFn,
+    mapSocials,
+    is_nav_large,
+}: any) {
     return {
+        isLarge: is_nav_large,
         isTopInverted: is_inverted,
         isNavInverted: nav_inverted,
         logo: {
-            link: resolveUnknownLink(settings.logo_href) || "",
-            icon: iconFunction
-
+            link: resolveUnknownLink(settingsData.logo_href) || '',
+            icon: iconFunction,
         },
-        socials: settings?.socials?.map((social: any) => {
-            return {
-                href: resolveUnknownLink(social.link) || '',
-                icon: social.platform,
-            };
-        }),
-        isLarge: size === 'full',
+        socials: mapSocials && mapSocials(settingsData.socials),
 
-        navItems: settings.main_nav.map((navItem: any, index: number) => {
+        primaryCta: nav_primaryCtaFn,
+        secondaryCta: nav_secondaryCtaFn,
+        navItems: settingsData.main_nav.map((navItem: any, index: number) => {
             return {
                 id: `navGroup${index}`,
                 name: navItem?.primary?.name || '',
@@ -184,6 +232,5 @@ function createMenu({ settings, iconFunction, is_inverted, nav_inverted, size }:
                     }),
             };
         }),
-  
     };
 }
