@@ -5,19 +5,18 @@ import {
 } from './mapping';
 
 import { ArticleSliceType } from 'slices/Article';
+import { CrossPromotionSliceType } from 'slices/CrossPromotion';
 import { Document } from 'prismic-javascript/types/documents';
 import { FactListSliceType } from 'slices/FactList';
 import { FeatureListSliceType } from 'slices/FeatureList';
-import { FooterSliceType } from 'slices/Footer';
 import { GallerySliceType } from 'slices/Gallery';
-import { IconListSliceType } from 'slices/IconList';
 import { HeaderSliceType } from 'slices/Header';
-import { CrossPromotionSliceType } from 'slices/CrossPromotion';
+import { IconListSliceType } from 'slices/IconList';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
-import { VideoSliceType } from 'slices/Video';
 import { RichText } from 'prismic-dom';
 import { TeaserSliceType } from 'slices/Teaser';
+import { VideoSliceType } from 'slices/Video';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -144,7 +143,6 @@ export interface PrismicPage extends Document {
             | FeatureListSliceType
             | VideoSliceType
             | PosterSliceType
-            | FooterSliceType
             | FactListSliceType
             | IconListSliceType
             | HeaderSliceType
@@ -190,6 +188,7 @@ export interface PrismicSettingsPage extends Document {
         nav_secondary_label?: PrismicKeyText;
         nav_secondary_link?: PrismicLink;
 
+        footer_newsletter_heading?: PrismicHeading;
         footer_newsletter_text?: PrismicRichText;
 
         footer_impressum?: PrismicLink;
