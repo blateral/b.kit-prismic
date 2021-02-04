@@ -11,18 +11,36 @@ import {
     resolveUnknownLink,
     getText,
     getHtmlText,
+    mapPrismicSelect,
+    getPrismicImage as getImg,
+    getImageFromUrls,
 } from '../utils/prismic';
 
 import { CrossPromotion } from '@blateral/b.kit';
 import React from 'react';
+import {
+    AliasMapperType,
+    AliasSelectMapperType,
+    ImageSizeSettings,
+} from 'utils/mapping';
+import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/PromotionCard';
 
-// type BgMode = 'full' | 'splitted';
+type BgMode = 'full' | 'splitted';
+interface ImageFormats {
+    square: string;
+    landscape: string;
+    'landscape-wide': 'landscape-wide';
+    portrait: string;
+}
 
 interface CrossPromotionItems {
     is_main?: PrismicBoolean;
-    size?: 'full' | 'half';
+    format?: PrismicSelectField;
     image?: PrismicImage;
     title?: PrismicHeading;
+    super_title?: PrismicHeading;
+    text?: PrismicRichText;
+    link?: PrismicLink;
 }
 
 export interface CrossPromotionSliceType
@@ -42,7 +60,8 @@ export interface CrossPromotionSliceType
         secondary_label?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
-    // bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
+    imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -57,6 +76,36 @@ export interface CrossPromotionSliceType
     }) => React.ReactNode;
 }
 
+// for this component defines image sizes
+const imageSizes = {
+    square: {
+        small: { width: 619, height: 464 },
+        medium: { width: 791, height: 593 },
+        semilarge: { width: 481, height: 481 },
+        large: { width: 686, height: 686 },
+        xlarge: { width: 690, height: 690 },
+    },
+    landscape: {
+        small: { width: 619, height: 464 },
+        medium: { width: 983, height: 737 },
+        large: { width: 1399, height: 1050 },
+        xlarge: { width: 1400, height: 1050 },
+    },
+    'landscape-wide': {
+        small: { width: 619, height: 464 },
+        medium: { width: 983, height: 737 },
+        large: { width: 1399, height: 824 },
+        xlarge: { width: 1400, height: 826 },
+    },
+    portrait: {
+        small: { width: 619, height: 464 },
+        medium: { width: 791, height: 593 },
+        semilarge: { width: 689, height: 1054 },
+        large: { width: 790, height: 1054 },
+        xlarge: { width: 790, height: 1055 },
+    },
+} as ImageSizeSettings<ImageFormats>;
+
 export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
     primary: {
         super_title,
@@ -70,45 +119,80 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
         secondary_link,
         secondary_label,
     },
-    // bgModeSelectAlias = {
-    //     full: 'full',
-    //     splitted: 'splitted',
-    // },
+    bgModeSelectAlias = {
+        full: 'full',
+        splitted: 'splitted',
+    },
+    imageFormatAlias = {
+        square: 'square',
+        landscape: 'landscape',
+        'landscape-wide': 'landscape-wide',
+        portrait: 'portrait',
+    },
     items,
     primaryAction,
     secondaryAction,
 }) => {
+    const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
+    const itemCount = items.length;
+
+    const mapPromotionItem = (item: CrossPromotionItems) => {
+        // get image format
+        let imgFormat = mapPrismicSelect(imageFormatAlias, item.format);
+        const isFull = itemCount === 1 || imgFormat === 'landscape-wide';
+        if (isFull) imgFormat = 'landscape-wide';
+
+        // get image format url for landscape
+        const imgUrlLandscape =
+            item.image && getImg(item.image, imageFormatAlias.landscape).url;
+
+        // get img url from format
+        const imgUrl =
+            item.image &&
+            getImg(item.image, imageFormatAlias?.[imgFormat || 'square']).url;
+
+        return {
+            size: isFull ? 'full' : 'half',
+            image: {
+                ...getImageFromUrls(
+                    {
+                        small: imgUrlLandscape || '',
+                        medium: imgUrlLandscape,
+                        semilarge: imgUrl,
+                        large: imgUrl,
+                        xlarge: imgUrl,
+                    },
+                    imageSizes[imgFormat || 'square'],
+                    getText(item.image?.alt)
+                ),
+            },
+            title: getText(item.title),
+            superTitle: isFull && getText(item.super_title),
+            text: isFull && getHtmlText(item.text),
+        } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
+    };
+
+    const mainItems = items.filter((item) => item.is_main);
+    const asideItems = items.filter((item) => !item.is_main);
+
     return (
         <CrossPromotion
             isInverted={is_inverted}
             isMirrored={is_mirrored}
+            bgMode={bgMode}
             superTitle={getText(super_title)}
             title={getText(title)}
             text={getHtmlText(text)}
-            main={items
-                .filter((item) => item.is_main)
-                .map((item) => {
-                    return {
-                        size: item.size || 'full',
-                        image: {
-                            small: item?.image?.url || '',
-                            alt: item?.image?.alt || '',
-                        },
-                        title: getText(item.title) || '',
-                    };
-                })}
-            aside={items
-                .filter((item) => !item.is_main)
-                .map((item) => {
-                    return {
-                        size: item.size || 'full',
-                        image: {
-                            small: item?.image?.url || '',
-                            alt: item?.image?.alt || '',
-                        },
-                        title: getText(item.title) || '',
-                    };
-                })}
+            main={
+                mainItems.length > 0
+                    ? mainItems.map((item) => mapPromotionItem(item))
+                    : undefined
+            }
+            aside={
+                asideItems.length > 0
+                    ? asideItems.map((item) => mapPromotionItem(item))
+                    : undefined
+            }
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction({
