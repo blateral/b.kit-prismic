@@ -207,7 +207,7 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
                         {
                             small: imgUrlLandscape || '',
                             medium: imgUrlLandscape,
-                            semilarge: imgUrlLandscape,
+                            semilarge: imgUrl,
                             large: imgUrl,
                             xlarge: imgUrl,
                         },
