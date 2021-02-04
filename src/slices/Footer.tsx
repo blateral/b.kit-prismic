@@ -1,145 +1,131 @@
 import {
-    PrismicBoolean,
-    PrismicHeading,
-    PrismicImage,
+    FacebookIcon,
+    InstagramIcon,
+    LinkedInIcon,
+    YoutubeIcon,
+} from '@blateral/b.kit';
+import {
     PrismicKeyText,
     PrismicLink,
-    PrismicNavigationSliceType,
-    PrismicRichText,
-    PrismicSlice,
-    resolveUnknownLink,
-    getText,
+    PrismicSettingsPage,
     getHtmlText,
+    getText,
+    isPrismicLinkEmpty,
+    resolveUnknownLink,
 } from '../utils/prismic';
 
 import { Footer } from '@blateral/b.kit';
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
 
-interface BottomLink {
-    label?: PrismicKeyText;
-    href?: PrismicLink;
-}
-
-interface SocialsItem {
-    platform?: PrismicKeyText;
-    link?: PrismicLink;
-}
-
-export interface FooterSliceType extends PrismicSlice<'Footer'> {
-    primary: {
-        is_active?: PrismicBoolean;
-        domain?: PrismicLink;
-        contact?: PrismicRichText;
-
-        logo_image?: PrismicImage;
-        logo_href?: PrismicLink;
-
-        is_inverted?: PrismicBoolean;
-        columntop_space?: PrismicBoolean;
-
-        footer_newsletter_heading?: PrismicHeading;
-        footer_newsletter_text?: PrismicRichText;
-        footer_newsletter_placeholder?: PrismicKeyText;
-
-        footer_bottomlinks?: Array<BottomLink>;
-
-        body?: Array<PrismicNavigationSliceType>;
-    };
-    // helpers to define component elements outside of slice
-    socials?: Array<SocialsItem>;
-    newsForm?: (props: {
-        isInverted?: boolean;
-        placeholder?: string;
-    }) => React.ReactNode;
+export interface FooterSliceType {
+    settingsPage?: PrismicSettingsPage;
+    injectForm?: (isInverted?: boolean) => React.ReactNode;
 }
 
 export const FooterSlice: React.FC<FooterSliceType> = ({
-    primary: {
-        // domain,
-        contact,
-        logo_image,
-        logo_href,
-
-        is_inverted,
-        columntop_space,
-
-        footer_newsletter_heading,
-        footer_newsletter_text,
-        footer_newsletter_placeholder,
-
-        footer_bottomlinks,
-
-        body,
-    },
-    socials,
-    newsForm,
+    settingsPage,
+    injectForm,
 }) => {
+    const settingsData = settingsPage?.data;
+
+    const mappedSocials =
+        settingsData &&
+        settingsData.socials &&
+        settingsData.socials.length > 0 &&
+        mapSocials(settingsData.socials);
+
+    console.log(mappedSocials);
     return (
         <Footer
-            siteLinks={body?.map((navSlice) => {
-                const item = navSlice.primary;
-                const isExternal = Boolean(
-                    item.footer_nav_link &&
-                        item.footer_nav_link.link_type === 'Web' &&
-                        item.footer_nav_link.target
-                );
+            socials={mappedSocials || undefined}
+            logo={{
+                img: (settingsData as any)?.logo_image?.url,
+                link:
+                    ((settingsData as any).logo_href &&
+                        resolveUnknownLink((settingsData as any).logo_href)) ||
+                    '',
+            }}
+            contactData={
+                (settingsData && getHtmlText(settingsData.contact)) || ''
+            }
+            // TODO: wo ist der news title? :D
+            newsTitle={
+                settingsData && getText(settingsData.footer_newsletter_heading)
+            }
+            newsText={
+                settingsData && getHtmlText(settingsData.footer_newsletter_text)
+            }
+            // TODO: placeholder anschließen?
+            newsForm={injectForm}
+            siteLinks={settingsData?.body?.map((linkSlice) => {
                 return {
-                    label: getText(item.footer_nav_title),
                     href:
-                        (item.footer_nav_link &&
-                            resolveUnknownLink(item.footer_nav_link)) ||
-                        undefined,
-                    isExternal: isExternal,
-                    isActive: false,
+                        resolveUnknownLink(linkSlice.primary.footer_nav_link) ||
+                        '',
+                    label: (linkSlice.primary.footer_nav_title as any) || '',
+                    isExternal: Boolean(
+                        linkSlice?.primary?.footer_nav_link?.link_type ===
+                            'Web' && linkSlice?.primary?.footer_nav_link?.target
+                    ),
                 };
             })}
-            newsForm={(isInverted) =>
-                newsForm &&
-                newsForm({
-                    isInverted,
-                    placeholder: getText(footer_newsletter_placeholder),
-                })
-            }
-            isInverted={is_inverted}
-            columnTopSpace={columntop_space ? '40px' : ''}
-            logo={{
-                img: logo_image && logo_image.url,
-                link: (logo_href && resolveUnknownLink(logo_href)) || '',
-            }}
-            socials={socials && mapSocials(socials)}
-            contactData={getHtmlText(contact)}
-            newsTitle={getText(footer_newsletter_heading)}
-            newsText={getHtmlText(footer_newsletter_text)}
-            bottomLinks={
-                footer_bottomlinks &&
-                footer_bottomlinks.map((botLink) => {
-                    const isExternal = Boolean(
-                        botLink.href &&
-                            botLink.href.link_type === 'Web' &&
-                            botLink.href.target
-                    );
-                    return {
-                        href:
-                            (botLink.href &&
-                                resolveUnknownLink(botLink.href)) ||
-                            '',
-                        label: botLink.label || '',
-                        isExternal,
-                    };
-                })
-            }
+            bottomLinks={settingsData?.body?.map((bottomLink) => {
+                const result = {
+                    href:
+                        resolveUnknownLink(
+                            bottomLink.primary.footer_nav_link
+                        ) || '',
+                    label: (bottomLink.primary.footer_nav_title as any) || '',
+                    isExternal: Boolean(
+                        bottomLink?.primary?.footer_nav_link?.link_type ===
+                            'Web' &&
+                            bottomLink?.primary?.footer_nav_link?.target
+                    ),
+                };
+                return result;
+            })}
         />
     );
 };
 
 const mapSocials = (
-    socials: Array<SocialsItem>
-): Array<{ href: string; icon: any }> => {
-    return socials?.map((social: any) => {
-        return {
-            href: resolveUnknownLink(social.link) || '',
-            icon: social.icon,
-        };
-    });
+    socials: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
+) => {
+    const mappedSocials = socials
+        .filter((social) => {
+            return (
+                social.link &&
+                !isPrismicLinkEmpty(social.link) &&
+                social.platform
+            );
+        })
+        .map((social) => {
+            let iconNode = null;
+            switch (social.platform && social.platform.toLocaleLowerCase()) {
+                case 'facebook':
+                    iconNode = <FacebookIcon />;
+                    break;
+                case 'youtube':
+                    iconNode = <YoutubeIcon />;
+                    break;
+                case 'instagram':
+                    iconNode = <InstagramIcon />;
+                    break;
+                case 'linkedin':
+                    iconNode = <LinkedInIcon />;
+                    break;
+
+                default:
+                    iconNode = <span>{social.platform}</span>;
+                    break;
+            }
+
+            return {
+                href: resolveUnknownLink(social.link) || '',
+                icon: iconNode,
+            };
+        });
+
+    return mappedSocials?.filter((social) => social !== null);
 };
