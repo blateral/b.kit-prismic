@@ -49,14 +49,12 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             contactData={
                 (settingsData && getHtmlText(settingsData.contact)) || ''
             }
-            // TODO: wo ist der news title? :D
             newsTitle={
                 settingsData && getText(settingsData.footer_newsletter_heading)
             }
             newsText={
                 settingsData && getHtmlText(settingsData.footer_newsletter_text)
             }
-            // TODO: placeholder anschließen?
             newsForm={injectForm}
             siteLinks={settingsData?.body?.map((linkSlice) => {
                 return {
