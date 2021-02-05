@@ -33,7 +33,6 @@ interface ImageFormats {
 }
 
 interface CrossPromotionItems {
-    format?: PrismicSelectField;
     image?: PrismicImage;
     title?: PrismicHeading;
     link?: PrismicLink;
@@ -114,7 +113,7 @@ const imageSizes = {
     },
 } as ImageSizeSettings<ImageFormats>;
 
-export const CrossPromotionSlice: React.FC<PromotionCarouselSliceType> = ({
+export const PromotionCarouselSlice: React.FC<PromotionCarouselSliceType> = ({
     primary: {
         super_title,
         title,
