@@ -192,6 +192,8 @@ export interface PrismicSettingsPage extends Document {
 
         footer_newsletter_heading?: PrismicHeading;
         footer_newsletter_text?: PrismicRichText;
+        footer_newsletter_placeholder?: PrismicKeyText;
+        footer_newsletter_submit_label?: PrismicKeyText;
 
         footer_impressum?: PrismicLink;
         footer_policy?: PrismicLink;
