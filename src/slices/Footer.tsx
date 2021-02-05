@@ -44,10 +44,10 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
         <Footer
             socials={mappedSocials || undefined}
             logo={{
-                img: (settingsData as any)?.logo_image?.url,
+                img: settingsData?.logo_image_full?.url,
                 link:
-                    ((settingsData as any).logo_href &&
-                        resolveUnknownLink((settingsData as any).logo_href)) ||
+                    (settingsData?.logo_href &&
+                        resolveUnknownLink(settingsData.logo_href)) ||
                     '',
             }}
             contactData={getHtmlText(settingsData?.contact)}

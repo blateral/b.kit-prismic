@@ -105,10 +105,17 @@ export interface PrismicGeopoint {
 interface PrismicImageProps {
     url: string;
     alt: string;
+    dimensions: {
+        height: number;
+        width: number;
+    };
 }
 
 export interface PrismicImage extends PrismicImageProps {
-    [key: string]: string | { [key in keyof PrismicImageProps]: string };
+    [key: string]:
+        | string
+        | { [key: string]: string | number }
+        | PrismicImageProps;
 }
 
 export interface DefaultMappedImage {
@@ -172,36 +179,41 @@ export interface PrismicMainNavigationSliceType {
         link?: PrismicLink;
     }>;
 }
+
+export interface PrismicSettingsData {
+    domain?: PrismicLink;
+    contact?: PrismicRichText;
+
+    socials?: Array<{
+        platform?: PrismicKeyText;
+        link?: PrismicLink;
+    }>;
+
+    logo_image_full?: PrismicImage;
+    logo_image_full_inverted?: PrismicImage;
+    logo_image_small?: PrismicImage;
+    logo_image_small_inverted?: PrismicImage;
+    logo_href?: PrismicLink;
+
+    nav_primary_label?: PrismicKeyText;
+    nav_primary_link?: PrismicLink;
+    nav_secondary_label?: PrismicKeyText;
+    nav_secondary_link?: PrismicLink;
+
+    footer_newsletter_heading?: PrismicHeading;
+    footer_newsletter_text?: PrismicRichText;
+    footer_newsletter_placeholder?: PrismicKeyText;
+    footer_newsletter_submit_label?: PrismicKeyText;
+
+    footer_impressum?: PrismicLink;
+    footer_policy?: PrismicLink;
+
+    body?: PrismicNavigationSliceType[];
+
+    main_nav?: PrismicMainNavigationSliceType[];
+}
 export interface PrismicSettingsPage extends Document {
-    data: {
-        domain?: PrismicLink;
-        contact?: PrismicRichText;
-
-        socials?: Array<{
-            platform?: PrismicKeyText;
-            link?: PrismicLink;
-        }>;
-
-        logo_image?: PrismicImage;
-        logo_href?: PrismicLink;
-
-        nav_primary_label?: PrismicKeyText;
-        nav_primary_link?: PrismicLink;
-        nav_secondary_label?: PrismicKeyText;
-        nav_secondary_link?: PrismicLink;
-
-        footer_newsletter_heading?: PrismicHeading;
-        footer_newsletter_text?: PrismicRichText;
-        footer_newsletter_placeholder?: PrismicKeyText;
-        footer_newsletter_submit_label?: PrismicKeyText;
-
-        footer_impressum?: PrismicLink;
-        footer_policy?: PrismicLink;
-
-        body?: PrismicNavigationSliceType[];
-
-        main_nav?: PrismicMainNavigationSliceType[];
-    };
+    data: PrismicSettingsData;
 }
 
 export interface PrismicRelationship {
