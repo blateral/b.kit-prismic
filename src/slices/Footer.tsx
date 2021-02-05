@@ -13,7 +13,11 @@ import React from 'react';
 
 export interface FooterSliceType {
     settingsPage?: PrismicSettingsPage;
-    injectForm?: (isInverted?: boolean) => React.ReactNode;
+    injectForm?: (props: {
+        isInverted?: boolean;
+        placeholder?: string;
+        buttonLabel?: string;
+    }) => React.ReactNode;
     mapSocials?: (
         socials: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
     ) => Array<{
@@ -40,22 +44,27 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
         <Footer
             socials={mappedSocials || undefined}
             logo={{
-                img: (settingsData as any)?.logo_image?.url,
+                img: settingsData?.logo_image_full?.url,
                 link:
-                    ((settingsData as any).logo_href &&
-                        resolveUnknownLink((settingsData as any).logo_href)) ||
+                    (settingsData?.logo_href &&
+                        resolveUnknownLink(settingsData.logo_href)) ||
                     '',
             }}
-            contactData={
-                (settingsData && getHtmlText(settingsData.contact)) || ''
+            contactData={getHtmlText(settingsData?.contact)}
+            newsTitle={getText(settingsData?.footer_newsletter_heading)}
+            newsText={getHtmlText(settingsData?.footer_newsletter_text)}
+            newsForm={(isInverted?: boolean) =>
+                injectForm &&
+                injectForm({
+                    isInverted,
+                    buttonLabel: getText(
+                        settingsData?.footer_newsletter_submit_label
+                    ),
+                    placeholder: getText(
+                        settingsData?.footer_newsletter_placeholder
+                    ),
+                })
             }
-            newsTitle={
-                settingsData && getText(settingsData.footer_newsletter_heading)
-            }
-            newsText={
-                settingsData && getHtmlText(settingsData.footer_newsletter_text)
-            }
-            newsForm={injectForm}
             siteLinks={settingsData?.body?.map((linkSlice) => {
                 return {
                     href:

@@ -11,16 +11,35 @@ import {
     getText,
     isPrismicLinkExternal,
     resolveUnknownLink,
+    mapPrismicSelect,
+    getPrismicImage as getImg,
+    getImageFromUrls,
+    PrismicSettingsData,
 } from '../utils/prismic';
 
 import { Header } from '@blateral/b.kit';
 import React from 'react';
+import {
+    AliasMapperType,
+    AliasSelectMapperType,
+    ImageSizeSettings,
+} from 'utils/mapping';
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { HeaderMenuProps } from '@blateral/b.kit/lib/components/sections/header/Header';
 
-interface HeaderImages {
-    images?: PrismicImage;
+interface HeaderImageItem {
+    image?: PrismicImage;
 }
 
-export interface HeaderSliceType extends PrismicSlice<'Header', HeaderImages> {
+type HeaderSize = 'full' | 'small';
+
+interface ImageFormats {
+    portrait: string;
+    landscape: string;
+}
+
+export interface HeaderSliceType
+    extends PrismicSlice<'Header', HeaderImageItem> {
     primary: {
         is_active?: PrismicBoolean;
         primary_label?: PrismicKeyText;
@@ -37,6 +56,8 @@ export interface HeaderSliceType extends PrismicSlice<'Header', HeaderImages> {
     };
 
     // helpers to define component elements outside of slice
+    sizeSelectAlias?: AliasSelectMapperType<HeaderSize>;
+    imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -63,22 +84,30 @@ export interface HeaderSliceType extends PrismicSlice<'Header', HeaderImages> {
         isExternal?: boolean;
     }) => React.ReactNode;
 
-    iconFunction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-
     mapSocials?: (
-        socials: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
+        socials?: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
     ) => Array<{
         href: string;
         icon: JSX.Element;
     }>;
 
+    // inject logo icon for into slice
+    injectLogo?: (isInverted?: boolean) => React.ReactNode;
+    // inject logo icon for top scroll state into slice
+    injectTopLogo?: (isInverted?: boolean) => React.ReactNode;
+
     settingsPage?: PrismicSettingsPage;
 }
+
+// for this component defines image sizes
+const imageSizes = {
+    main: {
+        small: { width: 660, height: 792 },
+        medium: { width: 1100, height: 1320 },
+        large: { width: 1596, height: 860 },
+        xlarge: { width: 2450, height: 1320 },
+    },
+} as ImageSizeSettings<{ main: ImageProps }>;
 
 export const HeaderSlice: React.FC<HeaderSliceType> = ({
     primary: {
@@ -95,27 +124,51 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     },
     items,
     settingsPage,
+    sizeSelectAlias = {
+        full: 'full',
+        small: 'small',
+    },
+    imageFormatAlias = {
+        portrait: 'portrait',
+        landscape: 'landscape',
+    },
     primaryAction,
     secondaryAction,
     nav_primaryAction,
     nav_secondaryAction,
-    iconFunction,
     mapSocials,
+    injectLogo,
+    injectTopLogo,
 }) => {
     const settingsData = settingsPage?.data;
-    const headerImageMap = items.map((imageObj) => {
+
+    // map header images
+    const headerImageMap = items.map((item) => {
+        // get image format url for landscape
+        const imgUrlPortrait =
+            item.image && getImg(item.image, imageFormatAlias.portrait).url;
+
+        // get image format url for landscape
+        const imgUrlLandscape =
+            item.image && getImg(item.image, imageFormatAlias.landscape).url;
+
         return {
-            small: imageObj?.images?.url || '',
-            medium: imageObj?.images?.url || '',
-            large: imageObj?.images?.url,
-            semilarge: imageObj?.images?.url,
-            xlarge: imageObj?.images?.url,
+            ...getImageFromUrls(
+                {
+                    small: imgUrlPortrait || '',
+                    medium: imgUrlPortrait,
+                    large: imgUrlLandscape,
+                    xlarge: imgUrlLandscape,
+                },
+                imageSizes.main,
+                getText(item?.image?.alt)
+            ),
         };
     });
 
     return (
         <Header
-            size={size ? (size === 'small' ? 'small' : 'full') : 'full'}
+            size={mapPrismicSelect<HeaderSize>(sizeSelectAlias, size) || 'full'}
             images={headerImageMap}
             titleAs={title && getHtmlElementFromPrismicType(title[0] as any)}
             title={getText(title)}
@@ -123,10 +176,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             menu={createMenu({
                 settingsData,
                 mapSocials,
-                iconFunction,
                 is_inverted,
                 nav_inverted,
                 is_nav_large,
+                injectLogo,
+                injectTopLogo,
                 nav_primaryCtaFn: (isInverted?: boolean) =>
                     nav_primaryAction &&
                     nav_primaryAction({
@@ -189,29 +243,62 @@ function headerBadge(badge?: PrismicImage, showOnMobile = false) {
     };
 }
 
-function createMenu({
+interface MenuSliceType {
+    settingsData?: PrismicSettingsData;
+    is_inverted?: boolean;
+    nav_inverted?: boolean;
+    nav_primaryCtaFn?: (isInverted?: boolean) => React.ReactNode;
+    nav_secondaryCtaFn?: (isInverted?: boolean) => React.ReactNode;
+    mapSocials?: (
+        socials?: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
+    ) => Array<{
+        href: string;
+        icon: JSX.Element;
+    }>;
+    // inject logo icon for into slice
+    injectLogo?: (isInverted?: boolean) => React.ReactNode;
+    // inject logo icon for top scroll state into slice
+    injectTopLogo?: (isInverted?: boolean) => React.ReactNode;
+    is_nav_large?: boolean;
+}
+
+const createMenu = ({
     settingsData,
-    iconFunction,
     is_inverted,
     nav_inverted,
     nav_primaryCtaFn,
     nav_secondaryCtaFn,
     mapSocials,
     is_nav_large,
-}: any) {
+    injectLogo,
+    injectTopLogo,
+}: MenuSliceType): HeaderMenuProps => {
+    // return logo from prismic
+    const logo = settingsData?.logo_image_small;
+    const logoInverted = settingsData?.logo_image_small_inverted;
+
     return {
         isLarge: is_nav_large,
         isTopInverted: is_inverted,
         isNavInverted: nav_inverted,
         logo: {
-            link: resolveUnknownLink(settingsData.logo_href) || '',
-            icon: iconFunction,
+            link: resolveUnknownLink(settingsData?.logo_href) || '',
+            icon: injectLogo
+                ? injectLogo
+                : (isInverted?: boolean) => {
+                      return (
+                          <img
+                              src={isInverted ? logoInverted?.url : logo?.url}
+                          />
+                      );
+                  },
+            iconTop: injectTopLogo, // only possible with injection from project
         },
-        socials: mapSocials && mapSocials(settingsData.socials),
+        socials: mapSocials && mapSocials(settingsData?.socials),
 
         primaryCta: nav_primaryCtaFn,
         secondaryCta: nav_secondaryCtaFn,
-        navItems: settingsData.main_nav.map((navItem: any, index: number) => {
+        navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
             return {
                 id: `navGroup${index}`,
                 name: navItem?.primary?.name || '',
@@ -233,4 +320,4 @@ function createMenu({
             };
         }),
     };
-}
+};
