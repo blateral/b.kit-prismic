@@ -11,6 +11,7 @@ import {
     resolveUnknownLink,
     getText,
     getHtmlText,
+    getHeadlineTag,
 } from 'utils/prismic';
 
 import { AliasSelectMapperType } from 'utils/mapping';
@@ -74,7 +75,9 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
             isInverted={is_inverted}
             bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
             title={getText(title)}
+            titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
+            superTitleAs={getHeadlineTag(super_title)}
             text={getHtmlText(text)}
             asideText={getHtmlText(aside_text)}
             primaryAction={(isInverted) =>

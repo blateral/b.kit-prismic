@@ -14,6 +14,7 @@ import {
     mapPrismicSelect,
     getPrismicImage as getImg,
     getImageFromUrls,
+    getHeadlineTag,
 } from '../utils/prismic';
 
 import { CrossPromotion } from '@blateral/b.kit';
@@ -182,7 +183,9 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
             isMirrored={is_mirrored}
             bgMode={bgMode}
             superTitle={getText(super_title)}
+            superTitleAs={getHeadlineTag(super_title)}
             title={getText(title)}
+            titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
             main={
                 mainItems.length > 0

@@ -15,6 +15,7 @@ import {
     PrismicKeyText,
     getText,
     getHtmlText,
+    getHeadlineTag,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -52,7 +53,7 @@ export interface FeatureListSliceType
         is_active?: PrismicBoolean;
         is_carousel?: PrismicBoolean;
         title?: PrismicHeading;
-        super_title?: PrismicRichText;
+        super_title?: PrismicHeading;
         text?: PrismicRichText;
 
         is_inverted?: PrismicBoolean;
@@ -163,7 +164,9 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         isInverted: is_inverted,
         bgMode: mapPrismicSelect(bgModeSelectAlias, bg_mode),
         title: getText(title),
+        titleAs: getHeadlineTag(title),
         superTitle: getText(super_title),
+        superTitleAs: getHeadlineTag(super_title),
         text: getHtmlText(text),
         primaryAction: (isInverted: boolean) =>
             primaryAction &&

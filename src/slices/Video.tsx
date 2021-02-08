@@ -15,6 +15,7 @@ import {
     getHtmlText,
     PrismicSelectField,
     mapPrismicSelect,
+    getHeadlineTag,
 } from 'utils/prismic';
 import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 
@@ -121,7 +122,9 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     const shardProps = {
         isInverted: is_inverted,
         title: getText(title),
+        titleAs: getHeadlineTag(title),
         superTitle: getText(super_title),
+        superTitleAs: getHeadlineTag(super_title),
         text: getHtmlText(text),
         primaryAction: (isInverted: boolean) =>
             primaryAction &&
