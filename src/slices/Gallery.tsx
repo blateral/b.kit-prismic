@@ -15,6 +15,7 @@ import {
     PrismicKeyText,
     getText,
     getHtmlText,
+    getHeadlineTag,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -157,7 +158,9 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
     const sharedProps = {
         isInverted: is_inverted,
         title: getText(title),
+        titleAs: getHeadlineTag(title),
         superTitle: getText(super_title),
+        superTitleAs: getHeadlineTag(super_title),
         text: getHtmlText(text),
         images: items?.map((item) => {
             // get image format

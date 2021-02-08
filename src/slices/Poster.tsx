@@ -12,6 +12,7 @@ import {
     resolveUnknownLink,
     getPrismicImage as getImg,
     getImageFromUrls,
+    getHeadlineTag,
 } from '../utils/prismic';
 
 import { Poster } from '@blateral/b.kit';
@@ -100,7 +101,9 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
         <Poster
             image={mappedImage}
             title={getText(title)}
+            titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
+            superTitleAs={getHeadlineTag(super_title)}
             text={getHtmlText(text)}
             primaryAction={
                 primaryAction &&

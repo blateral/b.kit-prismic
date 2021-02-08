@@ -7,7 +7,6 @@ import {
     PrismicSelectField,
     PrismicSettingsPage,
     PrismicSlice,
-    getHtmlElementFromPrismicType,
     getText,
     isPrismicLinkExternal,
     resolveUnknownLink,
@@ -15,6 +14,7 @@ import {
     getPrismicImage as getImg,
     getImageFromUrls,
     PrismicSettingsData,
+    getHeadlineTag,
 } from '../utils/prismic';
 
 import { Header } from '@blateral/b.kit';
@@ -170,7 +170,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         <Header
             size={mapPrismicSelect<HeaderSize>(sizeSelectAlias, size) || 'full'}
             images={headerImageMap}
-            titleAs={title && getHtmlElementFromPrismicType(title[0] as any)}
+            titleAs={getHeadlineTag(title)}
             title={getText(title)}
             badge={headerBadge(badge)}
             menu={createMenu({

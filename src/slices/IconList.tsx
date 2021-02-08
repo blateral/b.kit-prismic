@@ -1,4 +1,5 @@
 import {
+    getHeadlineTag,
     getHtmlText,
     getText,
     isPrismicLinkExternal,
@@ -73,7 +74,9 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
     return (
         <IconList
             superTitle={super_title && getText(super_title)}
+            superTitleAs={getHeadlineTag(super_title)}
             title={title && getText(title)}
+            titleAs={getHeadlineTag(title)}
             text={text && getHtmlText(text)}
             isCentered={is_centered}
             isInverted={is_inverted}

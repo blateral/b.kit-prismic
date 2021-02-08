@@ -18,6 +18,7 @@ import { RichText } from 'prismic-dom';
 import { TeaserSliceType } from 'slices/Teaser';
 import { VideoSliceType } from 'slices/Video';
 import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
+import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -251,26 +252,53 @@ export const resolveUnknownLink = (link: unknown): string | null => {
     return null;
 };
 
-export const getHtmlElementFromPrismicType = (
-    props: PrismicHeading[0] | undefined
-) => {
-    if (!props) return 'div';
+// export const getHtmlElementFromPrismicType = (
+//     props: PrismicHeading[0] | undefined
+// ) => {
+//     if (!props) return 'div';
 
-    switch (props.type) {
-        case 'heading1':
-            return 'h1';
-        case 'heading2':
-            return 'h2';
-        case 'heading3':
-            return 'h3';
-        case 'heading4':
-            return 'h4';
-        case 'heading5':
-            return 'h5';
-        case 'heading6':
-            return 'h6';
-        default:
-            return 'div';
+//     switch (props.type) {
+//         case 'heading1':
+//             return 'h1';
+//         case 'heading2':
+//             return 'h2';
+//         case 'heading3':
+//             return 'h3';
+//         case 'heading4':
+//             return 'h4';
+//         case 'heading5':
+//             return 'h5';
+//         case 'heading6':
+//             return 'h6';
+//         default:
+//             return 'div';
+//     }
+// };
+
+export const getHeadlineTag = (
+    heading?: PrismicHeading
+): HeadlineTag | undefined => {
+    try {
+        if (!heading || !heading[0] || !heading[0].type) throw Error();
+        switch (heading[0].type) {
+            case 'heading1':
+                return 'h1';
+            case 'heading2':
+                return 'h2';
+            case 'heading3':
+                return 'h3';
+            case 'heading4':
+                return 'h4';
+            case 'heading5':
+                return 'h5';
+            case 'heading6':
+                return 'h6';
+            default:
+                return undefined;
+        }
+    } catch (e) {
+        console.log(e);
+        return undefined;
     }
 };
 

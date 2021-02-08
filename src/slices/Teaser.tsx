@@ -21,6 +21,7 @@ import {
     resolveUnknownLink,
     getPrismicImage as getImg,
     getImageFromUrls,
+    getHeadlineTag,
 } from 'utils/prismic';
 
 type BgMode = 'full' | 'splitted';
@@ -143,7 +144,9 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
         isInverted: is_inverted,
         isMirrored: is_mirrored,
         superTitle: getText(super_title),
+        superTitleAs: getHeadlineTag(super_title),
         title: getText(title),
+        titleAs: getHeadlineTag(title),
         intro: getText(intro),
         text: getHtmlText(text),
         subText: getHtmlText(sub_text),
