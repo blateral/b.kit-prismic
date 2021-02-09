@@ -194,6 +194,7 @@ export interface PrismicSettingsData {
     logo_image_full_inverted?: PrismicImage;
     logo_image_small?: PrismicImage;
     logo_image_small_inverted?: PrismicImage;
+    logo_image_footer?: PrismicImage;
     logo_href?: PrismicLink;
 
     nav_primary_label?: PrismicKeyText;
