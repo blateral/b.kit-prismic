@@ -15,7 +15,6 @@ import {
     getImageFromUrls,
     PrismicSettingsData,
     getHeadlineTag,
-    isPrismicLinkEmpty,
 } from '../utils/prismic';
 
 import { Header } from '@blateral/b.kit';
