@@ -31,18 +31,18 @@ export interface FactListSliceType
         secondary_label?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
-    primaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
-    secondaryAction?: (
-        isInverted?: boolean,
-        label?: string,
-        href?: string,
-        isExternal?: boolean
-    ) => React.ReactNode;
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
 }
 
 export const FactListSlice: React.FC<FactListSliceType> = ({

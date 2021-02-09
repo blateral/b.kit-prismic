@@ -92,9 +92,10 @@ export interface HeaderSliceType
     }>;
 
     // inject logo icon for into slice
-    injectLogo?: (isInverted?: boolean) => React.ReactNode;
-    // inject logo icon for top scroll state into slice
-    injectTopLogo?: (isInverted?: boolean) => React.ReactNode;
+    injectLogo?: (props: {
+        isInverted?: boolean;
+        size?: 'full' | 'small';
+    }) => React.ReactNode;
 
     settingsPage?: PrismicSettingsPage;
 }
@@ -110,18 +111,7 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const HeaderSlice: React.FC<HeaderSliceType> = ({
-    primary: {
-        primary_label,
-        primary_link,
-        secondary_label,
-        secondary_link,
-        badge,
-        title,
-        is_nav_large,
-        is_inverted,
-        nav_inverted,
-        size,
-    },
+    primary: { badge, title, is_nav_large, is_inverted, nav_inverted, size },
     items,
     settingsPage,
     sizeSelectAlias = {
@@ -138,7 +128,6 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     nav_secondaryAction,
     mapSocials,
     injectLogo,
-    injectTopLogo,
 }) => {
     const settingsData = settingsPage?.data;
 
@@ -180,7 +169,6 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 nav_inverted,
                 is_nav_large,
                 injectLogo,
-                injectTopLogo,
                 nav_primaryCtaFn: (isInverted?: boolean) =>
                     nav_primaryAction &&
                     nav_primaryAction({
@@ -212,18 +200,27 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 primaryAction &&
                 primaryAction({
                     isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
+                    label: getText(settingsData?.header_primary_label),
+                    href:
+                        resolveUnknownLink(settingsData?.header_primary_link) ||
+                        '',
+                    isExternal: isPrismicLinkExternal(
+                        settingsData?.header_primary_link
+                    ),
                 })
             }
             secondaryCta={(isInverted) =>
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
+                    label: getText(settingsData?.header_secondary_label),
+                    href:
+                        resolveUnknownLink(
+                            settingsData?.header_secondary_link
+                        ) || '',
+                    isExternal: isPrismicLinkExternal(
+                        settingsData?.header_secondary_link
+                    ),
                 })
             }
         />
@@ -255,10 +252,11 @@ interface MenuSliceType {
         href: string;
         icon: JSX.Element;
     }>;
-    // inject logo icon for into slice
-    injectLogo?: (isInverted?: boolean) => React.ReactNode;
-    // inject logo icon for top scroll state into slice
-    injectTopLogo?: (isInverted?: boolean) => React.ReactNode;
+    // inject logo icon into slice
+    injectLogo?: (props: {
+        isInverted?: boolean;
+        size?: 'full' | 'small';
+    }) => React.ReactNode;
     is_nav_large?: boolean;
 }
 
@@ -271,11 +269,12 @@ const createMenu = ({
     mapSocials,
     is_nav_large,
     injectLogo,
-    injectTopLogo,
 }: MenuSliceType): HeaderMenuProps => {
     // return logo from prismic
-    const logo = settingsData?.logo_image_small;
-    const logoInverted = settingsData?.logo_image_small_inverted;
+    const logoFull = settingsData?.logo_image_full;
+    const logoSmall = settingsData?.logo_image_small;
+    const logoFullInverted = settingsData?.logo_image_full_inverted;
+    const logoSmallInverted = settingsData?.logo_image_small_inverted;
 
     return {
         isLarge: is_nav_large,
@@ -285,14 +284,15 @@ const createMenu = ({
             link: resolveUnknownLink(settingsData?.logo_href) || '',
             icon: injectLogo
                 ? injectLogo
-                : (isInverted?: boolean) => {
-                      return (
-                          <img
-                              src={isInverted ? logoInverted?.url : logo?.url}
-                          />
-                      );
-                  },
-            iconTop: injectTopLogo, // only possible with injection from project
+                : ({ isInverted, size }) =>
+                      logoFn({
+                          isInverted: isInverted || false,
+                          size: size || 'full',
+                          imgUrlSmall: logoSmall?.url || '',
+                          imgUrlSmallInverted: logoSmallInverted?.url || '',
+                          imgUrlFull: logoFull?.url || '',
+                          imgUrlFullInverted: logoFullInverted?.url || '',
+                      }),
         },
         socials: mapSocials && mapSocials(settingsData?.socials),
 
@@ -320,4 +320,28 @@ const createMenu = ({
             };
         }),
     };
+};
+
+const logoFn = ({
+    isInverted,
+    size,
+    imgUrlSmall,
+    imgUrlSmallInverted,
+    imgUrlFull,
+    imgUrlFullInverted,
+}: {
+    isInverted: boolean;
+    size: 'full' | 'small';
+    imgUrlSmall: string;
+    imgUrlSmallInverted: string;
+    imgUrlFull: string;
+    imgUrlFullInverted: string;
+}) => {
+    if (isInverted)
+        return (
+            <img
+                src={size === 'full' ? imgUrlFullInverted : imgUrlSmallInverted}
+            />
+        );
+    else return <img src={size === 'full' ? imgUrlFull : imgUrlSmall} />;
 };
