@@ -138,8 +138,8 @@ export interface PrismicLinkToMedia {
 
 export interface PrismicPage extends Document {
     data: {
-        uid: string;
-
+        uid: PrismicUid;
+        pagetitle?: PrismicHeading;
         seo_socialimage?: PrismicImage;
         seo_title?: PrismicHeading;
         seo_description?: PrismicRichText;
