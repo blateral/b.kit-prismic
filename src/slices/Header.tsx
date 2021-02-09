@@ -110,18 +110,7 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const HeaderSlice: React.FC<HeaderSliceType> = ({
-    primary: {
-        primary_label,
-        primary_link,
-        secondary_label,
-        secondary_link,
-        badge,
-        title,
-        is_nav_large,
-        is_inverted,
-        nav_inverted,
-        size,
-    },
+    primary: { badge, title, is_nav_large, is_inverted, nav_inverted, size },
     items,
     settingsPage,
     sizeSelectAlias = {
@@ -212,18 +201,27 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 primaryAction &&
                 primaryAction({
                     isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
+                    label: getText(settingsData?.header_primary_label),
+                    href:
+                        resolveUnknownLink(settingsData?.header_primary_link) ||
+                        '',
+                    isExternal: isPrismicLinkExternal(
+                        settingsData?.header_primary_link
+                    ),
                 })
             }
             secondaryCta={(isInverted) =>
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
+                    label: getText(settingsData?.header_secondary_label),
+                    href:
+                        resolveUnknownLink(
+                            settingsData?.header_secondary_link
+                        ) || '',
+                    isExternal: isPrismicLinkExternal(
+                        settingsData?.header_secondary_link
+                    ),
                 })
             }
         />
