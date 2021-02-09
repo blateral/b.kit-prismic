@@ -138,14 +138,17 @@ export interface PrismicLinkToMedia {
 
 export interface PrismicPage extends Document {
     data: {
-        name: PrismicHeading;
-        pagetitle: PrismicKeyText;
-        socialslogo?: PrismicImage;
-        menutitle: PrismicKeyText;
-        metadescription: PrismicKeyText;
-        navpoints: PrismicPage;
-        pulled: PrismicBoolean;
-        uid: string;
+        uid: PrismicUid;
+        pagetitle?: PrismicHeading;
+        seo_socialimage?: PrismicImage;
+        seo_title?: PrismicHeading;
+        seo_description?: PrismicRichText;
+        seo_keywords?: PrismicKeyText;
+        seo_search_index?: PrismicBoolean;
+        seo_trace_links?: PrismicBoolean;
+        seo_content_group?: PrismicKeyText;
+        seo_redirection?: PrismicLink;
+
         body: Array<
             | ArticleSliceType
             | GallerySliceType
