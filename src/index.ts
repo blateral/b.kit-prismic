@@ -14,5 +14,5 @@ export * from 'slices/Teaser';
 export * from 'slices/CrossPromotion';
 export * from 'slices/PromotionCarousel';
 export * from 'slices/Header';
-
+export * from 'slices/FactList';
 export * from 'slices/Footer';
