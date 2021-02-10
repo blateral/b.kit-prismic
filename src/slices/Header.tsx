@@ -296,8 +296,16 @@ const createMenu = ({
         },
         socials: mapSocials && mapSocials(settingsData?.socials),
 
-        primaryCta: nav_primaryCtaFn,
-        secondaryCta: nav_secondaryCtaFn,
+        primaryCta:
+            (settingsData?.header_primary_label &&
+                settingsData.header_primary_link?.url &&
+                nav_primaryCtaFn) ||
+            undefined,
+        secondaryCta:
+            (settingsData?.header_secondary_label &&
+                settingsData?.header_secondary_link?.url &&
+                nav_secondaryCtaFn) ||
+            undefined,
         navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
             return {
                 id: `navGroup${index}`,
