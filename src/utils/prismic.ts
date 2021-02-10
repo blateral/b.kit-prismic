@@ -186,6 +186,7 @@ export interface PrismicMainNavigationSliceType {
 
 export interface PrismicSettingsData {
     domain?: PrismicLink;
+    is_inverted?: PrismicBoolean;
     contact?: PrismicRichText;
 
     socials?: Array<{
