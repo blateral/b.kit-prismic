@@ -18,3 +18,9 @@ Inside project that should use the library:
 -   use `yarn --check-files` afterwards to install packages from npm
 
     Before each push to git `yalc check` performs a check to ensure that all linked packages are removed from package.json. To delete package linking from package.json but not from yalc.lock `yalc retreat [--all]` / `yalc restore`
+
+## FAQ
+
+### Images in Prismic
+
+-   SVG's are not supported by imgIx. Transforms are ignored! (e.g. `?w=`, `h=...` or `fm=` ... ) [more info](https://support.imgix.com/hc/en-us/articles/204280985#svg_s)

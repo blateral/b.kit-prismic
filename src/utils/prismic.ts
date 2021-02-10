@@ -266,7 +266,8 @@ export const getHeadlineTag = (
     heading?: PrismicHeading
 ): HeadlineTag | undefined => {
     try {
-        if (!heading || !heading[0] || !heading[0].type) throw Error();
+        if (!heading || !heading[0] || !heading[0].type)
+            throw Error('Prismic headline type is not defined!');
         switch (heading[0].type) {
             case 'heading1':
                 return 'h1';
@@ -284,7 +285,7 @@ export const getHeadlineTag = (
                 return undefined;
         }
     } catch (e) {
-        console.log(e);
+        console.warn(e);
         return undefined;
     }
 };

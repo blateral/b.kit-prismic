@@ -30,6 +30,12 @@ export const updateUrlParameters = (
         const hash = i === -1 ? '' : uri.substr(i);
         uri = i === -1 ? uri : uri.substr(0, i);
 
+        // check if image url has svg filename
+        if (uri.indexOf('.svg') !== -1)
+            throw Error(
+                'SVG images are not supported by imgIx! more at: https://support.imgix.com/hc/en-us/articles/204280985#svg_s'
+            );
+
         const separator = uri.indexOf('?') !== -1 ? '&' : '?';
 
         Object.keys(params).forEach((key) => {
@@ -43,7 +49,7 @@ export const updateUrlParameters = (
         });
         return uri + hash; // finally append the hash as well
     } catch (e) {
-        console.log(e);
+        console.warn(e);
         return uri;
     }
 };
