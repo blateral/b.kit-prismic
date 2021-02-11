@@ -111,7 +111,7 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const HeaderSlice: React.FC<HeaderSliceType> = ({
-    primary: { badge, title, is_nav_large, is_inverted, nav_inverted, size },
+    primary: { badge, title, is_nav_large, size },
     items,
     settingsPage,
     sizeSelectAlias = {
@@ -165,8 +165,8 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             menu={createMenu({
                 settingsData,
                 mapSocials,
-                is_inverted,
-                nav_inverted,
+                is_inverted: settingsData?.header_is_inverted || false,
+                nav_inverted: settingsData?.nav_is_inverted || false,
                 is_nav_large,
                 injectLogo,
                 nav_primaryCtaFn:
@@ -287,7 +287,6 @@ const createMenu = ({
     nav_primaryCtaFn,
     nav_secondaryCtaFn,
     mapSocials,
-    is_nav_large,
     injectLogo,
 }: MenuSliceType): HeaderMenuProps => {
     // return logo from prismic
@@ -297,7 +296,7 @@ const createMenu = ({
     const logoSmallInverted = settingsData?.logo_image_small_inverted;
 
     return {
-        isLarge: is_nav_large,
+        isLarge: settingsData?.nav_size || false,
         isTopInverted: is_inverted,
         isNavInverted: nav_inverted,
         logo: {
