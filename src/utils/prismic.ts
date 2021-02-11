@@ -201,11 +201,15 @@ export interface PrismicSettingsData {
     logo_image_footer?: PrismicImage;
     logo_href?: PrismicLink;
 
+
+    header_is_inverted?: PrismicBoolean;
     header_primary_label?: PrismicKeyText;
     header_primary_link?: PrismicLink;
     header_secondary_label?: PrismicKeyText;
     header_secondary_link?: PrismicLink;
 
+    nav_size?: PrismicBoolean;
+    nav_is_inverted?: PrismicBoolean;
     nav_primary_label?: PrismicKeyText;
     nav_primary_link?: PrismicLink;
     nav_secondary_label?: PrismicKeyText;
