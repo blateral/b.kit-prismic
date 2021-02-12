@@ -28,6 +28,7 @@ export interface PosterSliceType extends PrismicSlice<'Poster'> {
     primary: {
         is_active?: PrismicBoolean;
 
+        is_inverted?: PrismicBoolean;
         image?: PrismicImage;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
@@ -40,11 +41,13 @@ export interface PosterSliceType extends PrismicSlice<'Poster'> {
     // helpers to define component elements outside of slice
     imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (props: {
+        isInverted?: boolean;
         label?: string;
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
     secondaryAction?: (props: {
+        isInverted?: boolean;
         label?: string;
         href?: string;
         isExternal?: boolean;
@@ -64,6 +67,7 @@ const imageSizes = {
 export const PosterSlice: React.FC<PosterSliceType> = ({
     primary: {
         image,
+        is_inverted,
         super_title,
         title,
         text,
@@ -100,22 +104,25 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
     return (
         <Poster
             image={mappedImage}
+            isInverted={is_inverted}
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
             superTitleAs={getHeadlineTag(super_title)}
             text={getHtmlText(text)}
-            primaryAction={
+            primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction({
+                    isInverted,
                     label: getText(primary_label),
                     href: resolveUnknownLink(primary_link) || '',
                     isExternal: isPrismicLinkExternal(primary_link),
                 })
             }
-            secondaryAction={
+            secondaryAction={(isInverted) =>
                 secondaryAction &&
                 secondaryAction({
+                    isInverted,
                     label: getText(secondary_label),
                     href: resolveUnknownLink(secondary_link) || '',
                     isExternal: isPrismicLinkExternal(secondary_link),
