@@ -201,7 +201,6 @@ export interface PrismicSettingsData {
     logo_image_footer?: PrismicImage;
     logo_href?: PrismicLink;
 
-
     header_is_inverted?: PrismicBoolean;
     header_primary_label?: PrismicKeyText;
     header_primary_link?: PrismicLink;
@@ -414,9 +413,11 @@ export const getImageFromUrls = (
     return newImage;
 };
 
-export const isPrismicLinkEmpty = (prismicLink: PrismicLink | string) => {
-    const type = (prismicLink as PrismicLink).link_type;
-    return type ? type === 'Any' : prismicLink === '';
+export const isPrismicLinkEmpty = (prismicLink?: PrismicLink | string) => {
+    return (
+        !prismicLink ||
+        (prismicLink && (prismicLink as PrismicLink).link_type === 'Any')
+    );
 };
 
 export const isPrismicLinkExternal = (prismicLink?: PrismicLink | string) => {
