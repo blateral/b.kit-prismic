@@ -414,10 +414,10 @@ export const getImageFromUrls = (
 };
 
 export const isPrismicLinkEmpty = (prismicLink?: PrismicLink | string) => {
-    return (
-        !prismicLink ||
+    return !prismicLink ||
         (prismicLink && (prismicLink as PrismicLink).link_type === 'Any')
-    );
+        ? true
+        : false;
 };
 
 export const isPrismicLinkExternal = (prismicLink?: PrismicLink | string) => {
