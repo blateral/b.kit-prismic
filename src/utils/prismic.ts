@@ -184,6 +184,9 @@ export interface PrismicMainNavigationSliceType {
     }>;
 }
 
+/**
+ * Global prismic settings data for all pages
+ */
 export interface PrismicSettingsData {
     domain?: PrismicLink;
     is_inverted?: PrismicBoolean;
@@ -229,7 +232,6 @@ export interface PrismicSettingsData {
 export interface PrismicSettingsPage extends Document {
     data: PrismicSettingsData;
 }
-
 export interface PrismicRelationship {
     id?: string;
     isBroken?: boolean;
@@ -245,6 +247,10 @@ export const linkResolver = (doc: Document) => {
     return `/`;
 };
 
+/**
+ * Resolve unknown link to valid url string
+ * @param link Link e.g. url string or Prismic link object
+ */
 export const resolveUnknownLink = (link: unknown): string | null => {
     if (typeof link === 'object' && link !== null && 'link_type' in link) {
         const mylink = link as PrismicLink;
@@ -265,6 +271,10 @@ export const resolveUnknownLink = (link: unknown): string | null => {
     return null;
 };
 
+/**
+ * Get headline type from Prismic headline object
+ * @param heading Heading object from prismic CMS
+ */
 export const getHeadlineTag = (
     heading?: PrismicHeading
 ): HeadlineTag | undefined => {
@@ -293,6 +303,11 @@ export const getHeadlineTag = (
     }
 };
 
+/**
+ * Map prismic select value to own key names
+ * @param aliasMapper Mapper with keys as values for the component and values as keys from prismic select
+ * @param prismicSelectValue Select value from prismic CMS
+ */
 export const mapPrismicSelect = <TargetType extends string>(
     aliasMapper?: AliasSelectMapperType<TargetType>,
     prismicSelectValue?: PrismicSelectField
@@ -314,7 +329,12 @@ export const mapPrismicSelect = <TargetType extends string>(
     return alias;
 };
 
-// Try to get generic sub image from prismic image object
+/**
+ * Try to get a prismic sub image (art direction) e.g. that has a different format
+ * @desc Returns the given prismic image if no sub image can be found
+ * @param prismicImage Prismic image with potential some sub image formats
+ * @param key Sub image format key (e.g. medium, large, xlarge...)
+ */
 export const getPrismicImage = (prismicImage: PrismicImage, key?: string) => {
     try {
         if (!key || !prismicImage) throw new Error();
@@ -328,7 +348,13 @@ export const getPrismicImage = (prismicImage: PrismicImage, key?: string) => {
     }
 };
 
-// getting default image from prismic image url
+/**
+ * Get image object from prismic image url
+ * @desc It is only possible to resize with the already given image format from the url. So you need to pass the right url for the needed image ratio.
+ * @param url Image url from prismic CMS
+ * @param sizeSettings Settings object for the different image sizes.
+ * @param altText Alternative text for the image
+ */
 export const getImageFromUrl = (
     url: string,
     sizeSettings: ImageSettingsProps,
@@ -369,6 +395,13 @@ export const getImageFromUrl = (
     return newImage;
 };
 
+/**
+ * Get image object from multiple prismic image urls.
+ * @desc It is only possible to resize with the already given image format from the url. So you need to pass the right url for each image ratio.
+ * @param urls Object of different url e.g. with different image formats/ratios
+ * @param sizeSettings Settings object for the different image sizes.
+ * @param altText Alternative text for the image
+ */
 export const getImageFromUrls = (
     urls: { [key in keyof Omit<ImageProps, 'coverSpace' | 'alt'>]: string },
     sizeSettings: ImageSettingsProps,
@@ -413,6 +446,10 @@ export const getImageFromUrls = (
     return newImage;
 };
 
+/**
+ * Check if prismic link object is empty
+ * @param prismicLink Prismic link object
+ */
 export const isPrismicLinkEmpty = (prismicLink?: PrismicLink | string) => {
     return !prismicLink ||
         (prismicLink && (prismicLink as PrismicLink).link_type === 'Any')
@@ -420,6 +457,10 @@ export const isPrismicLinkEmpty = (prismicLink?: PrismicLink | string) => {
         : false;
 };
 
+/**
+ * Check if prismic link is external (e.g. target="_blank")
+ * @param prismicLink Prismic link object
+ */
 export const isPrismicLinkExternal = (prismicLink?: PrismicLink | string) => {
     return prismicLink &&
         (prismicLink as any).target &&
@@ -428,10 +469,19 @@ export const isPrismicLinkExternal = (prismicLink?: PrismicLink | string) => {
         : false;
 };
 
+/**
+ * Check if prismic rich text is empty
+ * @param prismicRichText Prismic rich text object
+ */
 export const isRichTextEmpty = (prismicRichText: PrismicRichText) => {
     return prismicRichText.length === 1 && prismicRichText[0].text === '';
 };
 
+/**
+ * Get text string from different prismic text objects
+ * @desc Always returning a string. HTML elements are not interpreted.
+ * @param prismicValue Prismic rich text, key text or a simple string
+ */
 export const getText = (
     prismicValue?: PrismicRichText | PrismicKeyText | string
 ) => {
@@ -450,6 +500,11 @@ export const getText = (
     return text;
 };
 
+/**
+ * Get text or rich text string from prismic rich text object
+ * @desc Always returning a string. HTML elements are interpreted.
+ * @param prismicValue Prismic rich text or a simple string
+ */
 export const getHtmlText = (prismicValue?: PrismicRichText) => {
     let text = '';
     try {
