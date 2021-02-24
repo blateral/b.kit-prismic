@@ -280,9 +280,9 @@ export const resolveUnknownLink = (link: unknown): string | null => {
 export const getHeadlineTag = (
     heading?: PrismicHeading
 ): HeadlineTag | undefined => {
+    if (!heading || !heading[0] || !heading[0].type) return undefined;
+
     try {
-        if (!heading || !heading[0] || !heading[0].type)
-            throw Error('Prismic headline type is not defined!');
         switch (heading[0].type) {
             case 'heading1':
                 return 'h1';
@@ -297,7 +297,7 @@ export const getHeadlineTag = (
             case 'heading6':
                 return 'h6';
             default:
-                return undefined;
+                throw new Error('Heading type is not defined!');
         }
     } catch (e) {
         console.warn(e);
