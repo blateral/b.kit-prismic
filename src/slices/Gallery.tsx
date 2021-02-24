@@ -92,26 +92,30 @@ export interface GallerySliceType
 const imageSizes = {
     square: {
         small: { width: 419, height: 313 },
-        medium: { width: 481, height: 481 },
+        medium: { width: 831, height: 624 },
+        semilarge: { width: 481, height: 481 },
         large: { width: 686, height: 686 },
         xlarge: { width: 690, height: 690 },
     },
     landscape: {
         small: { width: 419, height: 313 },
-        medium: { width: 983, height: 736 },
+        medium: { width: 831, height: 624 },
+        semilarge: { width: 983, height: 736 },
         large: { width: 1399, height: 1048 },
         xlarge: { width: 1400, height: 1050 },
     },
     // not available in carousel
     'landscape-wide': {
         small: { width: 419, height: 313 },
-        medium: { width: 983, height: 483 },
+        medium: { width: 831, height: 624 },
+        semilarge: { width: 983, height: 483 },
         large: { width: 1399, height: 688 },
         xlarge: { width: 1400, height: 690 },
     },
     portrait: {
         small: { width: 419, height: 313 },
-        medium: { width: 481, height: 642 },
+        medium: { width: 831, height: 624 },
+        semilarge: { width: 481, height: 642 },
         large: { width: 689, height: 919 },
         xlarge: { width: 690, height: 920 },
     },
@@ -186,7 +190,8 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 ...getImageFromUrls(
                     {
                         small: imgUrlLandscape,
-                        medium: imgUrl,
+                        medium: imgUrlLandscape,
+                        semilarge: imgUrl,
                         large: imgUrl,
                         xlarge: imgUrl,
                     },
