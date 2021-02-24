@@ -16,6 +16,7 @@ import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { PosterSliceType } from 'slices/Poster';
 import { RichText } from 'prismic-dom';
 import { TeaserSliceType } from 'slices/Teaser';
+import { CallToActionSliceType } from 'slices/CallToAction';
 import { VideoSliceType } from 'slices/Video';
 import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
@@ -159,6 +160,7 @@ export interface PrismicPage extends Document {
             | IconListSliceType
             | HeaderSliceType
             | TeaserSliceType
+            | CallToActionSliceType
             | CrossPromotionSliceType
             | PromotionCarouselSliceType
         >;
