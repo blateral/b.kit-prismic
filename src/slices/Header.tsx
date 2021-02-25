@@ -364,11 +364,9 @@ const logoFn = ({
     imgUrlFull: string;
     imgUrlFullInverted: string;
 }) => {
-    const url = size === 'full' ? imgUrlFull : imgUrlSmall || imgUrlFull;
+    const url = size === 'full' ? imgUrlFull : imgUrlSmall;
     const invertedUrl =
-        size === 'full'
-            ? imgUrlFullInverted
-            : imgUrlSmallInverted || imgUrlFullInverted;
+        size === 'full' ? imgUrlFullInverted : imgUrlSmallInverted;
 
     return <img src={isInverted ? invertedUrl : url} />;
 };
