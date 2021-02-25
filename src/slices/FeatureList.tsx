@@ -21,6 +21,7 @@ import {
     AliasMapperType,
     AliasSelectMapperType,
     ImageSizeSettings,
+    isSVG,
 } from 'utils/mapping';
 
 import { FeatureCarousel, FeatureList } from '@blateral/b.kit';
@@ -207,6 +208,9 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                     imageFormatAlias?.[imgFormat || 'square']
                 ).url;
 
+                // check if image urls are path to SVG image
+                const isSvgImage = isSVG(imgUrl) || isSVG(imgUrlLandscape);
+
                 return {
                     title: getText(title),
                     text: getHtmlText(text),
@@ -223,6 +227,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                             imageSizes[imgFormat || 'square'],
                             getText(image.alt)
                         ),
+                        coverSpace: !isSvgImage,
                     },
 
                     primaryAction: (isInverted: boolean) =>

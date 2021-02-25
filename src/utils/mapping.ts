@@ -19,6 +19,10 @@ export type ImageSettingsProps = {
     };
 };
 
+export const isSVG = (url?: string) => {
+    return url ? /\.(svg)$/i.test(url) : false;
+};
+
 // Add / Update a key-value pair in the URL query parameters
 export const updateUrlParameters = (
     uri: string,
