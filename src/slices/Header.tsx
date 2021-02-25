@@ -47,6 +47,7 @@ export interface HeaderSliceType
         secondary_label?: PrismicKeyText;
         secondary_link?: PrismicLink;
         badge?: PrismicImage;
+        badge_on_mobile?: PrismicBoolean;
         title?: PrismicHeading;
         is_nav_large?: PrismicBoolean;
 
@@ -111,7 +112,7 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const HeaderSlice: React.FC<HeaderSliceType> = ({
-    primary: { badge, title, is_nav_large, size },
+    primary: { badge, badge_on_mobile, title, is_nav_large, size },
     items,
     settingsPage,
     sizeSelectAlias = {
@@ -161,7 +162,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             images={headerImageMap}
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
-            badge={headerBadge(badge)}
+            badge={headerBadge(badge, badge_on_mobile)}
             menu={createMenu({
                 settingsData,
                 mapSocials,
@@ -245,7 +246,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     );
 };
 
-function headerBadge(badge?: PrismicImage, showOnMobile = false) {
+function headerBadge(badge?: PrismicImage, showOnMobile = true) {
     return badge && badge.url
         ? {
               content: (
