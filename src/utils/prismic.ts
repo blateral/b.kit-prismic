@@ -1,6 +1,7 @@
 import {
     AliasSelectMapperType,
     ImageSettingsProps,
+    isSVG,
     updateUrlParameters,
 } from './mapping';
 
@@ -214,10 +215,6 @@ export interface PrismicSettingsData {
 
     nav_size?: PrismicBoolean;
     nav_is_inverted?: PrismicBoolean;
-    nav_primary_label?: PrismicKeyText;
-    nav_primary_link?: PrismicLink;
-    nav_secondary_label?: PrismicKeyText;
-    nav_secondary_link?: PrismicLink;
 
     footer_newsletter_heading?: PrismicHeading;
     footer_newsletter_text?: PrismicRichText;
@@ -363,34 +360,41 @@ export const getImageFromUrl = (
     altText = ''
 ) => {
     const newImage: ImageProps = {
-        small: updateUrlParameters(url, {
-            w: `${sizeSettings.small.width}`,
-            h: `${sizeSettings.small.height}`,
-        }),
+        small:
+            url && !isSVG(url)
+                ? updateUrlParameters(url, {
+                      w: `${sizeSettings.small.width}`,
+                      h: `${sizeSettings.small.height}`,
+                  })
+                : url,
         medium:
-            sizeSettings.medium &&
-            updateUrlParameters(url, {
-                w: `${sizeSettings.medium?.width}`,
-                h: `${sizeSettings.medium?.height}`,
-            }),
+            sizeSettings.medium && url && !isSVG(url)
+                ? updateUrlParameters(url, {
+                      w: `${sizeSettings.medium?.width}`,
+                      h: `${sizeSettings.medium?.height}`,
+                  })
+                : undefined,
         semilarge:
-            sizeSettings.semilarge &&
-            updateUrlParameters(url, {
-                w: `${sizeSettings.semilarge?.width}`,
-                h: `${sizeSettings.semilarge?.height}`,
-            }),
+            sizeSettings.semilarge && url && !isSVG(url)
+                ? updateUrlParameters(url, {
+                      w: `${sizeSettings.semilarge?.width}`,
+                      h: `${sizeSettings.semilarge?.height}`,
+                  })
+                : undefined,
         large:
-            sizeSettings.large &&
-            updateUrlParameters(url, {
-                w: `${sizeSettings.large?.width}`,
-                h: `${sizeSettings.large?.height}`,
-            }),
+            sizeSettings.large && url && !isSVG(url)
+                ? updateUrlParameters(url, {
+                      w: `${sizeSettings.large?.width}`,
+                      h: `${sizeSettings.large?.height}`,
+                  })
+                : undefined,
         xlarge:
-            sizeSettings.xlarge &&
-            updateUrlParameters(url, {
-                w: `${sizeSettings.xlarge?.width}`,
-                h: `${sizeSettings.xlarge?.height}`,
-            }),
+            sizeSettings.xlarge && url && !isSVG(url)
+                ? updateUrlParameters(url, {
+                      w: `${sizeSettings.xlarge?.width}`,
+                      h: `${sizeSettings.xlarge?.height}`,
+                  })
+                : undefined,
         alt: altText,
     };
 
@@ -410,38 +414,41 @@ export const getImageFromUrls = (
     altText = ''
 ) => {
     const newImage: ImageProps = {
-        small: updateUrlParameters(urls.small, {
-            w: `${sizeSettings.small.width}`,
-            h: `${sizeSettings.small.height}`,
-        }),
+        small:
+            urls.small && !isSVG(urls.small)
+                ? updateUrlParameters(urls.small, {
+                      w: `${sizeSettings.small.width}`,
+                      h: `${sizeSettings.small.height}`,
+                  })
+                : urls.small,
         medium:
-            sizeSettings.medium &&
-            urls.medium &&
-            updateUrlParameters(urls.medium, {
-                w: `${sizeSettings.medium?.width}`,
-                h: `${sizeSettings.medium?.height}`,
-            }),
+            sizeSettings.medium && urls.medium && !isSVG(urls.medium)
+                ? updateUrlParameters(urls.medium, {
+                      w: `${sizeSettings.medium?.width}`,
+                      h: `${sizeSettings.medium?.height}`,
+                  })
+                : undefined,
         semilarge:
-            sizeSettings.semilarge &&
-            urls.semilarge &&
-            updateUrlParameters(urls.semilarge, {
-                w: `${sizeSettings.semilarge?.width}`,
-                h: `${sizeSettings.semilarge?.height}`,
-            }),
+            sizeSettings.semilarge && urls.semilarge && !isSVG(urls.semilarge)
+                ? updateUrlParameters(urls.semilarge, {
+                      w: `${sizeSettings.semilarge?.width}`,
+                      h: `${sizeSettings.semilarge?.height}`,
+                  })
+                : undefined,
         large:
-            sizeSettings.large &&
-            urls.large &&
-            updateUrlParameters(urls.large, {
-                w: `${sizeSettings.large?.width}`,
-                h: `${sizeSettings.large?.height}`,
-            }),
+            sizeSettings.large && urls.large && !isSVG(urls.large)
+                ? updateUrlParameters(urls.large, {
+                      w: `${sizeSettings.large?.width}`,
+                      h: `${sizeSettings.large?.height}`,
+                  })
+                : undefined,
         xlarge:
-            sizeSettings.xlarge &&
-            urls.xlarge &&
-            updateUrlParameters(urls.xlarge, {
-                w: `${sizeSettings.xlarge?.width}`,
-                h: `${sizeSettings.xlarge?.height}`,
-            }),
+            sizeSettings.xlarge && urls.xlarge && !isSVG(urls.xlarge)
+                ? updateUrlParameters(urls.xlarge, {
+                      w: `${sizeSettings.xlarge?.width}`,
+                      h: `${sizeSettings.xlarge?.height}`,
+                  })
+                : undefined,
         alt: altText,
     };
 

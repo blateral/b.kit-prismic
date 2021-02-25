@@ -15,6 +15,7 @@ import {
     getImageFromUrls,
     PrismicSettingsData,
     getHeadlineTag,
+    isPrismicLinkEmpty,
 } from '../utils/prismic';
 
 import { Header } from '@blateral/b.kit';
@@ -47,6 +48,7 @@ export interface HeaderSliceType
         secondary_label?: PrismicKeyText;
         secondary_link?: PrismicLink;
         badge?: PrismicImage;
+        badge_on_mobile?: PrismicBoolean;
         title?: PrismicHeading;
         is_nav_large?: PrismicBoolean;
 
@@ -111,7 +113,17 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const HeaderSlice: React.FC<HeaderSliceType> = ({
-    primary: { badge, title, is_nav_large, size },
+    primary: {
+        badge,
+        badge_on_mobile,
+        title,
+        is_nav_large,
+        size,
+        primary_label,
+        primary_link,
+        secondary_label,
+        secondary_link,
+    },
     items,
     settingsPage,
     sizeSelectAlias = {
@@ -161,7 +173,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             images={headerImageMap}
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
-            badge={headerBadge(badge)}
+            badge={headerBadge(badge, badge_on_mobile)}
             menu={createMenu({
                 settingsData,
                 mapSocials,
@@ -169,83 +181,56 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 nav_inverted: settingsData?.nav_is_inverted || false,
                 is_nav_large,
                 injectLogo,
-                nav_primaryCtaFn:
-                    nav_primaryAction && hasPrimaryNavButtonData(settingsData)
-                        ? (isInverted?: boolean) =>
-                              nav_primaryAction({
-                                  isInverted,
-                                  label: getText(
-                                      settingsData?.nav_primary_label
-                                  ),
-                                  href:
-                                      resolveUnknownLink(
-                                          settingsData?.nav_primary_link
-                                      ) || '',
-                                  isExternal: isPrismicLinkExternal(
-                                      settingsData?.nav_primary_link
-                                  ),
-                              })
-                        : undefined,
-                nav_secondaryCtaFn:
+                nav_primaryCtaFn: (isInverted: boolean) =>
+                    nav_primaryAction &&
+                    nav_primaryAction({
+                        isInverted,
+                        label: getText(settingsData?.header_primary_label),
+                        href:
+                            resolveUnknownLink(
+                                settingsData?.header_primary_link
+                            ) || '',
+                        isExternal: isPrismicLinkExternal(
+                            settingsData?.header_primary_link
+                        ),
+                    }),
+                nav_secondaryCtaFn: (isInverted: boolean) =>
                     nav_secondaryAction &&
-                    hasSecondaryNavButtonData(settingsData)
-                        ? (isInverted?: boolean) =>
-                              nav_secondaryAction({
-                                  isInverted,
-                                  label: getText(
-                                      settingsData?.nav_secondary_label
-                                  ),
-                                  href:
-                                      resolveUnknownLink(
-                                          settingsData?.nav_secondary_link
-                                      ) || '',
-                                  isExternal: isPrismicLinkExternal(
-                                      settingsData?.nav_secondary_link
-                                  ),
-                              })
-                        : undefined,
+                    nav_secondaryAction({
+                        isInverted,
+                        label: getText(settingsData?.header_secondary_label),
+                        href:
+                            resolveUnknownLink(
+                                settingsData?.header_secondary_link
+                            ) || '',
+                        isExternal: isPrismicLinkExternal(
+                            settingsData?.header_secondary_link
+                        ),
+                    }),
             })}
-            primaryCta={
-                primaryAction && hasPrimaryButtonData(settingsData)
-                    ? (isInverted) =>
-                          primaryAction({
-                              isInverted,
-                              label: getText(
-                                  settingsData?.header_primary_label
-                              ),
-                              href:
-                                  resolveUnknownLink(
-                                      settingsData?.header_primary_link
-                                  ) || '',
-                              isExternal: isPrismicLinkExternal(
-                                  settingsData?.header_primary_link
-                              ),
-                          })
-                    : undefined
+            primaryCta={(isInverted: boolean) =>
+                primaryAction &&
+                primaryAction({
+                    isInverted,
+                    label: getText(primary_label),
+                    href: resolveUnknownLink(primary_link) || '',
+                    isExternal: isPrismicLinkExternal(primary_link),
+                })
             }
-            secondaryCta={
-                secondaryAction && hasSecondaryButtonData(settingsData)
-                    ? (isInverted) =>
-                          secondaryAction({
-                              isInverted,
-                              label: getText(
-                                  settingsData?.header_secondary_label
-                              ),
-                              href:
-                                  resolveUnknownLink(
-                                      settingsData?.header_secondary_link
-                                  ) || '',
-                              isExternal: isPrismicLinkExternal(
-                                  settingsData?.header_secondary_link
-                              ),
-                          })
-                    : undefined
+            secondaryCta={(isInverted: boolean) =>
+                secondaryAction &&
+                secondaryAction({
+                    isInverted,
+                    label: getText(secondary_label),
+                    href: resolveUnknownLink(secondary_link) || '',
+                    isExternal: isPrismicLinkExternal(secondary_link),
+                })
             }
         />
     );
 };
 
-function headerBadge(badge?: PrismicImage, showOnMobile = false) {
+function headerBadge(badge?: PrismicImage, showOnMobile = true) {
     return badge && badge.url
         ? {
               content: (
@@ -317,12 +302,12 @@ const createMenu = ({
 
         primaryCta:
             (settingsData?.header_primary_label &&
-                settingsData.header_primary_link?.url &&
+                !isPrismicLinkEmpty(settingsData.header_primary_link) &&
                 nav_primaryCtaFn) ||
             undefined,
         secondaryCta:
             (settingsData?.header_secondary_label &&
-                settingsData?.header_secondary_link?.url &&
+                !isPrismicLinkEmpty(settingsData?.header_secondary_link) &&
                 nav_secondaryCtaFn) ||
             undefined,
         navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
@@ -364,43 +349,9 @@ const logoFn = ({
     imgUrlFull: string;
     imgUrlFullInverted: string;
 }) => {
-    if (isInverted)
-        return (
-            <img
-                src={size === 'full' ? imgUrlFullInverted : imgUrlSmallInverted}
-            />
-        );
-    else return <img src={size === 'full' ? imgUrlFull : imgUrlSmall} />;
-};
+    const url = size === 'full' ? imgUrlFull : imgUrlSmall;
+    const invertedUrl =
+        size === 'full' ? imgUrlFullInverted : imgUrlSmallInverted;
 
-const hasPrimaryButtonData = (settingsData: any) => {
-    return !!(
-        settingsData &&
-        settingsData.header_primary_label &&
-        settingsData.header_primary_link?.url
-    );
-};
-
-const hasSecondaryButtonData = (settingsData: any) => {
-    return !!(
-        settingsData &&
-        settingsData.header_secondary_label &&
-        settingsData.header_secondary_link?.url
-    );
-};
-
-const hasPrimaryNavButtonData = (settingsData: any) => {
-    return !!(
-        settingsData &&
-        settingsData.nav_primary_label &&
-        settingsData.nav_primary_link?.url
-    );
-};
-
-const hasSecondaryNavButtonData = (settingsData: any) => {
-    return !!(
-        settingsData &&
-        settingsData.nav_secondary_label &&
-        settingsData.nav_secondary_link?.url
-    );
+    return <img src={isInverted ? invertedUrl : url} />;
 };
