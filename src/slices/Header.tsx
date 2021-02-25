@@ -364,13 +364,13 @@ const logoFn = ({
     imgUrlFull: string;
     imgUrlFullInverted: string;
 }) => {
-    if (isInverted)
-        return (
-            <img
-                src={size === 'full' ? imgUrlFullInverted : imgUrlSmallInverted}
-            />
-        );
-    else return <img src={size === 'full' ? imgUrlFull : imgUrlSmall} />;
+    const url = size === 'full' ? imgUrlFull : imgUrlSmall || imgUrlFull;
+    const invertedUrl =
+        size === 'full'
+            ? imgUrlFullInverted
+            : imgUrlSmallInverted || imgUrlFullInverted;
+
+    return <img src={isInverted ? invertedUrl : url} />;
 };
 
 const hasPrimaryButtonData = (settingsData: any) => {
