@@ -27,6 +27,7 @@ import {
 } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { HeaderMenuProps } from '@blateral/b.kit/lib/components/sections/header/Header';
+import { MenuMq } from '@blateral/b.kit/lib/components/sections/header/menu/Menu';
 
 interface HeaderImageItem {
     image?: PrismicImage;
@@ -75,12 +76,14 @@ export interface HeaderSliceType
 
     nav_primaryAction?: (props: {
         isInverted?: boolean;
+        currentMq?: MenuMq;
         label?: string;
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
     nav_secondaryAction?: (props: {
         isInverted?: boolean;
+        currentMq?: MenuMq;
         label?: string;
         href?: string;
         isExternal?: boolean;
@@ -181,10 +184,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 nav_inverted: settingsData?.nav_is_inverted || false,
                 is_nav_large,
                 injectLogo,
-                nav_primaryCtaFn: (isInverted: boolean) =>
+                nav_primaryCtaFn: ({ isInverted, currentMq }) =>
                     nav_primaryAction &&
                     nav_primaryAction({
                         isInverted,
+                        currentMq,
                         label: getText(settingsData?.header_primary_label),
                         href:
                             resolveUnknownLink(
@@ -194,10 +198,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                             settingsData?.header_primary_link
                         ),
                     }),
-                nav_secondaryCtaFn: (isInverted: boolean) =>
+                nav_secondaryCtaFn: ({ isInverted, currentMq }) =>
                     nav_secondaryAction &&
                     nav_secondaryAction({
                         isInverted,
+                        currentMq,
                         label: getText(settingsData?.header_secondary_label),
                         href:
                             resolveUnknownLink(
@@ -249,8 +254,14 @@ interface MenuSliceType {
     settingsData?: PrismicSettingsData;
     is_inverted?: boolean;
     nav_inverted?: boolean;
-    nav_primaryCtaFn?: (isInverted?: boolean) => React.ReactNode;
-    nav_secondaryCtaFn?: (isInverted?: boolean) => React.ReactNode;
+    nav_primaryCtaFn?: (props: {
+        isInverted?: boolean;
+        currentMq: MenuMq;
+    }) => React.ReactNode;
+    nav_secondaryCtaFn?: (props: {
+        isInverted?: boolean;
+        currentMq: MenuMq;
+    }) => React.ReactNode;
     mapSocials?: (
         socials?: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
     ) => Array<{
