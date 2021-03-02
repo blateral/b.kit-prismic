@@ -67,5 +67,8 @@
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "styled-components": "^5.2.1"
+    },
+    "dependencies": {
+        "@blateral/b.kit-prismic": "file:.yalc/@blateral/b.kit-prismic"
     }
 }
