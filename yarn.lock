@@ -171,6 +171,13 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@prismicio/client@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@prismicio/client/-/client-4.0.0.tgz#45e5e8651b72b747ce4e21db04eae0b96139615a"
+  integrity sha512-3rGie+Banm61hOQcKF75+TI8oquVDT2PyX05ho2eRKdiMu0i4raHVJCuIAGBs/CDCuVXes2h/rnfRs+eKfq7XQ==
+  dependencies:
+    cross-fetch "^3.0.6"
+
 "@prismicio/helpers@^1.0.4":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@prismicio/helpers/-/helpers-1.0.5.tgz#2be60a1b44e6c33d7918fa74fe67648dc8af0c15"
@@ -595,7 +602,7 @@ cosmiconfig@^7.0.0:
     path-type "^4.0.0"
     yaml "^1.10.0"
 
-cross-fetch@^3.0.5:
+cross-fetch@^3.0.5, cross-fetch@^3.0.6:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
   integrity sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ==

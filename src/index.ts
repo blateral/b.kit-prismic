@@ -2,6 +2,7 @@
 
 // export util types and functions
 export * from 'utils/prismic';
+export * from 'utils/prismicApi';
 
 // slice exports
 export * from 'slices/Article';
