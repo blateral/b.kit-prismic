@@ -9,7 +9,6 @@ import {
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
-    PrismicSelectField,
     PrismicSlice,
     resolveUnknownLink,
 } from '../utils/prismic';
@@ -19,7 +18,6 @@ import React from 'react';
 
 interface IconListImages {
     image: PrismicImage;
-    size: PrismicSelectField;
 }
 
 export interface IconListSliceType
@@ -32,7 +30,7 @@ export interface IconListSliceType
         text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
         is_centered?: PrismicBoolean;
-        bg_mode?: PrismicSelectField;
+        has_back?: PrismicBoolean;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
@@ -61,6 +59,7 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
         text,
         is_inverted,
         is_centered,
+        has_back,
         primary_link,
         primary_label,
         secondary_link,
@@ -70,7 +69,6 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
-    const images = splitItemsIntoMultiples(items);
     return (
         <IconList
             superTitle={super_title && getText(super_title)}
@@ -80,9 +78,13 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
             text={text && getHtmlText(text)}
             isCentered={is_centered}
             isInverted={is_inverted}
-            bgMode={is_inverted ? 'full' : 'splitted'}
-            primaryItems={images.primaryItems}
-            secondaryItems={images.secondaryItems}
+            hasBack={has_back}
+            items={items.map((item) => {
+                return {
+                    src: item?.image?.url || '',
+                    alt: item?.image?.alt || '',
+                };
+            })}
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction({
@@ -104,34 +106,3 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
         />
     );
 };
-
-function splitItemsIntoMultiples(
-    iconListItems: IconListImages[],
-    maxPrimaryItems = 15
-) {
-    const firstHalf = [];
-    const secondHalf = [];
-
-    for (let index = 0; index < maxPrimaryItems; index++) {
-        const item = iconListItems[index];
-
-        firstHalf.push({
-            src: item?.image?.url || '',
-            alt: item?.image?.alt || '',
-        });
-    }
-
-    for (let index = maxPrimaryItems; index < iconListItems.length; index++) {
-        const item = iconListItems[index];
-
-        secondHalf.push({
-            src: item?.image?.url || '',
-            alt: item?.image?.alt || '',
-        });
-    }
-
-    return {
-        primaryItems: firstHalf,
-        secondaryItems: secondHalf,
-    };
-}

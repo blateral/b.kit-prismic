@@ -72,14 +72,17 @@ export interface GallerySliceType
     controlNext?: (props: {
         isInverted?: boolean;
         isActive?: boolean;
+        name?: string;
     }) => React.ReactNode;
     controlPrev?: (props: {
         isInverted?: boolean;
         isActive?: boolean;
+        name?: string;
     }) => React.ReactNode;
     dot?: (props: {
         isInverted?: boolean;
         isActive?: boolean;
+        index?: number;
     }) => React.ReactNode;
     beforeChange?: (props: { currentStep: number; nextStep: number }) => void;
     afterChange?: (currentStep: number) => void;

@@ -1,7 +1,10 @@
-/***** Version: 0.4.0 *****/
+/***** Version: 0.4.1 *****/
 
 // export util types and functions
 export * from 'utils/prismic';
+export * from 'utils/prismicApi';
+export * from 'utils/sitemapGenerator';
+export * from 'utils/robotsGenerator';
 
 // slice exports
 export * from 'slices/Article';
