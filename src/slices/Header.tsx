@@ -26,8 +26,7 @@ import {
     ImageSizeSettings,
 } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-import { HeaderMenuProps } from '@blateral/b.kit/lib/components/sections/header/Header';
-import { MenuMq } from '@blateral/b.kit/lib/components/sections/header/menu/Menu';
+import { HeaderNavProps } from '@blateral/b.kit/lib/components/sections/header/Header';
 
 interface HeaderImageItem {
     image?: PrismicImage;
@@ -76,14 +75,14 @@ export interface HeaderSliceType
 
     nav_primaryAction?: (props: {
         isInverted?: boolean;
-        currentMq?: MenuMq;
+        size?: 'desktop' | 'mobile';
         label?: string;
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
     nav_secondaryAction?: (props: {
         isInverted?: boolean;
-        currentMq?: MenuMq;
+        size?: 'desktop' | 'mobile';
         label?: string;
         href?: string;
         isExternal?: boolean;
@@ -101,6 +100,8 @@ export interface HeaderSliceType
         isInverted?: boolean;
         size?: 'full' | 'small';
     }) => React.ReactNode;
+
+    search?: (isInverted?: boolean) => React.ReactNode;
 
     settingsPage?: PrismicSettingsPage;
 }
@@ -143,6 +144,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     nav_secondaryAction,
     mapSocials,
     injectLogo,
+    search,
 }) => {
     const settingsData = settingsPage?.data;
 
@@ -177,18 +179,19 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
             badge={headerBadge(badge, badge_on_mobile)}
-            menu={createMenu({
+            navigation={createMenu({
                 settingsData,
                 mapSocials,
                 is_inverted: settingsData?.header_is_inverted || false,
                 nav_inverted: settingsData?.nav_is_inverted || false,
                 is_nav_large,
                 injectLogo,
-                nav_primaryCtaFn: ({ isInverted, currentMq }) =>
+                search,
+                nav_primaryCtaFn: ({ isInverted, size }) =>
                     nav_primaryAction &&
                     nav_primaryAction({
                         isInverted,
-                        currentMq,
+                        size,
                         label: getText(settingsData?.header_primary_label),
                         href:
                             resolveUnknownLink(
@@ -198,11 +201,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                             settingsData?.header_primary_link
                         ),
                     }),
-                nav_secondaryCtaFn: ({ isInverted, currentMq }) =>
+                nav_secondaryCtaFn: ({ isInverted, size }) =>
                     nav_secondaryAction &&
                     nav_secondaryAction({
                         isInverted,
-                        currentMq,
+                        size,
                         label: getText(settingsData?.header_secondary_label),
                         href:
                             resolveUnknownLink(
@@ -256,11 +259,11 @@ interface MenuSliceType {
     nav_inverted?: boolean;
     nav_primaryCtaFn?: (props: {
         isInverted?: boolean;
-        currentMq: MenuMq;
+        size?: 'desktop' | 'mobile';
     }) => React.ReactNode;
     nav_secondaryCtaFn?: (props: {
         isInverted?: boolean;
-        currentMq: MenuMq;
+        size?: 'desktop' | 'mobile';
     }) => React.ReactNode;
     mapSocials?: (
         socials?: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
@@ -273,6 +276,10 @@ interface MenuSliceType {
         isInverted?: boolean;
         size?: 'full' | 'small';
     }) => React.ReactNode;
+
+    // inject search into slice
+    search?: (isInverted?: boolean) => React.ReactNode;
+
     is_nav_large?: boolean;
 }
 
@@ -284,7 +291,8 @@ const createMenu = ({
     nav_secondaryCtaFn,
     mapSocials,
     injectLogo,
-}: MenuSliceType): HeaderMenuProps => {
+    search,
+}: MenuSliceType): HeaderNavProps => {
     // return logo from prismic
     const logoFull = settingsData?.logo_image_full;
     const logoSmall = settingsData?.logo_image_small;
@@ -292,9 +300,9 @@ const createMenu = ({
     const logoSmallInverted = settingsData?.logo_image_small_inverted;
 
     return {
-        isLarge: settingsData?.nav_size || false,
-        isTopInverted: is_inverted,
-        isNavInverted: nav_inverted,
+        isLargeMenu: settingsData?.nav_size || false,
+        isTopbarInverted: is_inverted,
+        isMenuInverted: nav_inverted,
         logo: {
             link: resolveUnknownLink(settingsData?.logo_href) || '',
             icon: injectLogo
@@ -310,7 +318,7 @@ const createMenu = ({
                       }),
         },
         socials: mapSocials && mapSocials(settingsData?.socials),
-
+        search: search && search,
         primaryCta:
             (settingsData?.header_primary_label &&
                 !isPrismicLinkEmpty(settingsData.header_primary_link) &&

@@ -35,7 +35,7 @@
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "^0.5.0",
+        "@blateral/b.kit": "^0.5.1",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",
         "@types/prismic-dom": "^2.1.1",
@@ -61,14 +61,12 @@
         "typescript": "^4.1.2"
     },
     "peerDependencies": {
-        "@blateral/b.kit": "^0.4.11",
+        "@blateral/b.kit": "^0.5.1",
         "prismic-dom": "^2.2.4",
         "prismic-javascript": "^3.0.2",
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "styled-components": "^5.2.1"
     },
-    "dependencies": {
-        "@blateral/b.kit-prismic": "file:.yalc/@blateral/b.kit-prismic"
-    }
+    "dependencies": {}
 }

@@ -1,20 +1,26 @@
 import {
+    getHeadlineTag,
+    getHtmlText,
+    getText,
+    isPrismicLinkExternal,
     PrismicBoolean,
     PrismicHeading,
+    PrismicImage,
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
-    PrismicSelectField,
     PrismicSlice,
+    resolveUnknownLink,
 } from '../utils/prismic';
 
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
+import { FactList } from '@blateral/b.kit';
 
 interface FactListEntryItems {
-    icon?: PrismicSelectField;
-    title?: PrismicHeading;
+    label?: PrismicKeyText;
     text?: PrismicRichText;
+    icon?: PrismicImage;
 }
 
 export interface FactListSliceType
@@ -25,6 +31,7 @@ export interface FactListSliceType
         title?: PrismicHeading;
         intro?: PrismicRichText;
         is_inverted?: PrismicBoolean;
+        has_back?: PrismicBoolean;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
@@ -46,21 +53,58 @@ export interface FactListSliceType
 }
 
 export const FactListSlice: React.FC<FactListSliceType> = ({
-    primary,
-    // primary: {
-    //     super_title,
-    //     title,
-    //     is_inverted,
-    //     primary_link,
-    //     primary_label,
-    //     secondary_link,
-    //     secondary_label,
-    // },
-    // primaryAction,
-    // secondaryAction,
+    primary: {
+        super_title,
+        title,
+        intro,
+        is_inverted,
+        has_back,
+        primary_link,
+        primary_label,
+        secondary_link,
+        secondary_label,
+    },
+    items,
+    primaryAction,
+    secondaryAction,
 }) => {
     return (
-        // <FactList />
-        <span>FactList Komponente noch nicht vorhanden</span>
+        <FactList
+            isInverted={is_inverted}
+            hasBack={has_back}
+            title={getText(title)}
+            titleAs={getHeadlineTag(title)}
+            superTitle={getText(super_title)}
+            superTitleAs={getHeadlineTag(super_title)}
+            intro={getHtmlText(intro)}
+            facts={items.map((item) => {
+                return {
+                    label: getText(item.label),
+                    text: getHtmlText(item.text),
+                    icon: {
+                        src: item?.icon?.url || '',
+                        alt: item?.icon?.alt || '',
+                    },
+                };
+            })}
+            primaryAction={(isInverted) =>
+                primaryAction &&
+                primaryAction({
+                    isInverted,
+                    label: getText(primary_label),
+                    href: resolveUnknownLink(primary_link) || '',
+                    isExternal: isPrismicLinkExternal(primary_link),
+                })
+            }
+            secondaryAction={(isInverted) =>
+                secondaryAction &&
+                secondaryAction({
+                    isInverted,
+                    label: getText(secondary_label),
+                    href: resolveUnknownLink(secondary_link) || '',
+                    isExternal: isPrismicLinkExternal(secondary_link),
+                })
+            }
+        />
     );
 };
