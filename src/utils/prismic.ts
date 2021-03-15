@@ -21,6 +21,7 @@ import { CallToActionSliceType } from 'slices/CallToAction';
 import { VideoSliceType } from 'slices/Video';
 import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
+import { MapSliceType } from 'slices/Map';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -161,6 +162,7 @@ export interface PrismicPage extends Document {
             | IconListSliceType
             | HeaderSliceType
             | TeaserSliceType
+            | MapSliceType
             | CallToActionSliceType
             | CrossPromotionSliceType
             | PromotionCarouselSliceType
