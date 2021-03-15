@@ -3,6 +3,7 @@ import {
     getHtmlText,
     getText,
     isPrismicLinkExternal,
+    isRichTextEmpty,
     PrismicBoolean,
     PrismicGeopoint,
     PrismicHeading,
@@ -15,13 +16,23 @@ import {
 } from '../utils/prismic';
 
 import React from 'react';
-import { FlyToIcon, Map } from '@blateral/b.kit/lib';
+import {
+    FlyToIcon,
+    MailIcon,
+    Map,
+    PhoneIcon,
+    RouteIcon,
+} from '@blateral/b.kit/lib';
 
 interface MapLocationItems {
     super_title?: PrismicHeading;
     title?: PrismicRichText;
     position?: PrismicGeopoint;
     marker?: PrismicImage;
+
+    phone?: PrismicRichText;
+    mail?: PrismicRichText;
+    route?: PrismicRichText;
 
     primary_link?: PrismicLink;
     primary_label?: PrismicKeyText;
@@ -34,6 +45,7 @@ export interface MapSliceType extends PrismicSlice<'Map', MapLocationItems> {
         is_active?: PrismicBoolean;
         is_inverted?: PrismicBoolean;
         is_mirrored?: PrismicBoolean;
+        with_fly_to?: PrismicBoolean;
     };
     // helpers to define component elements outside of slice
     center?: [number, number];
@@ -77,10 +89,13 @@ export interface MapSliceType extends PrismicSlice<'Map', MapLocationItems> {
         isActive?: boolean;
         index?: number;
     }) => React.ReactNode;
+    phoneIcon?: (isInverted?: boolean) => React.ReactNode;
+    mailIcon?: (isInverted?: boolean) => React.ReactNode;
+    routingIcon?: (isInverted?: boolean) => React.ReactNode;
 }
 
 export const MapSlice: React.FC<MapSliceType> = ({
-    primary: { is_inverted, is_mirrored },
+    primary: { is_inverted, is_mirrored, with_fly_to },
     items,
     iconSettings,
     center,
@@ -94,6 +109,9 @@ export const MapSlice: React.FC<MapSliceType> = ({
     controlNext,
     controlPrev,
     dot,
+    phoneIcon,
+    mailIcon,
+    routingIcon,
 }) => {
     return (
         <Map
@@ -103,28 +121,73 @@ export const MapSlice: React.FC<MapSliceType> = ({
             center={center}
             zoom={zoom}
             flyToZoom={flyToZoom || 12}
-            flyToControl={flyToControl || <FlyToIcon />}
+            flyToControl={
+                with_fly_to ? flyToControl || <FlyToIcon /> : undefined
+            }
             allMarkersOnInit={allMarkersOnInit}
             fitBoundsPadding={fitBoundsPadding || [30, 30]}
             locations={items?.map((location, i) => {
                 const posLat = location.position?.latitude || 0;
                 const posLng = location.position?.longitude || 0;
 
+                const contactInfo: {
+                    label: string;
+                    icon: React.ReactNode;
+                }[] = [];
+                if (location.phone && !isRichTextEmpty(location.phone)) {
+                    contactInfo.push({
+                        icon: phoneIcon || <PhoneIcon />,
+                        label: getHtmlText(location?.phone),
+                    });
+                }
+                if (location.mail && !isRichTextEmpty(location.mail)) {
+                    contactInfo.push({
+                        icon: mailIcon || <MailIcon />,
+                        label: getHtmlText(location?.mail),
+                    });
+                }
+                if (location.route && !isRichTextEmpty(location.route)) {
+                    contactInfo.push({
+                        icon: routingIcon || <RouteIcon />,
+                        label: getHtmlText(location?.route),
+                    });
+                }
+
                 return {
                     id: `location-${i}`,
                     position: [posLat, posLng],
                     meta: {
                         title: getHtmlText(location.title),
-                        titleAs: 'div',
+                        titleAs: 'span',
                         superTitle: getText(location.super_title),
                         superTitleAs: getHeadlineTag(location.super_title),
-                        primaryLabel: getText(location.primary_label),
-                        primaryLink:
-                            resolveUnknownLink(location.primary_link) || '',
-                        secondaryLabel: getText(location.secondary_label),
-                        secondaryLink:
-                            resolveUnknownLink(location.secondary_link) || '',
-                        contact: [],
+                        primaryAction: (isInverted?: boolean) =>
+                            primaryAction &&
+                            primaryAction({
+                                isInverted,
+                                label: getText(location.primary_label),
+                                href:
+                                    resolveUnknownLink(location.primary_link) ||
+                                    '',
+                                isExternal: isPrismicLinkExternal(
+                                    location.primary_link
+                                ),
+                            }),
+                        secondaryAction: (isInverted?: boolean) =>
+                            secondaryAction &&
+                            secondaryAction({
+                                isInverted,
+                                label: getText(location.secondary_label),
+                                href:
+                                    resolveUnknownLink(
+                                        location.secondary_link
+                                    ) || '',
+                                isExternal: isPrismicLinkExternal(
+                                    location.secondary_link
+                                ),
+                            }),
+
+                        contact: contactInfo,
                     },
                     icon: {
                         size: iconSettings?.size || [20, 28],
@@ -135,24 +198,6 @@ export const MapSlice: React.FC<MapSliceType> = ({
                     },
                 };
             })}
-            primaryAction={({ isInverted, label, href }) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted: isInverted,
-                    label: getText(label),
-                    href: resolveUnknownLink(href) || '',
-                    isExternal: isPrismicLinkExternal(href),
-                })
-            }
-            secondaryAction={({ isInverted, label, href }) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted: isInverted,
-                    label: getText(label),
-                    href: resolveUnknownLink(href) || '',
-                    isExternal: isPrismicLinkExternal(href),
-                })
-            }
             controlNext={controlNext}
             controlPrev={controlPrev}
             dot={dot}

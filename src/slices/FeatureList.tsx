@@ -44,8 +44,8 @@ interface FeatureItemType {
 
     primary_link?: PrismicLink;
     secondary_link?: PrismicLink;
-    primary_label?: string;
-    secondary_label?: string;
+    primary_label?: PrismicKeyText;
+    secondary_label?: PrismicKeyText;
 }
 
 export interface FeatureListSliceType
