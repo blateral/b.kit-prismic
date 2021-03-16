@@ -27,6 +27,10 @@ import {
 } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { HeaderNavProps } from '@blateral/b.kit/lib/components/sections/header/Header';
+import {
+    NavGroup,
+    NavItem,
+} from '@blateral/b.kit/lib/components/sections/header/menu/Flyout';
 
 interface HeaderImageItem {
     image?: PrismicImage;
@@ -104,6 +108,7 @@ export interface HeaderSliceType
     search?: (isInverted?: boolean) => React.ReactNode;
 
     settingsPage?: PrismicSettingsPage;
+    pageUrl?: string;
 }
 
 // for this component defines image sizes
@@ -130,6 +135,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     },
     items,
     settingsPage,
+    pageUrl,
     sizeSelectAlias = {
         full: 'full',
         small: 'small',
@@ -181,6 +187,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             badge={headerBadge(badge, badge_on_mobile)}
             navigation={createMenu({
                 settingsData,
+                pageUrl,
                 mapSocials,
                 is_inverted: settingsData?.header_is_inverted || false,
                 nav_inverted: settingsData?.nav_is_inverted || false,
@@ -255,6 +262,7 @@ function headerBadge(badge?: PrismicImage, showOnMobile = true) {
 
 interface MenuSliceType {
     settingsData?: PrismicSettingsData;
+    pageUrl?: string;
     is_inverted?: boolean;
     nav_inverted?: boolean;
     nav_primaryCtaFn?: (props: {
@@ -285,6 +293,7 @@ interface MenuSliceType {
 
 const createMenu = ({
     settingsData,
+    pageUrl,
     is_inverted,
     nav_inverted,
     nav_primaryCtaFn,
@@ -298,6 +307,37 @@ const createMenu = ({
     const logoSmall = settingsData?.logo_image_small;
     const logoFullInverted = settingsData?.logo_image_full_inverted;
     const logoSmallInverted = settingsData?.logo_image_small_inverted;
+
+    const activeItemIndexes = {
+        groupId: '',
+        itemId: '',
+    };
+    settingsData?.main_nav?.every((navGroup, groupIndex) => {
+        const navItems = navGroup?.items;
+        let hasFound = false;
+
+        navItems?.every((navItem, itemIndex) => {
+            const itemLink =
+                (navItem.link && resolveUnknownLink(navItem.link)) || '';
+
+            // try to get page URL
+            let pageUrlString = pageUrl;
+            try {
+                pageUrlString = new URL(pageUrl || '').pathname;
+            } catch (err) {
+                // console.log(err);
+            }
+
+            if (itemLink === pageUrlString) {
+                activeItemIndexes.groupId = groupIndex.toString();
+                activeItemIndexes.itemId = itemIndex.toString();
+                hasFound = true;
+                return false;
+            } else return true;
+        });
+        if (hasFound) return false;
+        else return true;
+    });
 
     return {
         isLargeMenu: settingsData?.nav_size || false,
@@ -329,6 +369,7 @@ const createMenu = ({
                 !isPrismicLinkEmpty(settingsData?.header_secondary_link) &&
                 nav_secondaryCtaFn) ||
             undefined,
+        activeNavItem: `navGroup${activeItemIndexes.groupId}.nav-link${activeItemIndexes.itemId}`,
         navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
             return {
                 id: `navGroup${index}`,
@@ -346,9 +387,9 @@ const createMenu = ({
                             },
                             onClick: (id: string, fullId: string) =>
                                 console.log(fullId),
-                        };
+                        } as NavItem;
                     }),
-            };
+            } as NavGroup;
         }),
     };
 };

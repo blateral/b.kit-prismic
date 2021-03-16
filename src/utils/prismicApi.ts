@@ -1,4 +1,9 @@
-import { PrismicLink, linkResolver, resolveUnknownLink } from './prismic';
+import {
+    PrismicLink,
+    linkResolver,
+    resolveUnknownLink,
+    isPrismicLinkEmpty,
+} from './prismic';
 
 import Prismic from 'prismic-javascript';
 
@@ -23,5 +28,17 @@ export const getPreviewUrl = async (req: any, token: string, docId: string) => {
 };
 
 export const getPageUrl = (req: any, domain?: PrismicLink) => {
-    return `${resolveUnknownLink(domain) || ''}${req?.url || ''}`;
+    let href = '';
+    try {
+        let url: URL;
+        if (!isPrismicLinkEmpty(domain)) {
+            url = new URL(resolveUnknownLink(domain) || '');
+            url.pathname = req?.url;
+            if (url) href = url.href;
+        } else href = req?.url;
+    } catch (err) {
+        console.warn(err);
+    }
+
+    return href;
 };
