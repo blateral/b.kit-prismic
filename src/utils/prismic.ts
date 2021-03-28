@@ -144,7 +144,6 @@ export interface PrismicPage extends Document {
         uid: PrismicUid;
         pagetitle?: PrismicHeading;
         seo_socialimage?: PrismicImage;
-        seo_title?: PrismicHeading;
         seo_description?: PrismicRichText;
         seo_keywords?: PrismicKeyText;
         seo_search_index?: PrismicBoolean;
