@@ -152,6 +152,14 @@ export interface PrismicPage extends Document {
         seo_content_group?: PrismicKeyText;
         seo_redirection?: PrismicLink;
 
+        header_title?: PrismicHeading;
+        header_size?: PrismicSelectField;
+        header_images?: Array<{
+            image?: PrismicImage;
+        }>;
+        header_badge?: PrismicImage;
+        header_badge_on_mobile?: PrismicBoolean;
+
         body: Array<
             | ArticleSliceType
             | GallerySliceType
