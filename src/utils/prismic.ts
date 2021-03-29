@@ -144,13 +144,20 @@ export interface PrismicPage extends Document {
         uid: PrismicUid;
         pagetitle?: PrismicHeading;
         seo_socialimage?: PrismicImage;
-        seo_title?: PrismicHeading;
         seo_description?: PrismicRichText;
         seo_keywords?: PrismicKeyText;
         seo_search_index?: PrismicBoolean;
         seo_trace_links?: PrismicBoolean;
         seo_content_group?: PrismicKeyText;
         seo_redirection?: PrismicLink;
+
+        header_title?: PrismicHeading;
+        header_size?: PrismicSelectField;
+        header_images?: Array<{
+            image?: PrismicImage;
+        }>;
+        header_badge?: PrismicImage;
+        header_badge_on_mobile?: PrismicBoolean;
 
         body: Array<
             | ArticleSliceType
