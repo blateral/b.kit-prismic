@@ -230,8 +230,7 @@ export interface PrismicSettingsData {
     footer_newsletter_placeholder?: PrismicKeyText;
     footer_newsletter_submit_label?: PrismicKeyText;
 
-    footer_impressum?: PrismicLink;
-    footer_policy?: PrismicLink;
+    footer_bottomlinks?: { href?: PrismicLink; label?: PrismicKeyText }[];
 
     body?: PrismicNavigationSliceType[];
 

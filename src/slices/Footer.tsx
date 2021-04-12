@@ -5,6 +5,7 @@ import {
     getHtmlText,
     getText,
     resolveUnknownLink,
+    isPrismicLinkExternal,
 } from '../utils/prismic';
 
 import { Footer } from '@blateral/b.kit';
@@ -72,24 +73,16 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                         resolveUnknownLink(linkSlice.primary.footer_nav_link) ||
                         '',
                     label: (linkSlice.primary.footer_nav_title as any) || '',
-                    isExternal: Boolean(
-                        linkSlice?.primary?.footer_nav_link?.link_type ===
-                            'Web' && linkSlice?.primary?.footer_nav_link?.target
+                    isExternal: isPrismicLinkExternal(
+                        linkSlice?.primary?.footer_nav_link
                     ),
                 };
             })}
-            bottomLinks={settingsData?.body?.map((bottomLink) => {
+            bottomLinks={settingsData?.footer_bottomlinks?.map((bottomLink) => {
                 const result = {
-                    href:
-                        resolveUnknownLink(
-                            bottomLink.primary.footer_nav_link
-                        ) || '',
-                    label: (bottomLink.primary.footer_nav_title as any) || '',
-                    isExternal: Boolean(
-                        bottomLink?.primary?.footer_nav_link?.link_type ===
-                            'Web' &&
-                            bottomLink?.primary?.footer_nav_link?.target
-                    ),
+                    href: resolveUnknownLink(bottomLink.href) || '',
+                    label: bottomLink.label || '',
+                    isExternal: isPrismicLinkExternal(bottomLink.href),
                 };
                 return result;
             })}
