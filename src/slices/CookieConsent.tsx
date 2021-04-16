@@ -1,21 +1,27 @@
 import {
     getHtmlText,
     getText,
-    PrismicSettingsPage,
-    PrismicSlice,
+    isRichTextEmpty,
+    PrismicImage,
+    PrismicKeyText,
+    PrismicRichText,
 } from '../utils/prismic';
 
-import { CookieConsent } from '@blateral/b.kit';
-import React from 'react';
 import {
     CookieActions,
+    CookieConsent,
     CookieIcon,
     CookieText,
     CookieTitle,
-} from '@blateral/b.kit/lib/components/blocks/CookieConsent';
+} from '@blateral/b.kit';
+import React from 'react';
 
-export interface CookieConsentSliceType extends PrismicSlice<'CookieConsent'> {
-    settingsPage?: PrismicSettingsPage;
+export interface CookieConsentSliceType {
+    icon?: PrismicImage;
+    title?: PrismicRichText;
+    text?: PrismicRichText;
+    acceptCtaLabel?: PrismicKeyText;
+    declineCtaLabel?: PrismicKeyText;
 
     // helpers to define component elements outside of slice
     cookieName?: string;
@@ -45,16 +51,18 @@ export interface CookieConsentSliceType extends PrismicSlice<'CookieConsent'> {
     }) => React.ReactNode;
 }
 
-export const IconListSlice: React.FC<CookieConsentSliceType> = ({
-    settingsPage,
-
+export const CookieConsentSlice: React.FC<CookieConsentSliceType> = ({
+    icon,
+    title,
+    text,
+    acceptCtaLabel,
+    declineCtaLabel,
     acceptAction,
     declineAction,
+    ...rest
 }) => {
-    const settingsData = settingsPage?.data;
-
     return (
-        <CookieConsent>
+        <CookieConsent {...rest}>
             {({
                 handleAccept,
                 handleDecline,
@@ -62,44 +70,33 @@ export const IconListSlice: React.FC<CookieConsentSliceType> = ({
                 additionalDeclineProps,
             }) => (
                 <>
-                    {settingsData?.cookie_logo && (
-                        <CookieIcon
-                            src={settingsData?.cookie_logo?.url}
-                            alt={settingsData?.cookie_logo?.alt}
-                        />
+                    {icon?.url && (
+                        <CookieIcon src={icon?.url} alt={icon?.alt} />
                     )}
-                    {settingsData?.cookie_title && (
-                        <CookieTitle
-                            innerHTML={getHtmlText(settingsData?.cookie_title)}
-                        />
+                    {title && !isRichTextEmpty(title) && (
+                        <CookieTitle innerHTML={getHtmlText(title)} />
                     )}
-                    {settingsData?.cookie_text && (
-                        <CookieText
-                            innerHTML={getHtmlText(settingsData?.cookie_text)}
-                        />
+                    {text && !isRichTextEmpty(text) && (
+                        <CookieText innerHTML={getHtmlText(text)} />
                     )}
                     {(acceptAction || declineAction) && (
                         <CookieActions
                             primary={
                                 acceptAction &&
-                                settingsData &&
+                                acceptCtaLabel &&
                                 acceptAction({
                                     handleAccept,
                                     additionalAcceptProps,
-                                    label: getText(
-                                        settingsData.cookie_accept_label
-                                    ),
+                                    label: getText(acceptCtaLabel),
                                 })
                             }
                             secondary={
                                 declineAction &&
-                                settingsData &&
+                                declineCtaLabel &&
                                 declineAction({
                                     handleDecline,
                                     additionalDeclineProps,
-                                    label: getText(
-                                        settingsData.cookie_decline_label
-                                    ),
+                                    label: getText(declineCtaLabel),
                                 })
                             }
                         />

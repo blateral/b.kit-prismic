@@ -22,7 +22,6 @@ import { CallToActionSliceType } from 'slices/CallToAction';
 import { VideoSliceType } from 'slices/Video';
 import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 import { MapSliceType } from 'slices/Map';
-import { CookieConsentSliceType } from 'slices/CookieConsent';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -174,7 +173,6 @@ export interface PrismicPage extends Document {
             | CallToActionSliceType
             | CrossPromotionSliceType
             | PromotionCarouselSliceType
-            | CookieConsentSliceType
         >;
     };
 }
@@ -234,7 +232,7 @@ export interface PrismicSettingsData {
 
     footer_bottomlinks?: { href?: PrismicLink; label?: PrismicKeyText }[];
 
-    cookie_logo?: PrismicImage;
+    cookie_icon?: PrismicImage;
     cookie_title?: PrismicRichText;
     cookie_text?: PrismicRichText;
     cookie_decline_label?: PrismicKeyText;

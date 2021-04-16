@@ -21,3 +21,4 @@ export * from 'slices/Header';
 export * from 'slices/FactList';
 export * from 'slices/Map';
 export * from 'slices/Footer';
+export * from 'slices/CookieConsent';
