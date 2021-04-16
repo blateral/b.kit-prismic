@@ -1,4 +1,4 @@
-/***** Version: 0.5.1 *****/
+/***** Version: 0.6.0 *****/
 
 // export util types and functions
 export * from 'utils/prismic';
@@ -21,3 +21,4 @@ export * from 'slices/Header';
 export * from 'slices/FactList';
 export * from 'slices/Map';
 export * from 'slices/Footer';
+export * from 'slices/CookieConsent';

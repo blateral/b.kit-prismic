@@ -4,6 +4,7 @@ import {
     isSVG,
     updateUrlParameters,
 } from './mapping';
+import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
 
 import { ArticleSliceType } from 'slices/Article';
 import { CrossPromotionSliceType } from 'slices/CrossPromotion';
@@ -20,7 +21,6 @@ import { TeaserSliceType } from 'slices/Teaser';
 import { CallToActionSliceType } from 'slices/CallToAction';
 import { VideoSliceType } from 'slices/Video';
 import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
-import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
 import { MapSliceType } from 'slices/Map';
 
 /****** Types ******/
@@ -231,6 +231,12 @@ export interface PrismicSettingsData {
     footer_newsletter_submit_label?: PrismicKeyText;
 
     footer_bottomlinks?: { href?: PrismicLink; label?: PrismicKeyText }[];
+
+    cookie_icon?: PrismicImage;
+    cookie_title?: PrismicRichText;
+    cookie_text?: PrismicRichText;
+    cookie_decline_label?: PrismicKeyText;
+    cookie_accept_label?: PrismicKeyText;
 
     body?: PrismicNavigationSliceType[];
 
