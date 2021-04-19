@@ -1,30 +1,30 @@
 import {
+    AliasMapperType,
+    AliasSelectMapperType,
+    ImageSizeSettings,
+} from '../utils/mapping';
+import {
     PrismicBoolean,
     PrismicHeading,
+    PrismicImage,
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
     PrismicSelectField,
     PrismicSlice,
-    PrismicImage,
-    isPrismicLinkExternal,
-    resolveUnknownLink,
-    getText,
-    getHtmlText,
-    mapPrismicSelect,
-    getPrismicImage as getImg,
-    getImageFromUrls,
     getHeadlineTag,
+    getHtmlText,
+    getImageFromUrls,
+    getPrismicImage as getImg,
+    getText,
+    isPrismicLinkExternal,
+    mapPrismicSelect,
+    resolveUnknownLink,
 } from '../utils/prismic';
 
 import { CrossPromotion } from '@blateral/b.kit';
-import React from 'react';
-import {
-    AliasMapperType,
-    AliasSelectMapperType,
-    ImageSizeSettings,
-} from 'utils/mapping';
 import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/PromotionCard';
+import React from 'react';
 
 type BgMode = 'full' | 'splitted';
 interface ImageFormats {
@@ -36,24 +36,22 @@ interface ImageFormats {
 
 interface CrossPromotionItems {
     is_main?: PrismicBoolean;
-    format?: PrismicSelectField;
     image?: PrismicImage;
     title?: PrismicHeading;
-    super_title?: PrismicHeading;
-    text?: PrismicRichText;
     link?: PrismicLink;
 }
 
-export interface CrossPromotionSliceType
-    extends PrismicSlice<'CrossPromotion', CrossPromotionItems> {
+export interface CrossPromotionListSliceType
+    extends PrismicSlice<'CrossPromotionList', CrossPromotionItems> {
     primary: {
         is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
-        is_mirrored?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
+
+        format?: PrismicSelectField;
 
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
@@ -107,14 +105,14 @@ const imageSizes = {
     },
 } as ImageSizeSettings<ImageFormats>;
 
-export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
+export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = ({
     primary: {
         super_title,
         title,
         text,
-        is_mirrored,
         is_inverted,
         bg_mode,
+        format,
         primary_link,
         primary_label,
         secondary_link,
@@ -139,7 +137,7 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
 
     const mapPromotionItem = (item: CrossPromotionItems) => {
         // get image format
-        let imgFormat = mapPrismicSelect(imageFormatAlias, item.format);
+        let imgFormat = mapPrismicSelect(imageFormatAlias, format || 'square');
         const isFull = itemCount === 1 || imgFormat === 'landscape-wide';
         if (isFull) imgFormat = 'landscape-wide';
 
@@ -168,8 +166,6 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
                 ),
             },
             title: getText(item.title),
-            superTitle: isFull && getText(item.super_title),
-            text: isFull && getHtmlText(item.text),
             href: resolveUnknownLink(item.link) || '',
         } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
     };
@@ -177,10 +173,10 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
     const mainItems = items.filter((item) => item.is_main);
     const asideItems = items.filter((item) => !item.is_main);
 
+ 
     return (
         <CrossPromotion
             isInverted={is_inverted}
-            isMirrored={is_mirrored}
             bgMode={bgMode}
             superTitle={getText(super_title)}
             superTitleAs={getHeadlineTag(super_title)}

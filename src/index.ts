@@ -1,4 +1,4 @@
-/***** Version: 0.6.0 *****/
+/***** Version: 0.6.2 *****/
 
 // export util types and functions
 export * from 'utils/prismic';
@@ -15,7 +15,7 @@ export * from 'slices/FeatureList';
 export * from 'slices/IconList';
 export * from 'slices/Teaser';
 export * from 'slices/CallToAction';
-export * from 'slices/CrossPromotion';
+export * from 'slices/CrossPromotionList';
 export * from 'slices/PromotionCarousel';
 export * from 'slices/Header';
 export * from 'slices/FactList';
