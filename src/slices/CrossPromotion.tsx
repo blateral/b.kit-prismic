@@ -36,7 +36,6 @@ interface ImageFormats {
 
 interface CrossPromotionItems {
     is_main?: PrismicBoolean;
-    format?: PrismicSelectField;
     image?: PrismicImage;
     title?: PrismicHeading;
     super_title?: PrismicHeading;
@@ -54,6 +53,9 @@ export interface CrossPromotionSliceType
         is_inverted?: PrismicBoolean;
         is_mirrored?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
+
+        format?: PrismicSelectField;
+
 
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
@@ -115,6 +117,7 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
         is_mirrored,
         is_inverted,
         bg_mode,
+        format,
         primary_link,
         primary_label,
         secondary_link,
@@ -139,7 +142,7 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
 
     const mapPromotionItem = (item: CrossPromotionItems) => {
         // get image format
-        let imgFormat = mapPrismicSelect(imageFormatAlias, item.format);
+        let imgFormat = mapPrismicSelect(imageFormatAlias, format || "square");
         const isFull = itemCount === 1 || imgFormat === 'landscape-wide';
         if (isFull) imgFormat = 'landscape-wide';
 
