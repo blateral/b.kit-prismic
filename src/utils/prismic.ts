@@ -4,24 +4,24 @@ import {
     isSVG,
     updateUrlParameters,
 } from './mapping';
-import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
 
 import { ArticleSliceType } from 'slices/Article';
-import { CrossPromotionSliceType } from 'slices/CrossPromotion';
+import { CallToActionSliceType } from 'slices/CallToAction';
+import { CrossPromotionListSliceType } from 'slices/CrossPromotionList';
 import { Document } from 'prismic-javascript/types/documents';
 import { FactListSliceType } from 'slices/FactList';
 import { FeatureListSliceType } from 'slices/FeatureList';
 import { GallerySliceType } from 'slices/Gallery';
 import { HeaderSliceType } from 'slices/Header';
+import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
 import { IconListSliceType } from 'slices/IconList';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { MapSliceType } from 'slices/Map';
 import { PosterSliceType } from 'slices/Poster';
+import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 import { RichText } from 'prismic-dom';
 import { TeaserSliceType } from 'slices/Teaser';
-import { CallToActionSliceType } from 'slices/CallToAction';
 import { VideoSliceType } from 'slices/Video';
-import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
-import { MapSliceType } from 'slices/Map';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -171,7 +171,7 @@ export interface PrismicPage extends Document {
             | TeaserSliceType
             | MapSliceType
             | CallToActionSliceType
-            | CrossPromotionSliceType
+            | CrossPromotionListSliceType
             | PromotionCarouselSliceType
         >;
     };

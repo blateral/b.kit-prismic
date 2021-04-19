@@ -1,30 +1,30 @@
 import {
+    AliasMapperType,
+    AliasSelectMapperType,
+    ImageSizeSettings,
+} from '../utils/mapping';
+import {
     PrismicBoolean,
     PrismicHeading,
+    PrismicImage,
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
     PrismicSelectField,
     PrismicSlice,
-    PrismicImage,
-    isPrismicLinkExternal,
-    resolveUnknownLink,
-    getText,
-    getHtmlText,
-    mapPrismicSelect,
-    getPrismicImage as getImg,
-    getImageFromUrls,
     getHeadlineTag,
+    getHtmlText,
+    getImageFromUrls,
+    getPrismicImage as getImg,
+    getText,
+    isPrismicLinkExternal,
+    mapPrismicSelect,
+    resolveUnknownLink,
 } from '../utils/prismic';
 
 import { CrossPromotion } from '@blateral/b.kit';
-import React from 'react';
-import {
-    AliasMapperType,
-    AliasSelectMapperType,
-    ImageSizeSettings,
-} from 'utils/mapping';
 import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/PromotionCard';
+import React from 'react';
 
 type BgMode = 'full' | 'splitted';
 interface ImageFormats {
@@ -38,13 +38,11 @@ interface CrossPromotionItems {
     is_main?: PrismicBoolean;
     image?: PrismicImage;
     title?: PrismicHeading;
-    super_title?: PrismicHeading;
-    text?: PrismicRichText;
     link?: PrismicLink;
 }
 
-export interface CrossPromotionSliceType
-    extends PrismicSlice<'CrossPromotion', CrossPromotionItems> {
+export interface CrossPromotionListSliceType
+    extends PrismicSlice<'CrossPromotionList', CrossPromotionItems> {
     primary: {
         is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
@@ -55,7 +53,6 @@ export interface CrossPromotionSliceType
         bg_mode?: PrismicSelectField;
 
         format?: PrismicSelectField;
-
 
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
@@ -109,7 +106,7 @@ const imageSizes = {
     },
 } as ImageSizeSettings<ImageFormats>;
 
-export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
+export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = ({
     primary: {
         super_title,
         title,
@@ -142,7 +139,7 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
 
     const mapPromotionItem = (item: CrossPromotionItems) => {
         // get image format
-        let imgFormat = mapPrismicSelect(imageFormatAlias, format || "square");
+        let imgFormat = mapPrismicSelect(imageFormatAlias, format || 'square');
         const isFull = itemCount === 1 || imgFormat === 'landscape-wide';
         if (isFull) imgFormat = 'landscape-wide';
 
@@ -171,8 +168,6 @@ export const CrossPromotionSlice: React.FC<CrossPromotionSliceType> = ({
                 ),
             },
             title: getText(item.title),
-            superTitle: isFull && getText(item.super_title),
-            text: isFull && getHtmlText(item.text),
             href: resolveUnknownLink(item.link) || '',
         } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
     };
