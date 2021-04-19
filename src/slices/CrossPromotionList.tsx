@@ -49,7 +49,6 @@ export interface CrossPromotionListSliceType
         title?: PrismicHeading;
         text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
-        is_mirrored?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
 
         format?: PrismicSelectField;
@@ -111,7 +110,6 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = ({
         super_title,
         title,
         text,
-        is_mirrored,
         is_inverted,
         bg_mode,
         format,
@@ -175,10 +173,10 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = ({
     const mainItems = items.filter((item) => item.is_main);
     const asideItems = items.filter((item) => !item.is_main);
 
+ 
     return (
         <CrossPromotion
             isInverted={is_inverted}
-            isMirrored={is_mirrored}
             bgMode={bgMode}
             superTitle={getText(super_title)}
             superTitleAs={getHeadlineTag(super_title)}
