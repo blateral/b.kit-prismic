@@ -1,4 +1,9 @@
 import {
+    AliasMapperType,
+    AliasSelectMapperType,
+    ImageSizeSettings,
+} from 'utils/mapping';
+import {
     PrismicBoolean,
     PrismicHeading,
     PrismicImage,
@@ -7,30 +12,18 @@ import {
     PrismicSelectField,
     PrismicSettingsPage,
     PrismicSlice,
+    getHeadlineTag,
+    getImageFromUrls,
+    getPrismicImage as getImg,
     getText,
     isPrismicLinkExternal,
-    resolveUnknownLink,
     mapPrismicSelect,
-    getPrismicImage as getImg,
-    getImageFromUrls,
-    PrismicSettingsData,
-    getHeadlineTag,
-    isPrismicLinkEmpty,
+    resolveUnknownLink,
 } from '../utils/prismic';
 
 import { Header } from '@blateral/b.kit';
-import React from 'react';
-import {
-    AliasMapperType,
-    AliasSelectMapperType,
-    ImageSizeSettings,
-} from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-import { HeaderNavProps } from '@blateral/b.kit/lib/components/sections/header/Header';
-import {
-    NavGroup,
-    NavItem,
-} from '@blateral/b.kit/lib/components/sections/header/menu/Flyout';
+import React from 'react';
 
 interface HeaderImageItem {
     image?: PrismicImage;
@@ -126,7 +119,6 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         badge,
         badge_on_mobile,
         title,
-        is_nav_large,
         size,
         primary_label,
         primary_link,
@@ -134,8 +126,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         secondary_link,
     },
     items,
-    settingsPage,
-    pageUrl,
+
     sizeSelectAlias = {
         full: 'full',
         small: 'small',
@@ -146,13 +137,8 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     },
     primaryAction,
     secondaryAction,
-    nav_primaryAction,
-    nav_secondaryAction,
-    mapSocials,
-    injectLogo,
-    search,
+
 }) => {
-    const settingsData = settingsPage?.data;
 
     // map header images
     const headerImageMap = items.map((item) => {
@@ -185,44 +171,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
             badge={headerBadge(badge, badge_on_mobile)}
-            navigation={createMenu({
-                settingsData,
-                pageUrl,
-                mapSocials,
-                is_inverted: settingsData?.header_is_inverted || false,
-                nav_inverted: settingsData?.nav_is_inverted || false,
-                is_nav_large,
-                injectLogo,
-                search,
-                nav_primaryCtaFn: ({ isInverted, size }) =>
-                    nav_primaryAction &&
-                    nav_primaryAction({
-                        isInverted,
-                        size,
-                        label: getText(settingsData?.header_primary_label),
-                        href:
-                            resolveUnknownLink(
-                                settingsData?.header_primary_link
-                            ) || '',
-                        isExternal: isPrismicLinkExternal(
-                            settingsData?.header_primary_link
-                        ),
-                    }),
-                nav_secondaryCtaFn: ({ isInverted, size }) =>
-                    nav_secondaryAction &&
-                    nav_secondaryAction({
-                        isInverted,
-                        size,
-                        label: getText(settingsData?.header_secondary_label),
-                        href:
-                            resolveUnknownLink(
-                                settingsData?.header_secondary_link
-                            ) || '',
-                        isExternal: isPrismicLinkExternal(
-                            settingsData?.header_secondary_link
-                        ),
-                    }),
-            })}
+            
             primaryCta={(isInverted: boolean) =>
                 primaryAction &&
                 primaryAction({
@@ -260,158 +209,33 @@ function headerBadge(badge?: PrismicImage, showOnMobile = true) {
         : undefined;
 }
 
-interface MenuSliceType {
-    settingsData?: PrismicSettingsData;
-    pageUrl?: string;
-    is_inverted?: boolean;
-    nav_inverted?: boolean;
-    nav_primaryCtaFn?: (props: {
-        isInverted?: boolean;
-        size?: 'desktop' | 'mobile';
-    }) => React.ReactNode;
-    nav_secondaryCtaFn?: (props: {
-        isInverted?: boolean;
-        size?: 'desktop' | 'mobile';
-    }) => React.ReactNode;
-    mapSocials?: (
-        socials?: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
-    ) => Array<{
-        href: string;
-        icon: JSX.Element;
-    }>;
-    // inject logo icon into slice
-    injectLogo?: (props: {
-        isInverted?: boolean;
-        size?: 'full' | 'small';
-    }) => React.ReactNode;
+// interface MenuSliceType {
+//     settingsData?: PrismicSettingsData;
+//     pageUrl?: string;
+//     is_inverted?: boolean;
+//     nav_inverted?: boolean;
+//     nav_primaryCtaFn?: (props: {
+//         isInverted?: boolean;
+//         size?: 'desktop' | 'mobile';
+//     }) => React.ReactNode;
+//     nav_secondaryCtaFn?: (props: {
+//         isInverted?: boolean;
+//         size?: 'desktop' | 'mobile';
+//     }) => React.ReactNode;
+//     mapSocials?: (
+//         socials?: Array<{ platform?: PrismicKeyText; link?: PrismicLink }>
+//     ) => Array<{
+//         href: string;
+//         icon: JSX.Element;
+//     }>;
+//     // inject logo icon into slice
+//     injectLogo?: (props: {
+//         isInverted?: boolean;
+//         size?: 'full' | 'small';
+//     }) => React.ReactNode;
 
-    // inject search into slice
-    search?: (isInverted?: boolean) => React.ReactNode;
+//     // inject search into slice
+//     search?: (isInverted?: boolean) => React.ReactNode;
 
-    is_nav_large?: boolean;
-}
-
-const createMenu = ({
-    settingsData,
-    pageUrl,
-    is_inverted,
-    nav_inverted,
-    nav_primaryCtaFn,
-    nav_secondaryCtaFn,
-    mapSocials,
-    injectLogo,
-    search,
-}: MenuSliceType): HeaderNavProps => {
-    // return logo from prismic
-    const logoFull = settingsData?.logo_image_full;
-    const logoSmall = settingsData?.logo_image_small;
-    const logoFullInverted = settingsData?.logo_image_full_inverted;
-    const logoSmallInverted = settingsData?.logo_image_small_inverted;
-
-    const activeItemIndexes = {
-        groupId: '',
-        itemId: '',
-    };
-    settingsData?.main_nav?.every((navGroup, groupIndex) => {
-        const navItems = navGroup?.items;
-        let hasFound = false;
-
-        navItems?.every((navItem, itemIndex) => {
-            const itemLink =
-                (navItem.link && resolveUnknownLink(navItem.link)) || '';
-
-            // try to get page URL
-            let pageUrlString = pageUrl;
-            try {
-                pageUrlString = new URL(pageUrl || '').pathname;
-            } catch (err) {
-                // console.log(err);
-            }
-
-            if (itemLink === pageUrlString) {
-                activeItemIndexes.groupId = groupIndex.toString();
-                activeItemIndexes.itemId = itemIndex.toString();
-                hasFound = true;
-                return false;
-            } else return true;
-        });
-        if (hasFound) return false;
-        else return true;
-    });
-
-    return {
-        isLargeMenu: settingsData?.nav_size || false,
-        isTopbarInverted: is_inverted,
-        isMenuInverted: nav_inverted,
-        logo: {
-            link: resolveUnknownLink(settingsData?.logo_href) || '',
-            icon: injectLogo
-                ? injectLogo
-                : ({ isInverted, size }) =>
-                      logoFn({
-                          isInverted: isInverted || false,
-                          size: size || 'full',
-                          imgUrlSmall: logoSmall?.url || '',
-                          imgUrlSmallInverted: logoSmallInverted?.url || '',
-                          imgUrlFull: logoFull?.url || '',
-                          imgUrlFullInverted: logoFullInverted?.url || '',
-                      }),
-        },
-        socials: mapSocials && mapSocials(settingsData?.socials),
-        search: search && search,
-        primaryCta:
-            (settingsData?.header_primary_label &&
-                !isPrismicLinkEmpty(settingsData.header_primary_link) &&
-                nav_primaryCtaFn) ||
-            undefined,
-        secondaryCta:
-            (settingsData?.header_secondary_label &&
-                !isPrismicLinkEmpty(settingsData?.header_secondary_link) &&
-                nav_secondaryCtaFn) ||
-            undefined,
-        activeNavItem: `navGroup${activeItemIndexes.groupId}.nav-link${activeItemIndexes.itemId}`,
-        navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
-            return {
-                id: `navGroup${index}`,
-                name: navItem?.primary?.name || '',
-                isSmall: navItem?.primary?.is_small,
-
-                items:
-                    navItem.items &&
-                    navItem.items.map((item: any, subindex: number) => {
-                        return {
-                            id: `nav-link${subindex}`,
-                            label: item?.label || '',
-                            link: {
-                                href: resolveUnknownLink(item.link) || '',
-                            },
-                            onClick: (id: string, fullId: string) =>
-                                console.log(fullId),
-                        } as NavItem;
-                    }),
-            } as NavGroup;
-        }),
-    };
-};
-
-const logoFn = ({
-    isInverted,
-    size,
-    imgUrlSmall,
-    imgUrlSmallInverted,
-    imgUrlFull,
-    imgUrlFullInverted,
-}: {
-    isInverted: boolean;
-    size: 'full' | 'small';
-    imgUrlSmall: string;
-    imgUrlSmallInverted: string;
-    imgUrlFull: string;
-    imgUrlFullInverted: string;
-}) => {
-    const url = size === 'full' ? imgUrlFull : imgUrlSmall;
-    const invertedUrl =
-        size === 'full' ? imgUrlFullInverted : imgUrlSmallInverted;
-
-    return <img src={isInverted ? invertedUrl : url} />;
-};
+//     is_nav_large?: boolean;
+// }
