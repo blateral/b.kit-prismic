@@ -151,6 +151,10 @@ export interface PrismicPage extends Document {
         seo_content_group?: PrismicKeyText;
         seo_redirection?: PrismicLink;
 
+        nav_isinverted?: PrismicBoolean;
+        nav_withtopoffset?: PrismicBoolean;
+        nav_menuicon?: PrismicSelectField;
+
         header_title?: PrismicHeading;
         header_size?: PrismicSelectField;
         header_images?: Array<{
