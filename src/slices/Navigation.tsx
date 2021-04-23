@@ -40,12 +40,17 @@ import React from 'react';
 // FIXME: Sollte aus bkit importiert werden
 export interface NavigationProps {
     pageUrl?: string;
-    isLargeMenu?: boolean;
-    isMenuInverted?: boolean;
-    isTopbarInverted?: boolean;
+
+    isLargeMenu?: boolean; // Global Settings
+    isMenuInverted?: boolean; // Global Settings
+    isTopbarInverted?: boolean; // Global Settings
+    withTopbarOffset?: boolean; // Global Settings
+    hideTopbarBackUnderMenu?: boolean; // Global Settings
+    backdropOpacity?: number; // Not Prismic
+    hideTopbarOnScrollDown?: boolean; // Not Prismic
+
     activeNavItem?: string;
     navItems?: NavGroup[];
-    backdropOpacity?: number;
     socialMapper?: (
         socials?:
             | {
@@ -59,9 +64,7 @@ export interface NavigationProps {
         icon: JSX.Element;
     }[];
     logo?: LogoProps;
-    hideTopbarOnScrollDown?: boolean;
-    withTopbarOffset?: boolean;
-    hideTopbarBackUnderMenu?: boolean;
+
     primaryCta?: (props: {
         isInverted?: boolean;
         size?: 'desktop' | 'mobile';
@@ -91,10 +94,13 @@ export const NavigationSlice: React.FC<
     const menu = createMenu({
         pageUrl,
         socials: socialMapper && socialMapper(data?.socials),
-        is_inverted: data?.is_inverted || false,
-        nav_inverted: data?.nav_is_inverted || false,
-        is_nav_large: data?.nav_size,
+        menu_islargemenu: data?.menu_islargemenu,
+
         settingsData: data,
+        menu_ismenuinverted: data?.menu_ismenuinverted,
+        tb_hidetopbarbackundermenu: data?.tb_hidetopbarbackundermenu,
+        tb_istopbarinverted: data?.tb_istopbarinverted,
+        tb_withtopbaroffset: data?.tb_withtopbaroffset,
         nav_primaryCtaFn: primaryCta,
         nav_secondaryCtaFn: secondaryCta,
         logo,
@@ -105,15 +111,22 @@ export const NavigationSlice: React.FC<
 interface MenuSliceType {
     settingsData?: PrismicSettingsData;
     pageUrl?: string;
-    is_inverted?: boolean;
-    nav_inverted?: boolean;
+    menu_islargemenu?: boolean;
+    menu_ismenuinverted?: boolean;
+    tb_istopbarinverted?: boolean;
+    tb_withtopbaroffset?: boolean;
+    tb_hidetopbarbackundermenu?: boolean;
     nav_primaryCtaFn?: (props: {
-        isInverted?: boolean;
-        size?: 'desktop' | 'mobile';
+        isInverted?: boolean | undefined;
+        label?: string | undefined;
+        href?: string | undefined;
+        isExternal?: boolean | undefined;
     }) => React.ReactNode;
     nav_secondaryCtaFn?: (props: {
-        isInverted?: boolean;
-        size?: 'desktop' | 'mobile';
+        isInverted?: boolean | undefined;
+        label?: string | undefined;
+        href?: string | undefined;
+        isExternal?: boolean | undefined;
     }) => React.ReactNode;
     socials?: Array<{
         icon: React.ReactNode;
@@ -124,14 +137,16 @@ interface MenuSliceType {
 
     // inject search into slice
     search?: (isInverted?: boolean) => React.ReactNode;
-
-    is_nav_large?: boolean;
 }
 const createMenu = ({
     settingsData,
     pageUrl,
-    is_inverted,
-    nav_inverted,
+    menu_islargemenu,
+    menu_ismenuinverted,
+    tb_hidetopbarbackundermenu,
+    tb_istopbarinverted,
+    tb_withtopbaroffset,
+
     nav_primaryCtaFn,
     nav_secondaryCtaFn,
     socials,
@@ -176,25 +191,33 @@ const createMenu = ({
     });
 
     return {
-        isLargeMenu: settingsData?.nav_size || false,
-        isTopbarInverted: is_inverted,
-        isMenuInverted: nav_inverted,
+        isLargeMenu: menu_islargemenu || false,
+        isTopbarInverted: tb_istopbarinverted,
+        isMenuInverted: menu_ismenuinverted,
+        hideTopbarBackUnderMenu: tb_hidetopbarbackundermenu,
+        withTopbarOffset: tb_withtopbaroffset,
         logo: {
             icon: logo && logo.icon,
             link: resolveUnknownLink(settingsData?.logo_href) || '',
         },
         socials: socials,
         search: search && search,
-        primaryCta:
-            (settingsData?.header_primary_label &&
-                !isPrismicLinkEmpty(settingsData.header_primary_link) &&
-                nav_primaryCtaFn) ||
-            undefined,
-        secondaryCta:
-            (settingsData?.header_secondary_label &&
-                !isPrismicLinkEmpty(settingsData?.header_secondary_link) &&
-                nav_secondaryCtaFn) ||
-            undefined,
+        primaryCta:({isInverted}) =>
+        nav_primaryCtaFn && !isPrismicLinkEmpty(settingsData?.header_primary_link) && settingsData?.header_primary_label?
+        nav_primaryCtaFn({
+            isInverted,
+            href: resolveUnknownLink( settingsData?.header_primary_link) || "",
+            label: settingsData?.header_primary_label || "",
+            
+        }) : undefined,
+        secondaryCta:({isInverted}) =>
+        nav_secondaryCtaFn && !isPrismicLinkEmpty(settingsData?.header_secondary_link) && settingsData?.header_secondary_label?
+        nav_secondaryCtaFn({
+            isInverted,
+            href: resolveUnknownLink( settingsData?.header_secondary_link) || "",
+            label: settingsData?.header_secondary_label || "",
+        }) : undefined,
+        
         activeNavItem: `navGroup${activeItemIndexes.groupId}.nav-link${activeItemIndexes.itemId}`,
         navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
             return {
