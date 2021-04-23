@@ -226,8 +226,11 @@ export interface PrismicSettingsData {
     header_secondary_label?: PrismicKeyText;
     header_secondary_link?: PrismicLink;
 
-    nav_size?: PrismicBoolean;
-    nav_is_inverted?: PrismicBoolean;
+    menu_islargemenu?: PrismicBoolean;
+    menu_ismenuinverted?: PrismicBoolean;
+    tb_istopbarinverted?: PrismicBoolean;
+    tb_withtopbaroffset?: PrismicBoolean;
+    tb_hidetopbarbackundermenu?: PrismicBoolean;
 
     footer_newsletter_heading?: PrismicHeading;
     footer_newsletter_text?: PrismicRichText;
