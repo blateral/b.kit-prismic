@@ -44,61 +44,59 @@ interface CrossPromotionItems {
 
 export interface CrossPromotionListSliceType
     extends PrismicSlice<'CrossPromotionList', CrossPromotionItems> {
-        primary: {
-            is_active?: PrismicBoolean;
-            super_title?: PrismicHeading;
-            title?: PrismicHeading;
-            text?: PrismicRichText;
-            is_inverted?: PrismicBoolean;
-            is_carousel?: PrismicBoolean;
-            bg_mode?: PrismicSelectField;
-            format?: PrismicSelectField;
-    
-            primary_link?: PrismicLink;
-            secondary_link?: PrismicLink;
-            primary_label?: PrismicKeyText;
-            secondary_label?: PrismicKeyText;
-        };
+    primary: {
+        is_active?: PrismicBoolean;
+        super_title?: PrismicHeading;
+        title?: PrismicHeading;
+        text?: PrismicRichText;
+        is_inverted?: PrismicBoolean;
+        is_carousel?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
+        format?: PrismicSelectField;
 
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
+    };
 
-        // helpers to define component elements outside of slice
-        bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
-        imageFormatAlias?: AliasMapperType<ImageFormats>;
-        primaryAction?: (props: {
-            isInverted?: boolean;
-            label?: string;
-            href?: string;
-            isExternal?: boolean;
-        }) => React.ReactNode;
-        secondaryAction?: (props: {
-            isInverted?: boolean;
-            label?: string;
-            href?: string;
-            isExternal?: boolean;
-        }) => React.ReactNode;
-    
-        controlNext?: (props: {
-            isInverted?: boolean;
-            isActive?: boolean;
-            name?: string;
-        }) => React.ReactNode;
-        controlPrev?: (props: {
-            isInverted?: boolean;
-            isActive?: boolean;
-            name?: string;
-        }) => React.ReactNode;
-        dot?: (props: {
-            isInverted?: boolean;
-            isActive?: boolean;
-            index?: number;
-        }) => React.ReactNode;
-        beforeChange?: (props: { currentStep: number; nextStep: number }) => void;
-        afterChange?: (currentStep: number) => void;
-        onInit?: (steps: number) => void;
-        slidesToShow?: number;
-        responsive?: ResponsiveObject[];
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
+    imageFormatAlias?: AliasMapperType<ImageFormats>;
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+
+    controlNext?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+        name?: string;
+    }) => React.ReactNode;
+    controlPrev?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+        name?: string;
+    }) => React.ReactNode;
+    dot?: (props: {
+        isInverted?: boolean;
+        isActive?: boolean;
+        index?: number;
+    }) => React.ReactNode;
+    beforeChange?: (props: { currentStep: number; nextStep: number }) => void;
+    afterChange?: (currentStep: number) => void;
+    onInit?: (steps: number) => void;
+    slidesToShow?: number;
+    responsive?: ResponsiveObject[];
 }
-
 
 // for this component defines image sizes
 const carouselImageSizes = {
@@ -110,6 +108,12 @@ const carouselImageSizes = {
         xlarge: { width: 690, height: 690 },
     },
     landscape: {
+        small: { width: 619, height: 464 },
+        medium: { width: 983, height: 737 },
+        large: { width: 1399, height: 1050 },
+        xlarge: { width: 1400, height: 1050 },
+    },
+    'landscape-wide': {
         small: { width: 619, height: 464 },
         medium: { width: 983, height: 737 },
         large: { width: 1399, height: 1050 },
@@ -154,13 +158,26 @@ const listImageSizes = {
     },
 } as ImageSizeSettings<ImageFormats>;
 
-export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (props,{
+export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (
+    props
+) => {
+    const {
+        primary: { is_carousel },
+    } = props;
+
+    if (is_carousel) {
+        return createCPromoCarousel(props);
+    } else {
+        return createCPromoList(props);
+    }
+};
+
+const createCPromoList = ({
     primary: {
         super_title,
         title,
         text,
         is_inverted,
-        is_carousel,
         bg_mode,
         format,
         primary_link,
@@ -181,19 +198,10 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (p
     items,
     primaryAction,
     secondaryAction,
-    controlNext,
-    controlPrev,
-    dot,
-    beforeChange,
-    afterChange,
-    onInit,
-    slidesToShow,
-    responsive,
-}) => {
-    if(is_carousel)return createCPromoCarousel(props);
-    
+}: CrossPromotionListSliceType) => {
+    const promoItems: Array<CrossPromotionItems> = items;
     const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
-    const itemCount = items.length;
+    const itemCount = promoItems.length;
     const mapPromotionItem = (item: CrossPromotionItems) => {
         // get image format
         let imgFormat = mapPrismicSelect(imageFormatAlias, format || 'square');
@@ -229,10 +237,9 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (p
         } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
     };
 
-    const mainItems = items.filter((item) => item.is_main);
-    const asideItems = items.filter((item) => !item.is_main);
+    const mainItems = promoItems.filter((item) => item.is_main);
+    const asideItems = promoItems.filter((item) => !item.is_main);
 
- 
     return (
         <CrossPromotion
             isInverted={is_inverted}
@@ -244,12 +251,16 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (p
             text={getHtmlText(text)}
             main={
                 mainItems.length > 0
-                    ? mainItems.map((item) => mapPromotionItem(item))
+                    ? mainItems.map((item: CrossPromotionItems) =>
+                          mapPromotionItem(item)
+                      )
                     : undefined
             }
             aside={
                 asideItems.length > 0
-                    ? asideItems.map((item) => mapPromotionItem(item))
+                    ? asideItems.map((item: CrossPromotionItems) =>
+                          mapPromotionItem(item)
+                      )
                     : undefined
             }
             primaryAction={(isInverted) =>
@@ -274,9 +285,6 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (p
     );
 };
 
-
-
-
 const createCPromoCarousel = ({
     primary: {
         super_title,
@@ -297,7 +305,7 @@ const createCPromoCarousel = ({
     imageFormatAlias = {
         square: 'square',
         landscape: 'landscape',
-        "landscape-wide": 'landscape-wide',
+        'landscape-wide': 'landscape-wide',
         portrait: 'portrait',
     },
     items,
@@ -311,7 +319,7 @@ const createCPromoCarousel = ({
     onInit,
     slidesToShow,
     responsive,
-}:CrossPromotionListSliceType) => {
+}: CrossPromotionListSliceType) => {
     const imgFormat = mapPrismicSelect(imageFormatAlias, format);
     const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
     return (
@@ -378,4 +386,4 @@ const createCPromoCarousel = ({
             responsive={responsive}
         />
     );
-}
+};
