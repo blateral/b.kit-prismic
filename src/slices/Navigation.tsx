@@ -198,6 +198,7 @@ const createMenu = ({
         logo: {
             icon: logo && logo.icon,
             link: resolveUnknownLink(settingsData?.logo_href) || '',
+            scale: logo && logo.scale,
         },
         socials: socials,
         search: search && search,
