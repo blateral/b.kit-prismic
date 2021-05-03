@@ -42,10 +42,11 @@ export interface NavigationProps {
     isLargeMenu?: boolean; // Global Settings
     isMenuInverted?: boolean; // Global Settings
     isTopbarInverted?: boolean; // Global Settings
-    withTopbarOffset?: boolean; // Global Settings
-    hideTopbarBackUnderMenu?: boolean; // Global Settings
+    withTopbarOffset?: boolean; // Not Prismic
+    hideTopbarBackUnderMenu?: boolean; // Not Prismic
     backdropOpacity?: number; // Not Prismic
     hideTopbarOnScrollDown?: boolean; // Not Prismic
+    allowTopbarOverflow?: boolean; // Page Settings
 
     activeNavItem?: string;
     navItems?: NavGroup[];
@@ -87,6 +88,7 @@ export const NavigationSlice: React.FC<
     logo,
     primaryCta,
     secondaryCta,
+    allowTopbarOverflow,
     ...rest
 }) => {
     const data = settingsPage?.data;
@@ -97,14 +99,18 @@ export const NavigationSlice: React.FC<
 
         settingsData: data,
         menu_ismenuinverted: data?.menu_ismenuinverted,
-        tb_hidetopbarbackundermenu: data?.tb_hidetopbarbackundermenu,
         tb_istopbarinverted: data?.tb_istopbarinverted,
-        tb_withtopbaroffset: data?.tb_withtopbaroffset,
         nav_primaryCtaFn: primaryCta,
         nav_secondaryCtaFn: secondaryCta,
         logo,
     });
-    return <Navigation {...menu} {...rest} />;
+    return (
+        <Navigation
+            {...menu}
+            allowTopbarOverflow={allowTopbarOverflow}
+            {...rest}
+        />
+    );
 };
 
 interface MenuSliceType {
@@ -113,8 +119,6 @@ interface MenuSliceType {
     menu_islargemenu?: boolean;
     menu_ismenuinverted?: boolean;
     tb_istopbarinverted?: boolean;
-    tb_withtopbaroffset?: boolean;
-    tb_hidetopbarbackundermenu?: boolean;
     nav_primaryCtaFn?: (props: {
         isInverted?: boolean | undefined;
         label?: string | undefined;
@@ -142,9 +146,7 @@ const createMenu = ({
     pageUrl,
     menu_islargemenu,
     menu_ismenuinverted,
-    tb_hidetopbarbackundermenu,
     tb_istopbarinverted,
-    tb_withtopbaroffset,
 
     nav_primaryCtaFn,
     nav_secondaryCtaFn,
@@ -193,11 +195,10 @@ const createMenu = ({
         isLargeMenu: menu_islargemenu || false,
         isTopbarInverted: tb_istopbarinverted,
         isMenuInverted: menu_ismenuinverted,
-        hideTopbarBackUnderMenu: tb_hidetopbarbackundermenu,
-        withTopbarOffset: tb_withtopbaroffset,
         logo: {
             icon: logo && logo.icon,
             link: resolveUnknownLink(settingsData?.logo_href) || '',
+            scale: logo && logo.scale,
         },
         socials: socials,
         search: search && search,
