@@ -4,24 +4,24 @@ import {
     isSVG,
     updateUrlParameters,
 } from './mapping';
-import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
 
 import { ArticleSliceType } from 'slices/Article';
-import { CrossPromotionSliceType } from 'slices/CrossPromotion';
+import { CallToActionSliceType } from 'slices/CallToAction';
+import { CrossPromotionListSliceType } from 'slices/CrossPromotionList';
 import { Document } from 'prismic-javascript/types/documents';
 import { FactListSliceType } from 'slices/FactList';
 import { FeatureListSliceType } from 'slices/FeatureList';
 import { GallerySliceType } from 'slices/Gallery';
 import { HeaderSliceType } from 'slices/Header';
+import { HeadlineTag } from '@blateral/b.kit/lib/components/typography/Heading';
 import { IconListSliceType } from 'slices/IconList';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { MapSliceType } from 'slices/Map';
 import { PosterSliceType } from 'slices/Poster';
+import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 import { RichText } from 'prismic-dom';
 import { TeaserSliceType } from 'slices/Teaser';
-import { CallToActionSliceType } from 'slices/CallToAction';
 import { VideoSliceType } from 'slices/Video';
-import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
-import { MapSliceType } from 'slices/Map';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -151,6 +151,10 @@ export interface PrismicPage extends Document {
         seo_content_group?: PrismicKeyText;
         seo_redirection?: PrismicLink;
 
+        nav_isinverted?: PrismicBoolean;
+        nav_withtopoffset?: PrismicBoolean;
+        nav_menuicon?: PrismicSelectField;
+
         header_title?: PrismicHeading;
         header_size?: PrismicSelectField;
         header_images?: Array<{
@@ -171,7 +175,7 @@ export interface PrismicPage extends Document {
             | TeaserSliceType
             | MapSliceType
             | CallToActionSliceType
-            | CrossPromotionSliceType
+            | CrossPromotionListSliceType
             | PromotionCarouselSliceType
         >;
     };
@@ -222,8 +226,11 @@ export interface PrismicSettingsData {
     header_secondary_label?: PrismicKeyText;
     header_secondary_link?: PrismicLink;
 
-    nav_size?: PrismicBoolean;
-    nav_is_inverted?: PrismicBoolean;
+    menu_islargemenu?: PrismicBoolean;
+    menu_ismenuinverted?: PrismicBoolean;
+    tb_istopbarinverted?: PrismicBoolean;
+    tb_withtopbaroffset?: PrismicBoolean;
+    tb_hidetopbarbackundermenu?: PrismicBoolean;
 
     footer_newsletter_heading?: PrismicHeading;
     footer_newsletter_text?: PrismicRichText;
