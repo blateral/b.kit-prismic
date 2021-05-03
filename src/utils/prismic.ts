@@ -155,6 +155,8 @@ export interface PrismicPage extends Document {
         nav_withtopoffset?: PrismicBoolean;
         nav_menuicon?: PrismicSelectField;
 
+        nav_allowtopbaroverflow?: PrismicBoolean;
+
         header_title?: PrismicHeading;
         header_size?: PrismicSelectField;
         header_images?: Array<{
