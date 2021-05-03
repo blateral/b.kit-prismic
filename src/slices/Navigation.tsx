@@ -89,6 +89,7 @@ export const NavigationSlice: React.FC<
     logo,
     primaryCta,
     secondaryCta,
+    ...rest
 }) => {
     const data = settingsPage?.data;
     const menu = createMenu({
@@ -105,7 +106,7 @@ export const NavigationSlice: React.FC<
         nav_secondaryCtaFn: secondaryCta,
         logo,
     });
-    return <Navigation {...menu} />;
+    return <Navigation {...menu} {...rest} />;
 };
 
 interface MenuSliceType {
@@ -202,22 +203,33 @@ const createMenu = ({
         },
         socials: socials,
         search: search && search,
-        primaryCta:({isInverted}) =>
-        nav_primaryCtaFn && !isPrismicLinkEmpty(settingsData?.header_primary_link) && settingsData?.header_primary_label?
-        nav_primaryCtaFn({
-            isInverted,
-            href: resolveUnknownLink( settingsData?.header_primary_link) || "",
-            label: settingsData?.header_primary_label || "",
-            
-        }) : undefined,
-        secondaryCta:({isInverted}) =>
-        nav_secondaryCtaFn && !isPrismicLinkEmpty(settingsData?.header_secondary_link) && settingsData?.header_secondary_label?
-        nav_secondaryCtaFn({
-            isInverted,
-            href: resolveUnknownLink( settingsData?.header_secondary_link) || "",
-            label: settingsData?.header_secondary_label || "",
-        }) : undefined,
-        
+        primaryCta: ({ isInverted }) =>
+            nav_primaryCtaFn &&
+            !isPrismicLinkEmpty(settingsData?.header_primary_link) &&
+            settingsData?.header_primary_label
+                ? nav_primaryCtaFn({
+                      isInverted,
+                      href:
+                          resolveUnknownLink(
+                              settingsData?.header_primary_link
+                          ) || '',
+                      label: settingsData?.header_primary_label || '',
+                  })
+                : undefined,
+        secondaryCta: ({ isInverted }) =>
+            nav_secondaryCtaFn &&
+            !isPrismicLinkEmpty(settingsData?.header_secondary_link) &&
+            settingsData?.header_secondary_label
+                ? nav_secondaryCtaFn({
+                      isInverted,
+                      href:
+                          resolveUnknownLink(
+                              settingsData?.header_secondary_link
+                          ) || '',
+                      label: settingsData?.header_secondary_label || '',
+                  })
+                : undefined,
+
         activeNavItem: `navGroup${activeItemIndexes.groupId}.nav-link${activeItemIndexes.itemId}`,
         navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
             return {
