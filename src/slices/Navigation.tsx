@@ -7,15 +7,13 @@ import {
     NavItem,
 } from '@blateral/b.kit/lib/components/sections/header/menu/Flyout';
 import {
+    isPrismicLinkEmpty,
     PrismicKeyText,
     PrismicLink,
-    PrismicSettingsPage,
-} from 'utils/prismic';
-import {
     PrismicSettingsData,
-    isPrismicLinkEmpty,
+    PrismicSettingsPage,
     resolveUnknownLink,
-} from 'index';
+} from 'utils/prismic';
 
 import { Navigation } from '@blateral/b.kit';
 import React from 'react';
