@@ -35,17 +35,15 @@ import React from 'react';
 //     }) => React.ReactNode;
 // }
 
-// FIXME: Sollte aus bkit importiert werden
 export interface NavigationProps {
     pageUrl?: string;
 
     isLargeMenu?: boolean; // Global Settings
     isMenuInverted?: boolean; // Global Settings
     isTopbarInverted?: boolean; // Global Settings
-    withTopbarOffset?: boolean; // Not Prismic
     hideTopbarBackUnderMenu?: boolean; // Not Prismic
+    isTopbarLargeOnPageTop?: boolean; // Not Prismic
     backdropOpacity?: number; // Not Prismic
-    hideTopbarOnScrollDown?: boolean; // Not Prismic
     allowTopbarOverflow?: boolean; // Page Settings
 
     activeNavItem?: string;
@@ -89,6 +87,7 @@ export const NavigationSlice: React.FC<
     primaryCta,
     secondaryCta,
     allowTopbarOverflow,
+    isTopbarLargeOnPageTop,
     ...rest
 }) => {
     const data = settingsPage?.data;
@@ -108,6 +107,7 @@ export const NavigationSlice: React.FC<
         <Navigation
             {...menu}
             allowTopbarOverflow={allowTopbarOverflow}
+            isTopbarLargeOnPageTop={isTopbarLargeOnPageTop}
             {...rest}
         />
     );
@@ -198,7 +198,7 @@ const createMenu = ({
         logo: {
             icon: logo && logo.icon,
             link: resolveUnknownLink(settingsData?.logo_href) || '',
-            scale: logo && logo.scale,
+            pageTopScale: logo && logo.pageTopScale,
         },
         socials: socials,
         search: search && search,
