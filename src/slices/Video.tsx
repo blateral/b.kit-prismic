@@ -196,6 +196,7 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         return (
             <Video
                 {...shardProps}
+                hasBack={bgMode === 'full' || bgMode === 'splitted'}
                 bgImage={mappedImage}
                 embedId={getText(embedId)}
                 playIcon={playIcon}
