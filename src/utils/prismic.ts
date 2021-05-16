@@ -20,6 +20,7 @@ import { MapSliceType } from 'slices/Map';
 import { PosterSliceType } from 'slices/Poster';
 import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 import { RichText } from 'prismic-dom';
+import { TableSliceType } from 'slices/Table';
 import { TeaserSliceType } from 'slices/Teaser';
 import { VideoSliceType } from 'slices/Video';
 
@@ -179,6 +180,7 @@ export interface PrismicPage extends Document {
             | CallToActionSliceType
             | CrossPromotionListSliceType
             | PromotionCarouselSliceType
+            | TableSliceType
         >;
     };
 }
