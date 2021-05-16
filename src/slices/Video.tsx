@@ -1,26 +1,26 @@
-import React from 'react';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import {
     PrismicBoolean,
     PrismicHeading,
-    PrismicRichText,
-    PrismicSlice,
-    PrismicLink,
-    resolveUnknownLink,
     PrismicImage,
-    isPrismicLinkExternal,
-    getPrismicImage as getImg,
-    getImageFromUrl,
     PrismicKeyText,
-    getText,
-    getHtmlText,
+    PrismicLink,
+    PrismicRichText,
     PrismicSelectField,
-    mapPrismicSelect,
+    PrismicSlice,
     getHeadlineTag,
+    getHtmlText,
+    getImageFromUrl,
+    getPrismicImage as getImg,
+    getText,
+    isPrismicLinkExternal,
+    mapPrismicSelect,
+    resolveUnknownLink,
 } from 'utils/prismic';
-import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
-
 import { Video, VideoCarousel } from '@blateral/b.kit';
+
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import React from 'react';
 import { ResponsiveObject } from './slick';
 
 type BgMode = 'full' | 'splitted';
@@ -196,7 +196,8 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         return (
             <Video
                 {...shardProps}
-                hasBack={bgMode === 'full' || bgMode === 'splitted'}
+
+                // FIXME: hasBack={bgMode === 'full' || bgMode === 'splitted'}
                 bgImage={mappedImage}
                 embedId={getText(embedId)}
                 playIcon={playIcon}

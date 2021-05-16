@@ -109,6 +109,7 @@ const imageSizes = {
     main: {
         small: { width: 660, height: 792 },
         medium: { width: 1100, height: 1320 },
+        semilarge: { width: 1100, height: 700 },
         large: { width: 1596, height: 860 },
         xlarge: { width: 2450, height: 1320 },
     },
