@@ -216,7 +216,6 @@ const createCPromoList = ({
         const imgUrl =
             item.image &&
             getImg(item.image, imageFormatAlias?.[imgFormat || 'square']).url;
-
         return {
             size: isFull ? 'full' : 'half',
             image: {
@@ -233,12 +232,15 @@ const createCPromoList = ({
                 ),
             },
             title: getText(item.title),
-            href: resolveUnknownLink(item.link) || '',
+            href: item.link && item.link.link_type !== "Any" && item.link.url ? resolveUnknownLink(item.link) : undefined,
         } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
     };
 
     const mainItems = promoItems.filter((item) => item.is_main);
     const asideItems = promoItems.filter((item) => !item.is_main);
+
+
+
 
     return (
         <CrossPromotion
@@ -360,7 +362,7 @@ const createCPromoCarousel = ({
                         .url;
 
                 return {
-                    href: resolveUnknownLink(link) || '',
+                    href: link && link.link_type !== "Any" ? (resolveUnknownLink(link) || undefined) : undefined,
                     title: getText(title),
                     image: {
                         ...getImageFromUrls(
