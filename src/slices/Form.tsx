@@ -60,6 +60,7 @@ export interface FormSliceType extends PrismicSlice<'Form'> {
     }) => React.ReactNode;
     submitAction?: (props: {
         isInverted?: boolean;
+        isDisabled?: boolean;
         label?: string;
         additionalProps?: { type: 'submit'; as: 'button' | 'a' };
     }) => React.ReactNode;
@@ -154,10 +155,11 @@ export const FormSlice: React.FC<FormSliceType> = ({
                     isExternal: isPrismicLinkExternal(secondary_link),
                 })
             }
-            submitAction={({ isInverted, additionalProps }) =>
+            submitAction={({ isInverted, isDisabled, additionalProps }) =>
                 submitAction &&
                 submitAction({
                     isInverted,
+                    isDisabled,
                     additionalProps,
                     label: getText(submit_label),
                 })
