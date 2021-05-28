@@ -23,6 +23,7 @@ import { RichText } from 'prismic-dom';
 import { TableSliceType } from 'slices/Table';
 import { TeaserSliceType } from 'slices/Teaser';
 import { VideoSliceType } from 'slices/Video';
+import { FormSliceType } from 'slices/Form';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -181,6 +182,7 @@ export interface PrismicPage extends Document {
             | CrossPromotionListSliceType
             | PromotionCarouselSliceType
             | TableSliceType
+            | FormSliceType
         >;
     };
 }

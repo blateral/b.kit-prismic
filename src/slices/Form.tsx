@@ -19,7 +19,12 @@ import {
     FormData,
 } from '@blateral/b.kit/lib/components/sections/Form';
 
-export interface FormSliceType extends PrismicSlice<'FactList'> {
+export interface MailInfo {
+    targetMails?: string[];
+    subjectText?: string;
+    redirectUrl?: string;
+}
+export interface FormSliceType extends PrismicSlice<'Form', PrismicKeyText> {
     primary: {
         is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
@@ -31,6 +36,11 @@ export interface FormSliceType extends PrismicSlice<'FactList'> {
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
+        checkboxLabel?: PrismicRichText;
+
+        targetMail?: PrismicKeyText;
+        subjectText?: PrismicKeyText;
+        redirectUrl?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
     primaryAction?: (props: {
@@ -54,9 +64,13 @@ export interface FormSliceType extends PrismicSlice<'FactList'> {
     }) => React.ReactNode;
     validation?: (values: FormData, errors: FormDataErrors) => FormDataErrors;
     yupValidationSchema?: any;
+    onSubmit?: (props: { mail: MailInfo; data: FormData }) => void;
+    infoLineMessages?: {
+        [key in keyof FormData]: string;
+    };
 }
 
-export const FactListSlice: React.FC<FormSliceType> = ({
+export const FormSlice: React.FC<FormSliceType> = ({
     primary: {
         super_title,
         title,
@@ -67,12 +81,20 @@ export const FactListSlice: React.FC<FormSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
+        checkboxLabel,
+
+        targetMail,
+        subjectText,
+        redirectUrl,
     },
+    items,
     primaryAction,
     secondaryAction,
     submitAction,
     yupValidationSchema,
     validation,
+    onSubmit,
+    infoLineMessages,
 }) => {
     return (
         <Form
@@ -86,22 +108,25 @@ export const FactListSlice: React.FC<FormSliceType> = ({
             formFields={{
                 name: {
                     isRequired: true,
+                    infoMessage: infoLineMessages?.name,
                 },
                 surname: {
                     isRequired: true,
+                    infoMessage: infoLineMessages?.surname,
                 },
                 mail: {
                     isRequired: true,
+                    infoMessage: infoLineMessages?.mail,
                 },
                 phone: {
-                    infoMessage: '*Help extra info line option',
+                    infoMessage: infoLineMessages?.phone,
                 },
                 area: {
-                    isRequired: true,
+                    infoMessage: infoLineMessages?.area,
                 },
             }}
             checkbox={{
-                label: `Ich aktzeptiere die <a href="#0">Datenschutzbestimmungen</a>`,
+                label: getHtmlText(checkboxLabel),
             }}
             primaryAction={(isInverted) =>
                 primaryAction &&
@@ -131,11 +156,23 @@ export const FactListSlice: React.FC<FormSliceType> = ({
                     isExternal: isPrismicLinkExternal(secondary_link),
                 })
             }
-            validation={(values, errors) =>
-                validation && validation(values, errors)
+            validation={
+                validation
+                    ? (values, errors) => validation(values, errors)
+                    : undefined
             }
             yupValidationSchema={yupValidationSchema}
-            onSubmit={console.log}
+            onSubmit={(data) => {
+                onSubmit &&
+                    onSubmit({
+                        mail: {
+                            targetMails: items?.map((mail) => getText(mail)),
+                            redirectUrl: getText(redirectUrl),
+                            subjectText: getText(subjectText),
+                        },
+                        data,
+                    });
+            }}
         />
     );
 };
