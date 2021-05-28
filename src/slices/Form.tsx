@@ -17,6 +17,7 @@ import { Form } from '@blateral/b.kit';
 import {
     FormDataErrors,
     FormData,
+    FormFieldProps,
 } from '@blateral/b.kit/lib/components/sections/Form';
 
 export interface MailInfo {
@@ -65,11 +66,8 @@ export interface FormSliceType extends PrismicSlice<'Form'> {
     validation?: (values: FormData, errors: FormDataErrors) => FormDataErrors;
     yupValidationSchema?: any;
     onSubmit?: (props: { mail: MailInfo; data: FormData }) => void;
-    infoLineMessages?: {
-        [key in keyof FormData]: string;
-    };
-    fieldLabels?: {
-        [key in keyof FormData]: string;
+    fieldSettings?: {
+        [key in keyof FormData]: FormFieldProps;
     };
 }
 
@@ -97,8 +95,7 @@ export const FormSlice: React.FC<FormSliceType> = ({
     yupValidationSchema,
     validation,
     onSubmit,
-    infoLineMessages,
-    fieldLabels,
+    fieldSettings,
 }) => {
     return (
         <Form
@@ -111,27 +108,29 @@ export const FormSlice: React.FC<FormSliceType> = ({
             intro={getHtmlText(intro)}
             formFields={{
                 name: {
-                    isRequired: true,
-                    infoMessage: infoLineMessages?.name,
-                    label: fieldLabels?.name,
+                    isRequired: fieldSettings?.name?.isRequired,
+                    infoMessage: fieldSettings?.name?.infoMessage,
+                    label: fieldSettings?.name?.label,
                 },
                 surname: {
-                    isRequired: true,
-                    infoMessage: infoLineMessages?.surname,
-                    label: fieldLabels?.surname,
+                    isRequired: fieldSettings?.surname?.isRequired,
+                    infoMessage: fieldSettings?.surname?.infoMessage,
+                    label: fieldSettings?.surname?.label,
                 },
                 mail: {
-                    isRequired: true,
-                    infoMessage: infoLineMessages?.mail,
-                    label: fieldLabels?.mail,
+                    isRequired: fieldSettings?.mail?.isRequired,
+                    infoMessage: fieldSettings?.mail?.infoMessage,
+                    label: fieldSettings?.mail?.label,
                 },
                 phone: {
-                    infoMessage: infoLineMessages?.phone,
-                    label: fieldLabels?.phone,
+                    isRequired: fieldSettings?.phone?.isRequired,
+                    infoMessage: fieldSettings?.phone?.infoMessage,
+                    label: fieldSettings?.phone?.label,
                 },
                 area: {
-                    infoMessage: infoLineMessages?.area,
-                    label: fieldLabels?.area,
+                    isRequired: fieldSettings?.area?.isRequired,
+                    infoMessage: fieldSettings?.area?.infoMessage,
+                    label: fieldSettings?.area?.label,
                 },
             }}
             checkbox={{
