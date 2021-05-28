@@ -68,6 +68,9 @@ export interface FormSliceType extends PrismicSlice<'Form'> {
     infoLineMessages?: {
         [key in keyof FormData]: string;
     };
+    fieldLabels?: {
+        [key in keyof FormData]: string;
+    };
 }
 
 export const FormSlice: React.FC<FormSliceType> = ({
@@ -95,6 +98,7 @@ export const FormSlice: React.FC<FormSliceType> = ({
     validation,
     onSubmit,
     infoLineMessages,
+    fieldLabels,
 }) => {
     return (
         <Form
@@ -109,20 +113,25 @@ export const FormSlice: React.FC<FormSliceType> = ({
                 name: {
                     isRequired: true,
                     infoMessage: infoLineMessages?.name,
+                    label: fieldLabels?.name,
                 },
                 surname: {
                     isRequired: true,
                     infoMessage: infoLineMessages?.surname,
+                    label: fieldLabels?.surname,
                 },
                 mail: {
                     isRequired: true,
                     infoMessage: infoLineMessages?.mail,
+                    label: fieldLabels?.mail,
                 },
                 phone: {
                     infoMessage: infoLineMessages?.phone,
+                    label: fieldLabels?.phone,
                 },
                 area: {
                     infoMessage: infoLineMessages?.area,
+                    label: fieldLabels?.area,
                 },
             }}
             checkbox={{
