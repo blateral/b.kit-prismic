@@ -24,7 +24,8 @@ export interface MailInfo {
     subjectText?: string;
     redirectUrl?: string;
 }
-export interface FormSliceType extends PrismicSlice<'Form', PrismicKeyText> {
+
+export interface FormSliceType extends PrismicSlice<'Form'> {
     primary: {
         is_active?: PrismicBoolean;
         super_title?: PrismicHeading;
@@ -36,11 +37,12 @@ export interface FormSliceType extends PrismicSlice<'Form', PrismicKeyText> {
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
-        checkboxLabel?: PrismicRichText;
+        submit_label?: PrismicKeyText;
+        checkbox_label?: PrismicRichText;
 
-        targetMail?: PrismicKeyText;
-        subjectText?: PrismicKeyText;
-        redirectUrl?: PrismicKeyText;
+        subject_text?: PrismicKeyText;
+        redirect_url?: PrismicLink;
+        target_mails?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
     primaryAction?: (props: {
@@ -58,9 +60,7 @@ export interface FormSliceType extends PrismicSlice<'Form', PrismicKeyText> {
     submitAction?: (props: {
         isInverted?: boolean;
         label?: string;
-        href?: string;
-        isExternal?: boolean;
-        additionalProps?: { type: string; as: 'button' | 'a' };
+        additionalProps?: { type: 'submit'; as: 'button' | 'a' };
     }) => React.ReactNode;
     validation?: (values: FormData, errors: FormDataErrors) => FormDataErrors;
     yupValidationSchema?: any;
@@ -81,13 +81,13 @@ export const FormSlice: React.FC<FormSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
-        checkboxLabel,
+        submit_label,
+        checkbox_label,
 
-        targetMail,
-        subjectText,
-        redirectUrl,
+        subject_text,
+        redirect_url,
+        target_mails,
     },
-    items,
     primaryAction,
     secondaryAction,
     submitAction,
@@ -126,7 +126,7 @@ export const FormSlice: React.FC<FormSliceType> = ({
                 },
             }}
             checkbox={{
-                label: getHtmlText(checkboxLabel),
+                label: getHtmlText(checkbox_label),
             }}
             primaryAction={(isInverted) =>
                 primaryAction &&
@@ -151,9 +151,7 @@ export const FormSlice: React.FC<FormSliceType> = ({
                 submitAction({
                     isInverted,
                     additionalProps,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
+                    label: getText(submit_label),
                 })
             }
             validation={
@@ -166,9 +164,12 @@ export const FormSlice: React.FC<FormSliceType> = ({
                 onSubmit &&
                     onSubmit({
                         mail: {
-                            targetMails: items?.map((mail) => getText(mail)),
-                            redirectUrl: getText(redirectUrl),
-                            subjectText: getText(subjectText),
+                            targetMails: target_mails
+                                ?.replace(/\s+/g, '')
+                                ?.split(',')
+                                .map((mail) => getText(mail)),
+                            redirectUrl: resolveUnknownLink(redirect_url) || '',
+                            subjectText: getText(subject_text),
                         },
                         data,
                     });
