@@ -27,7 +27,13 @@ import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/Promot
 import React from 'react';
 import { ResponsiveObject } from './slick';
 
-type BgMode = 'full' | 'splitted';
+type BgMode =
+    | 'full'
+    | 'half-left'
+    | 'half-right'
+    | 'larger-left'
+    | 'larger-right';
+
 interface ImageFormats {
     square: string;
     landscape: string;
@@ -187,7 +193,10 @@ const createCPromoList = ({
     },
     bgModeSelectAlias = {
         full: 'full',
-        splitted: 'splitted',
+        'half-right': 'splitted',
+        'half-left': 'splitted',
+        'larger-left': 'splitted',
+        'larger-right': 'splitted',
     },
     imageFormatAlias = {
         square: 'square',
@@ -232,15 +241,15 @@ const createCPromoList = ({
                 ),
             },
             title: getText(item.title),
-            href: item.link && item.link.link_type !== "Any" && item.link.url ? resolveUnknownLink(item.link) : undefined,
+            href:
+                item.link && item.link.link_type !== 'Any' && item.link.url
+                    ? resolveUnknownLink(item.link)
+                    : undefined,
         } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
     };
 
     const mainItems = promoItems.filter((item) => item.is_main);
     const asideItems = promoItems.filter((item) => !item.is_main);
-
-
-
 
     return (
         <CrossPromotion
@@ -302,7 +311,10 @@ const createCPromoCarousel = ({
     },
     bgModeSelectAlias = {
         full: 'full',
-        splitted: 'splitted',
+        'half-right': 'splitted',
+        'half-left': 'splitted',
+        'larger-left': 'splitted',
+        'larger-right': 'splitted',
     },
     imageFormatAlias = {
         square: 'square',
@@ -362,7 +374,10 @@ const createCPromoCarousel = ({
                         .url;
 
                 return {
-                    href: link && link.link_type !== "Any" ? (resolveUnknownLink(link) || undefined) : undefined,
+                    href:
+                        link && link.link_type !== 'Any'
+                            ? resolveUnknownLink(link) || undefined
+                            : undefined,
                     title: getText(title),
                     image: {
                         ...getImageFromUrls(
