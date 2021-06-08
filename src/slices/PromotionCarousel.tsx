@@ -26,7 +26,12 @@ import {
 } from 'utils/mapping';
 import { ResponsiveObject } from './slick';
 
-type BgMode = 'full' | 'splitted';
+type BgMode =
+    | 'full'
+    | 'half-left'
+    | 'half-right'
+    | 'larger-left'
+    | 'larger-right';
 interface ImageFormats {
     square: string;
     landscape: string;
@@ -132,7 +137,10 @@ export const PromotionCarouselSlice: React.FC<PromotionCarouselSliceType> = ({
     },
     bgModeSelectAlias = {
         full: 'full',
-        splitted: 'splitted',
+        'half-right': 'splitted',
+        'half-left': 'splitted',
+        'larger-left': 'splitted',
+        'larger-right': 'splitted',
     },
     imageFormatAlias = {
         square: 'square',

@@ -161,6 +161,7 @@ export interface PrismicPage extends Document {
 
         header_title?: PrismicHeading;
         header_size?: PrismicSelectField;
+        header_video?: PrismicLink;
         header_images?: Array<{
             image?: PrismicImage;
         }>;

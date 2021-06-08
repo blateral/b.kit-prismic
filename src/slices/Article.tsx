@@ -18,7 +18,12 @@ import { AliasSelectMapperType } from 'utils/mapping';
 import { Article } from '@blateral/b.kit';
 import React from 'react';
 
-type BgMode = 'full' | 'splitted';
+type BgMode =
+    | 'full'
+    | 'half-left'
+    | 'half-right'
+    | 'larger-left'
+    | 'larger-right';
 
 export interface ArticleSliceType extends PrismicSlice<'Article'> {
     primary: {
@@ -65,7 +70,10 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
     },
     bgModeSelectAlias = {
         full: 'full',
-        splitted: 'splitted',
+        'half-right': 'splitted',
+        'half-left': 'splitted',
+        'larger-left': 'splitted',
+        'larger-right': 'splitted',
     },
     primaryAction,
     secondaryAction,

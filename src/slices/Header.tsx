@@ -40,6 +40,7 @@ export interface HeaderSliceType
     extends PrismicSlice<'Header', HeaderImageItem> {
     primary: {
         is_active?: PrismicBoolean;
+        video_url?: PrismicLink;
         primary_label?: PrismicKeyText;
         primary_link?: PrismicLink;
         secondary_label?: PrismicKeyText;
@@ -117,6 +118,7 @@ const imageSizes = {
 
 export const HeaderSlice: React.FC<HeaderSliceType> = ({
     primary: {
+        video_url,
         badge,
         badge_on_mobile,
         title,
@@ -138,9 +140,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     },
     primaryAction,
     secondaryAction,
-
 }) => {
-
     // map header images
     const headerImageMap = items.map((item) => {
         // get image format url for landscape
@@ -168,11 +168,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     return (
         <Header
             size={mapPrismicSelect<HeaderSize>(sizeSelectAlias, size) || 'full'}
+            videoUrl={resolveUnknownLink(video_url) || ''}
             images={headerImageMap}
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
             badge={headerBadge(badge, badge_on_mobile)}
-            
             primaryCta={(isInverted: boolean) =>
                 primaryAction &&
                 primaryAction({
