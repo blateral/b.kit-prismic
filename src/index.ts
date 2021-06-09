@@ -20,7 +20,6 @@ export * from 'slices/IconList';
 export * from 'slices/Map';
 export * from 'slices/Navigation';
 export * from 'slices/Poster';
-export * from 'slices/PromotionCarousel';
 export * from 'slices/Teaser';
 export * from 'slices/Table';
 export * from 'slices/Video';
