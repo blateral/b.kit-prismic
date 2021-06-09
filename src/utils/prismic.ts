@@ -18,7 +18,6 @@ import { IconListSliceType } from 'slices/IconList';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { MapSliceType } from 'slices/Map';
 import { PosterSliceType } from 'slices/Poster';
-import { PromotionCarouselSliceType } from 'slices/PromotionCarousel';
 import { RichText } from 'prismic-dom';
 import { TableSliceType } from 'slices/Table';
 import { TeaserSliceType } from 'slices/Teaser';
@@ -181,7 +180,6 @@ export interface PrismicPage extends Document {
             | MapSliceType
             | CallToActionSliceType
             | CrossPromotionListSliceType
-            | PromotionCarouselSliceType
             | TableSliceType
             | FormSliceType
         >;
