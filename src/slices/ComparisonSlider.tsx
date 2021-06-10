@@ -5,9 +5,9 @@ import {
     PrismicKeyText,
     PrismicSlice,
     getPrismicImage as getImg,
-    getImageFromUrls,
     PrismicSelectField,
     mapPrismicSelect,
+    getImageFromUrls,
 } from '../utils/prismic';
 
 import { ComparisonSlider } from '@blateral/b.kit';
@@ -19,17 +19,17 @@ import {
 } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
-interface ImageFormats {
-    landscape: string;
-    'landscape-wide': string;
-}
-
 type BgMode =
     | 'full'
     | 'half-left'
     | 'half-right'
     | 'larger-left'
     | 'larger-right';
+
+interface ImageFormats {
+    landscape: string;
+    'landscape-wide': string;
+}
 
 export interface ComparisonSliderSliceType
     extends PrismicSlice<'ComparisonSlider'> {
@@ -55,12 +55,12 @@ export interface ComparisonSliderSliceType
 // for this component defines image sizes
 const imageSizes = {
     main: {
-        small: { width: 1023, height: 500 },
-        medium: { width: 1023, height: 500 },
-        large: { width: 1439, height: 512 },
-        xlarge: { width: 2400, height: 854 },
+        small: { width: 640, height: 480 },
+        medium: { width: 1024, height: 576 },
+        large: { width: 1440, height: 810 },
+        xlarge: { width: 1680, height: 810 },
     },
-} as ImageSizeSettings<{ main: ImageProps }>;
+} as ImageSizeSettings<{ main: string }>;
 
 export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
     primary: {
@@ -71,10 +71,6 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
         background_img,
         background_label,
     },
-    imageFormatAlias = {
-        landscape: '',
-        'landscape-wide': 'landscape-wide',
-    },
     bgModeSelectAlias = {
         full: 'full',
         'half-right': 'splitted',
@@ -82,50 +78,71 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
         'larger-left': 'splitted',
         'larger-right': 'splitted',
     },
+    imageFormatAlias = {
+        landscape: '',
+        'landscape-wide': 'landscape-wide',
+    },
     initalValue,
     overlayColor,
     labelColor,
     dragControl,
 }) => {
     // get image urls for different formats / ratios
-    const landscapeUrlForeground =
+    const foregroundUrl =
         foreground_img &&
         getImg(foreground_img, imageFormatAlias.landscape).url;
-    const landscapeUrlBackground =
-        background_img &&
-        getImg(background_img, imageFormatAlias.landscape).url;
-    const landscapeWideUrlForeground =
+    const foregroundWideUrl =
         foreground_img &&
         getImg(foreground_img, imageFormatAlias['landscape-wide']).url;
-    const landscapeWideUrlBackground =
+
+    const backgroundUrl =
+        background_img &&
+        getImg(background_img, imageFormatAlias.landscape).url;
+    const backgroundWideUrl =
         background_img &&
         getImg(background_img, imageFormatAlias['landscape-wide']).url;
 
     const mappedForegroundImage: ImageProps = {
         ...getImageFromUrls(
             {
-                small: landscapeWideUrlForeground || '',
-                medium: landscapeWideUrlForeground,
-                large: landscapeUrlForeground,
-                xlarge: landscapeUrlForeground,
+                small: foregroundUrl || '',
+                medium: foregroundWideUrl,
+                large: foregroundWideUrl,
+                xlarge: foregroundWideUrl,
             },
             imageSizes.main,
             getText(foreground_img?.alt)
         ),
     };
-
     const mappedBackgroundImage: ImageProps = {
         ...getImageFromUrls(
             {
-                small: landscapeWideUrlBackground || '',
-                medium: landscapeWideUrlBackground,
-                large: landscapeUrlBackground,
-                xlarge: landscapeUrlBackground,
+                small: backgroundUrl || '',
+                medium: backgroundWideUrl,
+                large: backgroundWideUrl,
+                xlarge: backgroundWideUrl,
             },
             imageSizes.main,
             getText(background_img?.alt)
         ),
     };
+
+    // const landscapeUrl = image && getImg(image, imageFormatAlias.landscape).url;
+    // const landscapeWideUrl =
+    //     image && getImg(image, imageFormatAlias['landscape-wide']).url;
+
+    // const mappedImage: ImageProps = {
+    //     ...getImageFromUrls(
+    //         {
+    //             small: landscapeWideUrl || '',
+    //             medium: landscapeWideUrl,
+    //             large: landscapeUrl,
+    //             xlarge: landscapeUrl,
+    //         },
+    //         imageSizes.main,
+    //         getText(image?.alt)
+    //     ),
+    // };
 
     return (
         <ComparisonSlider
