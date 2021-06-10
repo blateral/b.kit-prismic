@@ -1,4 +1,4 @@
-/***** Version: 0.9.1 *****/
+/***** Version: 0.9.2 *****/
 
 // export util types and functions
 export * from 'utils/prismic';
@@ -24,3 +24,4 @@ export * from 'slices/Teaser';
 export * from 'slices/Table';
 export * from 'slices/Video';
 export * from 'slices/Form';
+export * from 'slices/ComparisonSlider';
