@@ -24,3 +24,4 @@ export * from 'slices/Teaser';
 export * from 'slices/Table';
 export * from 'slices/Video';
 export * from 'slices/Form';
+export * from 'slices/ComparisonSlider';
