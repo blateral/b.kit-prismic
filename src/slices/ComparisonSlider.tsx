@@ -38,6 +38,7 @@ export interface ComparisonSliderSliceType
 
         is_inverted?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
+        has_anim?: PrismicBoolean;
         foreground_img?: PrismicImage;
         background_img?: PrismicImage;
         foreground_label?: PrismicKeyText;
@@ -66,6 +67,7 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
     primary: {
         is_inverted,
         bg_mode,
+        has_anim,
         foreground_img,
         foreground_label,
         background_img,
@@ -127,23 +129,6 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
         ),
     };
 
-    // const landscapeUrl = image && getImg(image, imageFormatAlias.landscape).url;
-    // const landscapeWideUrl =
-    //     image && getImg(image, imageFormatAlias['landscape-wide']).url;
-
-    // const mappedImage: ImageProps = {
-    //     ...getImageFromUrls(
-    //         {
-    //             small: landscapeWideUrl || '',
-    //             medium: landscapeWideUrl,
-    //             large: landscapeUrl,
-    //             xlarge: landscapeUrl,
-    //         },
-    //         imageSizes.main,
-    //         getText(image?.alt)
-    //     ),
-    // };
-
     return (
         <ComparisonSlider
             isInverted={is_inverted}
@@ -156,6 +141,7 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
             overlayColor={overlayColor}
             labelColor={labelColor}
             dragControl={dragControl}
+            enableControlAnim={has_anim}
         />
     );
 };
