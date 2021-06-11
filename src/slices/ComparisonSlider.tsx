@@ -7,16 +7,12 @@ import {
     getPrismicImage as getImg,
     PrismicSelectField,
     mapPrismicSelect,
-    getImageFromUrls,
+    getImageFromUrl,
 } from '../utils/prismic';
 
 import { ComparisonSlider } from '@blateral/b.kit';
 import React from 'react';
-import {
-    AliasMapperType,
-    AliasSelectMapperType,
-    ImageSizeSettings,
-} from 'utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 type BgMode =
@@ -25,11 +21,6 @@ type BgMode =
     | 'half-right'
     | 'larger-left'
     | 'larger-right';
-
-interface ImageFormats {
-    landscape: string;
-    'landscape-wide': string;
-}
 
 export interface ComparisonSliderSliceType
     extends PrismicSlice<'ComparisonSlider'> {
@@ -46,7 +37,6 @@ export interface ComparisonSliderSliceType
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
-    imageFormatAlias?: AliasMapperType<ImageFormats>;
     initalValue?: number;
     overlayColor?: string;
     labelColor?: string;
@@ -80,50 +70,30 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
         'larger-left': 'splitted',
         'larger-right': 'splitted',
     },
-    imageFormatAlias = {
-        landscape: '',
-        'landscape-wide': 'landscape-wide',
-    },
     initalValue,
     overlayColor,
     labelColor,
     dragControl,
 }) => {
     // get image urls for different formats / ratios
-    const foregroundUrl =
-        foreground_img &&
-        getImg(foreground_img, imageFormatAlias.landscape).url;
-    const foregroundWideUrl =
-        foreground_img &&
-        getImg(foreground_img, imageFormatAlias['landscape-wide']).url;
+    const foregroundUrl = foreground_img
+        ? getImg(foreground_img, 'main').url
+        : '';
 
-    const backgroundUrl =
-        background_img &&
-        getImg(background_img, imageFormatAlias.landscape).url;
-    const backgroundWideUrl =
-        background_img &&
-        getImg(background_img, imageFormatAlias['landscape-wide']).url;
+    const backgroundUrl = background_img
+        ? getImg(background_img, 'main').url
+        : '';
 
     const mappedForegroundImage: ImageProps = {
-        ...getImageFromUrls(
-            {
-                small: foregroundUrl || '',
-                medium: foregroundWideUrl,
-                large: foregroundWideUrl,
-                xlarge: foregroundWideUrl,
-            },
+        ...getImageFromUrl(
+            foregroundUrl,
             imageSizes.main,
             getText(foreground_img?.alt)
         ),
     };
     const mappedBackgroundImage: ImageProps = {
-        ...getImageFromUrls(
-            {
-                small: backgroundUrl || '',
-                medium: backgroundWideUrl,
-                large: backgroundWideUrl,
-                xlarge: backgroundWideUrl,
-            },
+        ...getImageFromUrl(
+            backgroundUrl,
             imageSizes.main,
             getText(background_img?.alt)
         ),

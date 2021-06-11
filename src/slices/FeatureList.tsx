@@ -58,6 +58,7 @@ export interface FeatureListSliceType
         text?: PrismicRichText;
 
         is_inverted?: PrismicBoolean;
+        is_centered?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         image_format?: PrismicSelectField;
 
@@ -133,6 +134,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         super_title,
         text,
         is_inverted,
+        is_centered,
         bg_mode,
         image_format,
         primary_link,
@@ -166,6 +168,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
 
     const sharedProps = {
         isInverted: is_inverted,
+        isCentered: is_centered,
         bgMode: mapPrismicSelect(bgModeSelectAlias, bg_mode),
         title: getText(title),
         titleAs: getHeadlineTag(title),
