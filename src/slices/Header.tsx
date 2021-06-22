@@ -98,7 +98,8 @@ export interface HeaderSliceType
         isInverted?: boolean;
         size?: 'full' | 'small';
     }) => React.ReactNode;
-
+    customTopGradient?: string;
+    customBottomGradient?: string;
     search?: (isInverted?: boolean) => React.ReactNode;
 
     settingsPage?: PrismicSettingsPage;
@@ -129,7 +130,8 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         secondary_link,
     },
     items,
-
+    customBottomGradient,
+    customTopGradient,
     sizeSelectAlias = {
         full: 'full',
         small: 'small',
@@ -191,6 +193,8 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                     isExternal: isPrismicLinkExternal(secondary_link),
                 })
             }
+            customTopGradient={customTopGradient}
+            customBottomGradient={customBottomGradient}
         />
     );
 };
