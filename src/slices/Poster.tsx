@@ -104,7 +104,6 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
     return (
         <Poster
             image={mappedImage}
-            isInverted={is_inverted}
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
