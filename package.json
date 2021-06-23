@@ -35,7 +35,7 @@
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "^0.10.7",
+        "@blateral/b.kit": "^0.10.8",
         "@prismicio/client": "^4.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",

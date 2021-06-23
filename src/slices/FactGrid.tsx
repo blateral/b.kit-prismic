@@ -115,7 +115,7 @@ export const FactGridSlice: React.FC<FactGridSliceType> = ({
         splitted: 'splitted',
     },
     imageFormatAlias = {
-        landscape: '',
+        landscape: 'landscape',
         'landscape-wide': 'landscape-wide',
     },
     columnAlias = {
