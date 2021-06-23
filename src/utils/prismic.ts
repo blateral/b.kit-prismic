@@ -10,6 +10,7 @@ import { CallToActionSliceType } from 'slices/CallToAction';
 import { CrossPromotionListSliceType } from 'slices/CrossPromotionList';
 import { Document } from 'prismic-javascript/types/documents';
 import { FactListSliceType } from 'slices/FactList';
+import { FactGridSliceType } from 'slices/FactGrid';
 import { FeatureListSliceType } from 'slices/FeatureList';
 import { GallerySliceType } from 'slices/Gallery';
 import { HeaderSliceType } from 'slices/Header';
@@ -175,6 +176,7 @@ export interface PrismicPage extends Document {
             | VideoSliceType
             | PosterSliceType
             | FactListSliceType
+            | FactGridSliceType
             | IconListSliceType
             | HeaderSliceType
             | TeaserSliceType

@@ -12,6 +12,7 @@ export * from 'slices/CallToAction';
 export * from 'slices/CookieConsent';
 export * from 'slices/CrossPromotionList';
 export * from 'slices/FactList';
+export * from 'slices/FactGrid';
 export * from 'slices/FeatureList';
 export * from 'slices/Footer';
 export * from 'slices/Gallery';
