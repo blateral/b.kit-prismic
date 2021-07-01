@@ -25,6 +25,8 @@ import { TeaserSliceType } from 'slices/Teaser';
 import { VideoSliceType } from 'slices/Video';
 import { FormSliceType } from 'slices/Form';
 import { ComparisonSliderSliceType } from 'slices/ComparisonSlider';
+import { NewsTextSliceType } from 'slices/News/Text';
+import { NewsTableSliceType } from 'slices/News/Table';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -186,6 +188,8 @@ export interface PrismicPage extends Document {
             | ComparisonSliderSliceType
             | TableSliceType
             | FormSliceType
+            | NewsTextSliceType
+            | NewsTableSliceType
         >;
     };
 }
