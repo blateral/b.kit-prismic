@@ -29,11 +29,7 @@
         "url": "https://github.com/blateral/b.kit-prismic/issues"
     },
     "homepage": "https://github.com/blateral/b.kit-prismic#readme",
-    "husky": {
-        "hooks": {
-            "pre-push": " yarn check-yalc && yarn tc"
-        }
-    },
+
     "devDependencies": {
         "@blateral/b.kit": "^0.10.9",
         "@prismicio/client": "^4.0.0",
