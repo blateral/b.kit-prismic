@@ -14,7 +14,7 @@ import {
 
 import React from 'react';
 import { Table } from '@blateral/b.kit';
-import { TableProps } from '@blateral/b.kit/lib/components/blocks/TableBlock';
+import { TableProps } from '@blateral/b.kit/lib/components/sections/Table'
 
 interface TableItem {
     table_title?: PrismicKeyText;

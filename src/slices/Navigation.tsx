@@ -5,7 +5,7 @@ import {
 import {
     NavGroup,
     NavItem,
-} from '@blateral/b.kit/lib/components/sections/header/menu/Flyout';
+} from '@blateral/b.kit/lib/components/sections/navigation/menu/Flyout';
 import {
     isPrismicLinkEmpty,
     PrismicKeyText,
