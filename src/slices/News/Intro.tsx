@@ -5,17 +5,19 @@ import {
     PrismicLink,
     PrismicRichText,
     PrismicSlice,
-    isPrismicLinkExternal,
-
-    resolveUnknownLink,
-    getText,
     PrismicImage,
+    getHtmlText,
+    getPrismicImage as getImg,
+    getImageFromUrls,
+    getText,
+
 } from '../../utils/prismic';
 
-import { AliasSelectMapperType } from '../../utils/mapping';
-import { NewsIntro, NewsList } from '@blateral/b.kit';
+import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
+import { NewsIntro } from '@blateral/b.kit';
 import React from 'react';
 import format from 'date-fns/format';
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 type BgMode =
     | 'full'
@@ -24,11 +26,21 @@ type BgMode =
     | 'larger-left'
     | 'larger-right';
 
-export interface NewsListSliceType extends PrismicSlice<'NewsList'> {
+
+const imageSizes = {
+    main: {
+        small: { width: 619, height: 348 },
+        medium: { width: 791, height: 445 },
+        semilarge: { width: 944, height: 531 },
+    },
+} as ImageSizeSettings<{ main: ImageProps }>;
+export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
     primary: {
         is_active?: PrismicBoolean;
-        title?: PrismicHeading;
+        intro_heading?: PrismicHeading;
+        intro?: PrismicRichText;
         tag?: PrismicKeyText;
+        news_image?: PrismicImage;
         author_name?: PrismicKeyText;
         author_image?: PrismicImage;
         publication_date?: PrismicKeyText;
@@ -40,41 +52,49 @@ export interface NewsListSliceType extends PrismicSlice<'NewsList'> {
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-    secondaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
+
+
 }
 
-export const NewsListSlice: React.FC<NewsListSliceType> = ({
+export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     primary: {
         tag,
         is_inverted,
         author_name,
         publication_date,
-        author_image,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
+        news_image,
+        intro,
+        intro_heading,
+
     }
 
 }) => {
+    console.log("Intro fuck you ", news_image);
+
+    const introImageUrl = news_image && getImg(news_image).url;
+    const mappedImage: ImageProps = {
+        ...getImageFromUrls(
+            {
+                small: introImageUrl || '',
+                medium: introImageUrl,
+                semilarge: introImageUrl,
+            },
+            imageSizes.main,
+            getText(news_image?.alt)
+        ),
+    };
+
+    console.log("Stupid gucking immage: ", mappedImage);
 
     const publicationDate = generatePublicationDateObject(publication_date);
     return (
         <NewsIntro
-            title={"TITLE IN PRISMIC EINBAUEN"}
+            title={getHtmlText(intro_heading)}
+            text={getHtmlText(intro)}
+            image={mappedImage}
             isInverted={is_inverted}
             tag={tag || ""}
+
             meta={
                 {
                     author: author_name || "",
