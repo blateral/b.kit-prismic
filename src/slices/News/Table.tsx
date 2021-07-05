@@ -4,7 +4,6 @@ import {
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
-    PrismicSelectField,
     PrismicSlice,
     isPrismicLinkExternal,
 
@@ -15,7 +14,14 @@ import {
 import { AliasSelectMapperType } from '../../utils/mapping';
 import { NewsTable } from '@blateral/b.kit';
 import React from 'react';
+import { TableProps } from '@blateral/b.kit/lib/components/sections/Table';
 
+
+
+interface TableItem {
+    table_title?: PrismicKeyText;
+    table?: PrismicRichText;
+}
 type BgMode =
     | 'full'
     | 'half-left'
@@ -23,7 +29,7 @@ type BgMode =
     | 'larger-left'
     | 'larger-right';
 
-export interface NewsTableSliceType extends PrismicSlice<'NewsTable'> {
+export interface NewsTableSliceType extends PrismicSlice<'NewsTable', TableItem> {
     primary: {
         is_active?: PrismicBoolean;
         title?: PrismicHeading;
@@ -52,61 +58,19 @@ export interface NewsTableSliceType extends PrismicSlice<'NewsTable'> {
 
 export const NewsTableSlice: React.FC<NewsTableSliceType> = ({
     primary: {
-        table,
         is_inverted,
-        primary_link,
         primary_label,
-        secondary_link,
         secondary_label,
+        primary_link,
+        secondary_link,
     },
+    items,
     primaryAction,
     secondaryAction,
 }) => {
     return (
         <NewsTable
-            tableItems={[
-                {
-                    rowTitle: [
-                        'Table Headline',
-                        'Table Headline',
-                        'Table Headline',
-                        'Table Headline',
-                    ],
-                    row: [
-                        {
-                            cols: [
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                            ],
-                        },
-                        {
-                            cols: [
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                            ],
-                        },
-                        {
-                            cols: [
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                            ],
-                        },
-                        {
-                            cols: [
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                                'Lorem ipsum dolor sit amet',
-                            ],
-                        },
-                    ],
-                }]}
+            tableItems={createTableItems(items)}
             isInverted={is_inverted}
             primaryAction={(isInverted) =>
                 primaryAction &&
@@ -129,3 +93,38 @@ export const NewsTableSlice: React.FC<NewsTableSliceType> = ({
         />
     );
 };
+
+
+
+function createTableItems(tableItems: TableItem[]): TableProps[] {
+    return tableItems.filter(item => item.table && item.table.length > 0).map(item => {
+        const { tableHeaders, sliceRows } = convertCsvToTable(getText(item.table!));
+
+        return {
+            tableTitle: item.table_title || "",
+            rowTitle: tableHeaders || [],
+            row: sliceRows || []
+
+        }
+    })
+
+}
+
+
+function convertCsvToTable(tableCsv: string) {
+
+    const rows = tableCsv.split("\n");
+    const tableHeaders = rows[0].split(",");
+
+    const sliceRows = rows.map((row) => {
+        const columns = row.split(",");
+        return {
+            cols: columns
+        }
+    })
+
+
+    sliceRows.shift();
+
+    return { tableHeaders, sliceRows }
+}

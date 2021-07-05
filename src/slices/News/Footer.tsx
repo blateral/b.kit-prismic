@@ -1,19 +1,15 @@
 import {
     PrismicBoolean,
-    PrismicHeading,
     PrismicKeyText,
-    PrismicLink,
     PrismicSlice,
-    isPrismicLinkExternal,
-
-    resolveUnknownLink,
-    getText,
-    PrismicNewsPage,
     getHtmlText,
+    PrismicNewsPage,
+    getText,
+    isPrismicLinkExternal,
 } from '../../utils/prismic';
 
 import { AliasSelectMapperType } from '../../utils/mapping';
-import { NewsList } from '@blateral/b.kit';
+import { NewsFooter } from '@blateral/b.kit';
 import React from 'react';
 import format from 'date-fns/format';
 
@@ -24,70 +20,47 @@ type BgMode =
     | 'larger-left'
     | 'larger-right';
 
-export interface NewsListSliceType extends PrismicSlice<'NewsList', PrismicNewsPage> {
+export interface NewsFooterSliceType extends PrismicSlice<'NewsFooter', PrismicNewsPage> {
     primary: {
         is_active?: PrismicBoolean;
-        title?: PrismicHeading;
+
+        publication_date?: PrismicKeyText;
         is_inverted?: PrismicBoolean;
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
+        news_footer_background?: PrismicBoolean
+
+
+
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
+
 }
 
-export const NewsListSlice: React.FC<NewsListSliceType> = ({
+export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
     primary: {
-        is_inverted,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
-        title
+        news_footer_background,
+        is_inverted
     },
     items,
-    primaryAction,
-    secondaryAction,
+    secondaryAction
+
+
 }) => {
 
-    const newsListMap = mapNewsListData(items);
+    const newsListMap = mapNewsListData(items, secondaryAction);
+
     return (
-        <NewsList
-            title={getText(title)}
-            news={newsListMap}
+        <NewsFooter
+            news={newsListMap || []}
             isInverted={is_inverted}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
-            }
-            secondaryAction={(isInverted) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
-            }
+            hasBack={news_footer_background}
+
         />
     );
 };

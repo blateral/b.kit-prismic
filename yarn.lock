@@ -107,10 +107,8 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@blateral/b.kit@^0.10.9":
+"@blateral/b.kit@file:.yalc/@blateral/b.kit":
   version "0.10.9"
-  resolved "https://registry.yarnpkg.com/@blateral/b.kit/-/b.kit-0.10.9.tgz#2ca28f51d663ae6fcbc35fb7544202273b68f551"
-  integrity sha512-R/LO4rd3PBpHc60usI3Jtr0cjPLOsJr5ChBCvz9N6wbkrCG/MojLMHVu1QtlG6koUdiRdbF5NKCtWkY6gy6ygQ==
 
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
@@ -646,6 +644,11 @@ csstype@^3.0.2:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.6.tgz#865d0b5833d7d8d40f4e5b8a6d76aea3de4725ef"
   integrity sha512-+ZAmfyWMT7TiIlzdqJgjMb7S4f1beorDbWbsocyK4RaiqA5RTX3K14bnBWmmA9QEM0gRdsjyyrEmcyga8Zsxmw==
+
+date-fns@^2.22.1:
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.22.1.tgz#1e5af959831ebb1d82992bf67b765052d8f0efc4"
+  integrity sha512-yUFPQjrxEmIsMqlHhAhmxkuH769baF21Kk+nZwZGyrMoyLA+LugaQtC0+Tqf9CBUUULWwUJt6Q5ySI3LJDDCGg==
 
 debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   version "4.3.1"

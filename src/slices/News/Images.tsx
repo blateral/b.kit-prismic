@@ -1,20 +1,17 @@
 import {
     PrismicBoolean,
-    PrismicHeading,
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
-    PrismicSelectField,
     PrismicSlice,
     isPrismicLinkExternal,
 
     resolveUnknownLink,
     getText,
-    getHtmlText,
 } from '../../utils/prismic';
 
 import { AliasSelectMapperType } from '../../utils/mapping';
-import { NewsImages, NewsText } from '@blateral/b.kit';
+import { NewsImages } from '@blateral/b.kit';
 import React from 'react';
 
 type BgMode =

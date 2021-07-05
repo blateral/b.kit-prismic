@@ -1,35 +1,35 @@
 Arguments: 
-  /home/falco/.nvm/versions/node/v15.2.1/bin/node /usr/share/yarn/bin/yarn.js publish
+  /home/falco/.nvm/versions/node/v15.14.0/bin/node /usr/share/yarn/bin/yarn.js add datefns
 
 PATH: 
-  /tmp/yarn--1618830695390-0.25754505034055164:/home/falco/Documents/b.kit-prismic/node_modules/.bin:/home/falco/.config/yarn/link/node_modules/.bin:/home/falco/.yarn/bin:/home/falco/.nvm/versions/node/v15.2.1/libexec/lib/node_modules/npm/bin/node-gyp-bin:/home/falco/.nvm/versions/node/v15.2.1/lib/node_modules/npm/bin/node-gyp-bin:/home/falco/.nvm/versions/node/v15.2.1/bin/node_modules/npm/bin/node-gyp-bin:/home/falco/.nvm/versions/node/v15.2.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+  /home/falco/.local/bin:/home/falco/.nvm/versions/node/v15.14.0/bin:/home/falco/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 
 Yarn version: 
   1.22.5
 
 Node version: 
-  15.2.1
+  15.14.0
 
 Platform: 
   linux x64
 
 Trace: 
-  Error: canceled
-      at Interface.<anonymous> (/usr/share/yarn/lib/cli.js:137009:13)
-      at Interface.emit (node:events:329:20)
-      at Interface._ttyWrite (node:readline:875:16)
-      at ReadStream.onkeypress (node:readline:213:10)
-      at ReadStream.emit (node:events:329:20)
-      at emitKeys (node:internal/readline/utils:345:14)
-      at emitKeys.next (<anonymous>)
-      at ReadStream.onData (node:readline:1144:36)
-      at ReadStream.emit (node:events:329:20)
-      at addChunk (node:internal/streams/readable:304:12)
+  Error: https://registry.yarnpkg.com/datefns: Not found
+      at Request.params.callback [as _callback] (/usr/share/yarn/lib/cli.js:66988:18)
+      at Request.self.callback (/usr/share/yarn/lib/cli.js:140749:22)
+      at Request.emit (node:events:369:20)
+      at Request.<anonymous> (/usr/share/yarn/lib/cli.js:141721:10)
+      at Request.emit (node:events:369:20)
+      at IncomingMessage.<anonymous> (/usr/share/yarn/lib/cli.js:141643:12)
+      at Object.onceWrapper (node:events:475:28)
+      at IncomingMessage.emit (node:events:381:22)
+      at endReadableNT (node:internal/streams/readable:1307:12)
+      at processTicksAndRejections (node:internal/process/task_queues:81:21)
 
 npm manifest: 
   {
       "name": "@blateral/b.kit-prismic",
-      "version": "0.6.1",
+      "version": "0.9.6",
       "description": "",
       "main": "lib/index.js",
       "module": "lib/index.es.js",
@@ -60,11 +60,11 @@ npm manifest:
       "homepage": "https://github.com/blateral/b.kit-prismic#readme",
       "husky": {
           "hooks": {
-              "pre-push": " yarn check-yalc && yarn tc"
+              "pre-push": "yarn tc && yarn deploy-storybook"
           }
       },
       "devDependencies": {
-          "@blateral/b.kit": "^0.6.0",
+          "@blateral/b.kit": "file:.yalc/@blateral/b.kit",
           "@prismicio/client": "^4.0.0",
           "@rollup/plugin-commonjs": "^17.1.0",
           "@rollup/plugin-node-resolve": "^11.1.1",
@@ -92,14 +92,15 @@ npm manifest:
           "typescript": "^4.1.2"
       },
       "peerDependencies": {
-          "@blateral/b.kit": "^0.5.6",
+          "@blateral/b.kit": "^0.10.9",
           "@prismicio/client": "^4.0.0",
           "prismic-dom": "^2.2.4",
           "prismic-javascript": "^3.0.2",
           "react": "^17.0.1",
           "react-dom": "^17.0.1",
           "styled-components": "^5.2.1"
-      }
+      },
+      "dependencies": {}
   }
 
 yarn manifest: 
@@ -215,10 +216,8 @@ Lockfile:
       lodash "^4.17.19"
       to-fast-properties "^2.0.0"
   
-  "@blateral/b.kit@^0.6.0":
-    version "0.6.0"
-    resolved "https://registry.yarnpkg.com/@blateral/b.kit/-/b.kit-0.6.0.tgz#4fac2de26e0d02a75d82d093db6825d3cb8fdfe1"
-    integrity sha512-8O+BYnX0B/zyhJbYdNjx4mmm+NT92s4dNhgfsw4B9dKkK/4GKLmVQAOeEjzEk6b5l65SPjtkK9BtDf/K3z44Bw==
+  "@blateral/b.kit@file:.yalc/@blateral/b.kit":
+    version "0.10.9"
   
   "@emotion/is-prop-valid@^0.8.8":
     version "0.8.8"
