@@ -29,9 +29,13 @@
         "url": "https://github.com/blateral/b.kit-prismic/issues"
     },
     "homepage": "https://github.com/blateral/b.kit-prismic#readme",
-
+    "husky": {
+        "hooks": {
+            "pre-push": "yarn tc && yarn deploy-storybook"
+        }
+    },
     "devDependencies": {
-        "@blateral/b.kit": "^0.10.9",
+        "@blateral/b.kit": "file:.yalc/@blateral/b.kit",
         "@prismicio/client": "^4.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",
@@ -67,5 +71,7 @@
         "react-dom": "^17.0.1",
         "styled-components": "^5.2.1"
     },
-    "dependencies": {}
+    "dependencies": {
+        "date-fns": "^2.22.1"
+    }
 }
