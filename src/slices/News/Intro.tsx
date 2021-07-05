@@ -68,7 +68,6 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     }
 
 }) => {
-    console.log("Intro fuck you ", news_image);
 
     const introImageUrl = news_image && getImg(news_image).url;
     const mappedImage: ImageProps = {
@@ -83,7 +82,6 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
         ),
     };
 
-    console.log("Stupid gucking immage: ", mappedImage);
 
     const publicationDate = generatePublicationDateObject(publication_date);
     return (

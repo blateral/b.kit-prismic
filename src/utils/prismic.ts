@@ -169,13 +169,18 @@ export interface PrismicNewsPage extends Document {
         news_intro?: PrismicRichText;
         news_footer_inverted?: PrismicBoolean;
         news_footer_background?: PrismicBoolean
+
+
         primary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_link?: PrismicLink;
         secondary_label?: PrismicKeyText;
 
+        author_label?: PrismicKeyText;
         author_name?: PrismicKeyText;
         author_image?: PrismicImage;
+        author_has_background?: PrismicBoolean;
+        author_is_inverted?: PrismicBoolean;
 
         body: Array<NewsTextSliceType | NewsTableSliceType | NewsIntroSliceType | NewsListSliceType>;
     };

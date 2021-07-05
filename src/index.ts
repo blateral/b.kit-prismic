@@ -31,5 +31,8 @@ export * from 'slices/News/Table';
 export * from 'slices/News/Intro';
 export * from 'slices/News/List';
 export * from 'slices/News/Footer';
+export * from 'slices/News/AuthorCard';
+export * from 'slices/News/Video';
+
 
 
