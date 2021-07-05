@@ -27,7 +27,7 @@ const imageSizes = {
         small: { width: 150, height: 150 }
     },
 } as ImageSizeSettings<{ main: ImageProps }>;
-export interface NewsAuthorCardSliceType extends PrismicSlice<'NewsAuthor'> {
+export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
     primary: {
         is_active?: PrismicBoolean;
         has_background?: PrismicBoolean;
@@ -43,7 +43,7 @@ export interface NewsAuthorCardSliceType extends PrismicSlice<'NewsAuthor'> {
 
 }
 
-export const NewsAuthorCardSlice: React.FC<NewsAuthorCardSliceType> = ({
+export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
     primary: {
         is_inverted,
         has_background,
