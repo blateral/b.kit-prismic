@@ -61,8 +61,9 @@ export const CookieConsentSlice: React.FC<CookieConsentSliceType> = ({
     declineAction,
     ...rest
 }) => {
+    // FIXME: Locale key 'eng' not compatible with 'en'
     return (
-        <CookieConsent {...rest}>
+        <CookieConsent {...{ ...rest, localeKey: "de" }}>
             {({
                 handleAccept,
                 handleDecline,
