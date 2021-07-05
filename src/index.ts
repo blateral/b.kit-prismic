@@ -26,3 +26,13 @@ export * from 'slices/Table';
 export * from 'slices/Video';
 export * from 'slices/Form';
 export * from 'slices/ComparisonSlider';
+export * from 'slices/News/Text';
+export * from 'slices/News/Table';
+export * from 'slices/News/Intro';
+export * from 'slices/News/List';
+export * from 'slices/News/Footer';
+export * from 'slices/News/AuthorCard';
+export * from 'slices/News/Video';
+
+
+

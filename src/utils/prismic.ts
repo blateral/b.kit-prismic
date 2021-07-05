@@ -25,6 +25,11 @@ import { TeaserSliceType } from 'slices/Teaser';
 import { VideoSliceType } from 'slices/Video';
 import { FormSliceType } from 'slices/Form';
 import { ComparisonSliderSliceType } from 'slices/ComparisonSlider';
+import { NewsTextSliceType } from 'slices/News/Text';
+import { NewsTableSliceType } from 'slices/News/Table';
+import { NewsIntroSliceType } from 'slices/News/Intro';
+import { NewsVideoSliceType } from 'slices/News/Video';
+import { NewsListSliceType } from 'slices/News/List';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -142,6 +147,47 @@ export interface PrismicLinkToMedia {
     width?: string;
 }
 
+export interface PrismicNewsPage extends Document {
+    data: {
+        uid: PrismicUid;
+        pagetitle?: PrismicHeading;
+        seo_socialimage?: PrismicImage;
+        seo_description?: PrismicRichText;
+        seo_keywords?: PrismicKeyText;
+        seo_search_index?: PrismicBoolean;
+        seo_trace_links?: PrismicBoolean;
+        seo_content_group?: PrismicKeyText;
+        seo_redirection?: PrismicLink;
+
+        nav_isinverted?: PrismicBoolean;
+        nav_withtopoffset?: PrismicBoolean;
+        nav_menuicon?: PrismicSelectField;
+
+        nav_allowtopbaroverflow?: PrismicBoolean;
+
+        news_image?: PrismicImage;
+        news_heading?: PrismicHeading;
+        news_intro?: PrismicRichText;
+        news_footer_inverted?: PrismicBoolean;
+        news_footer_background?: PrismicBoolean
+
+
+        primary_link?: PrismicLink;
+        primary_label?: PrismicKeyText;
+        secondary_link?: PrismicLink;
+        secondary_label?: PrismicKeyText;
+
+        author_label?: PrismicKeyText;
+        author_name?: PrismicKeyText;
+        author_image?: PrismicImage;
+        author_has_background?: PrismicBoolean;
+        author_is_inverted?: PrismicBoolean;
+
+        body: Array<NewsTextSliceType | NewsTableSliceType | NewsIntroSliceType | NewsVideoSliceType>;
+    };
+}
+
+
 export interface PrismicPage extends Document {
     data: {
         uid: PrismicUid;
@@ -169,6 +215,8 @@ export interface PrismicPage extends Document {
         header_badge?: PrismicImage;
         header_badge_on_mobile?: PrismicBoolean;
 
+
+
         body: Array<
             | ArticleSliceType
             | GallerySliceType
@@ -186,6 +234,7 @@ export interface PrismicPage extends Document {
             | ComparisonSliderSliceType
             | TableSliceType
             | FormSliceType
+            | NewsListSliceType
         >;
     };
 }
@@ -197,6 +246,30 @@ export interface PrismicNavigationSliceType {
     };
     items: never[];
 }
+
+
+export const getHtmlElementFromPrismicType = (
+    props: PrismicHeading[0] | undefined
+) => {
+    if (!props) return 'div';
+
+    switch (props.type) {
+        case 'heading1':
+            return 'h1';
+        case 'heading2':
+            return 'h2';
+        case 'heading3':
+            return 'h3';
+        case 'heading4':
+            return 'h4';
+        case 'heading5':
+            return 'h5';
+        case 'heading6':
+            return 'h6';
+        default:
+            return 'div';
+    }
+};
 
 export interface PrismicMainNavigationSliceType {
     primary: {
