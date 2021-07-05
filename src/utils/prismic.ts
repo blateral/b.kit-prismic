@@ -28,7 +28,7 @@ import { ComparisonSliderSliceType } from 'slices/ComparisonSlider';
 import { NewsTextSliceType } from 'slices/News/Text';
 import { NewsTableSliceType } from 'slices/News/Table';
 import { NewsIntroSliceType } from 'slices/News/Intro';
-import { NewsListSliceType } from 'slices/News/List';
+import { NewsVideoSliceType } from 'slices/News/Video';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -182,7 +182,7 @@ export interface PrismicNewsPage extends Document {
         author_has_background?: PrismicBoolean;
         author_is_inverted?: PrismicBoolean;
 
-        body: Array<NewsTextSliceType | NewsTableSliceType | NewsIntroSliceType | NewsListSliceType>;
+        body: Array<NewsTextSliceType | NewsTableSliceType | NewsIntroSliceType | NewsVideoSliceType>;
     };
 }
 

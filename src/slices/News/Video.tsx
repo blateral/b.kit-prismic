@@ -6,13 +6,17 @@ import {
     getPrismicImage as getImg,
     getImageFromUrls,
     getText,
+    PrismicLink,
+    isPrismicLinkExternal,
+    resolveUnknownLink,
 
 } from '../../utils/prismic';
 
 import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
-import { NewsAuthorCard } from '@blateral/b.kit';
+
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { NewsVideo } from '@blateral/b.kit';
 
 type BgMode =
     | 'full'
@@ -24,7 +28,11 @@ type BgMode =
 
 const imageSizes = {
     main: {
-        small: { width: 150, height: 150 }
+        small: { width: 640, height: 480 },
+        medium: { width: 1024, height: 576 },
+        large: { width: 1440, height: 810 },
+        xlarge: { width: 1680, height: 810 }
+
     },
 } as ImageSizeSettings<{ main: ImageProps }>;
 export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
@@ -32,14 +40,28 @@ export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
         is_active?: PrismicBoolean;
         has_background?: PrismicBoolean;
         is_inverted?: PrismicBoolean;
-        author_name?: PrismicKeyText;
-        author_image?: PrismicImage;
-        author_label?: PrismicKeyText
+        external_video?: PrismicLink;
+        image?: PrismicImage
+        primary_link?: PrismicLink;
+        secondary_link?: PrismicLink;
+        primary_label?: PrismicKeyText;
+        secondary_label?: PrismicKeyText;
 
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
-
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
 
 }
 
@@ -47,34 +69,69 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
     primary: {
         is_inverted,
         has_background,
-        author_name,
-        author_image,
-        author_label
+        external_video,
+        image,
+        primary_link,
+        primary_label,
+        secondary_link,
+        secondary_label
 
-    }
+
+    },
+    primaryAction,
+    secondaryAction
 
 }) => {
 
-    const introImageUrl = author_image && getImg(author_image).url;
+    const introImageUrl = image && getImg(image).url;
     const mappedImage: ImageProps = {
         ...getImageFromUrls(
             {
-                small: introImageUrl || ''
+                small: introImageUrl || '',
+                medium: introImageUrl || '',
+                large: introImageUrl || '',
+                xlarge: introImageUrl || ''
+
             },
             imageSizes.main,
-            getText(author_image?.alt)
+            getText(image?.alt)
         ),
     };
 
 
+    let embedId = external_video?.url?.split('v=')[1] || null;
+    if (embedId) {
+        const ampersandPosition = embedId.indexOf('&');
+        if (ampersandPosition != -1) {
+            embedId = embedId.substring(0, ampersandPosition);
+        }
+    }
     return (
-        <NewsAuthorCard
-            author={author_name || ""}
-            avatar={{ src: mappedImage.small || "" }}
+        <NewsVideo
+            embedId={embedId || ""}
             hasBack={has_background}
             isInverted={is_inverted}
-            label={author_label || "Geschrieben von"}
 
+
+            bgImage={mappedImage}
+            primaryAction={(isInverted) =>
+                primaryAction &&
+                primaryAction({
+                    isInverted,
+                    label: getText(primary_label),
+                    href: resolveUnknownLink(primary_link) || '',
+                    isExternal: isPrismicLinkExternal(primary_link),
+                })
+            }
+            secondaryAction={(isInverted) =>
+                secondaryAction &&
+                secondaryAction({
+                    isInverted,
+                    label: getText(secondary_label),
+                    href: resolveUnknownLink(secondary_link) || '',
+                    isExternal: isPrismicLinkExternal(secondary_link),
+                })
+            }
 
         />
     );
