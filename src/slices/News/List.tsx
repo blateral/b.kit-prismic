@@ -3,17 +3,19 @@ import {
     PrismicHeading,
     PrismicKeyText,
     PrismicLink,
-    PrismicRichText,
     PrismicSlice,
     isPrismicLinkExternal,
 
     resolveUnknownLink,
     getText,
+    PrismicNewsPage,
+    getHtmlText,
 } from '../../utils/prismic';
 
 import { AliasSelectMapperType } from '../../utils/mapping';
 import { NewsList } from '@blateral/b.kit';
 import React from 'react';
+import format from 'date-fns/format';
 
 type BgMode =
     | 'full'
@@ -22,11 +24,10 @@ type BgMode =
     | 'larger-left'
     | 'larger-right';
 
-export interface NewsListSliceType extends PrismicSlice<'NewsList'> {
+export interface NewsListSliceType extends PrismicSlice<'NewsList', PrismicNewsPage> {
     primary: {
         is_active?: PrismicBoolean;
         title?: PrismicHeading;
-        table?: PrismicRichText;
         is_inverted?: PrismicBoolean;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
@@ -51,19 +52,23 @@ export interface NewsListSliceType extends PrismicSlice<'NewsList'> {
 
 export const NewsListSlice: React.FC<NewsListSliceType> = ({
     primary: {
-        table,
         is_inverted,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
+        title
     },
+    items,
     primaryAction,
     secondaryAction,
 }) => {
+
+    const newsListMap = mapNewsListData(items);
     return (
         <NewsList
-            title={"TITLE IN PRISMIC EINBAUEN"}
+            title={getText(title)}
+            news={newsListMap}
             isInverted={is_inverted}
             primaryAction={(isInverted) =>
                 primaryAction &&
@@ -86,3 +91,31 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         />
     );
 };
+function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode) {
+
+    return newsCollection?.map(news => {
+        return {
+            tag: news.tags[0] || "News",
+            publishDate: format(new Date(news.last_publication_date || ""), "dd.MM.yyyy"),
+            title: getText(news.data.news_heading),
+            text: getHtmlText(news.data.news_intro),
+            secondaryAction: (isInverted: boolean) =>
+                secondaryAction &&
+                secondaryAction({
+                    isInverted,
+                    label: getText(news.data.secondary_label) || "Mehr erfahren",
+                    href: `/news/${news.uid}`,
+                    isExternal: isPrismicLinkExternal(news.data.secondary_link),
+                })
+
+
+        }
+    })
+}
+
