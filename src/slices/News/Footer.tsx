@@ -11,7 +11,6 @@ import {
 import { AliasSelectMapperType } from '../../utils/mapping';
 import { NewsFooter } from '@blateral/b.kit';
 import React from 'react';
-import format from 'date-fns/format';
 
 type BgMode =
     | 'full'
@@ -75,7 +74,7 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
     return newsCollection?.map(news => {
         return {
             tag: news.tags[0] || "News",
-            publishDate: format(new Date(news.last_publication_date || ""), "dd.MM.yyyy"),
+            publishDate: new Date(news.last_publication_date || ""),
             title: getText(news.data.news_heading),
             text: getHtmlText(news.data.news_intro),
             secondaryAction: (isInverted: boolean) =>

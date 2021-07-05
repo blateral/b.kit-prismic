@@ -16,7 +16,6 @@ import {
 import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
 import { NewsIntro } from '@blateral/b.kit';
 import React from 'react';
-import format from 'date-fns/format';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 type BgMode =
@@ -107,7 +106,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     );
 };
 function generatePublicationDateObject(publication_date?: PrismicKeyText) {
-    if (!publication_date) return "";
+    if (!publication_date) return undefined;
 
     const parts = publication_date?.split("/").filter(Boolean);
     try {
@@ -116,12 +115,11 @@ function generatePublicationDateObject(publication_date?: PrismicKeyText) {
 
         const publicationDate = new Date(+dateParts[0], (+dateParts[1] - 1), +dateParts[2], +timeParts[0], +timeParts[1])
 
-        const result = format(publicationDate, "dd.MM.yyyy")
-        return result;
+        return publicationDate;
     }
     catch (e) {
         console.error("Error in NewsIntro date generation. \n", e)
-        return "";
+        return undefined;
     }
 
 }
