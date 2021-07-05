@@ -1,6 +1,6 @@
 {
     "name": "@blateral/b.kit-prismic",
-    "version": "0.9.6",
+    "version": "0.10.0",
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
