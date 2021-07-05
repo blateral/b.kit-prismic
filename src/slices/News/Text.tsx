@@ -1,10 +1,8 @@
 import {
     PrismicBoolean,
-    PrismicHeading,
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
-    PrismicSelectField,
     PrismicSlice,
     isPrismicLinkExternal,
 
