@@ -5,36 +5,36 @@ import {
     PrismicLink,
     PrismicSlice,
     isPrismicLinkExternal,
+    getPrismicImage as getImg,
 
     resolveUnknownLink,
     getText,
     PrismicNewsPage,
     getHtmlText,
+    PrismicRichText,
+    getHtmlElementFromPrismicType,
+    getImageFromUrls,
 } from '../../utils/prismic';
 
-import { AliasSelectMapperType } from '../../utils/mapping';
 import { NewsList } from '@blateral/b.kit';
 import React from 'react';
-
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
+import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { ImageSizeSettings } from 'utils/mapping';
 
 export interface NewsListSliceType extends PrismicSlice<'NewsList', PrismicNewsPage> {
     primary: {
         is_active?: PrismicBoolean;
+        super_title?: PrismicHeading;
         title?: PrismicHeading;
+        text?: PrismicRichText;
+        has_back?: PrismicBoolean;
         is_inverted?: PrismicBoolean;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
+        show_more_text?: PrismicKeyText;
     };
-    // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -49,6 +49,15 @@ export interface NewsListSliceType extends PrismicSlice<'NewsList', PrismicNewsP
     }) => React.ReactNode;
 }
 
+const imageSizes = {
+    main: {
+        small: { width: 599, height: 450 },
+        medium: { width: 688, height: 516 },
+        large: { width: 591, height: 444 },
+        xlarge: { width: 592, height: 445 }
+    },
+} as ImageSizeSettings<{ main: ImageProps }>;
+
 export const NewsListSlice: React.FC<NewsListSliceType> = ({
     primary: {
         is_inverted,
@@ -56,17 +65,30 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
-        title
+        title,
+        super_title,
+        has_back,
+        show_more_text,
+        text
     },
     items,
     primaryAction,
     secondaryAction,
 }) => {
 
+
+
     const newsListMap = mapNewsListData(items);
     return (
         <NewsList
+            superTitle={getText(super_title)}
+            superTitleAs={super_title && super_title[0] && getHtmlElementFromPrismicType(super_title[0] as any) || "div"}
             title={getText(title)}
+            titleAs={title && title[0] && getHtmlElementFromPrismicType(title[0] as any) || "div"}
+
+            text={getHtmlText(text)}
+            showMoreText={show_more_text || ""}
+            hasBack={has_back}
             news={newsListMap}
             isInverted={is_inverted}
             primaryAction={(isInverted) =>
@@ -98,12 +120,27 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
         isExternal?: boolean;
     }) => React.ReactNode) {
 
+
+
+
     return newsCollection?.map(news => {
+        const introImageUrl = news?.data?.news_image?.url && getImg(news?.data?.news_image)?.url || "";
+
+        const mappedImage: ImageProps = {
+            ...getImageFromUrls(
+                {
+                    small: introImageUrl || ''
+                },
+                imageSizes.main,
+                getText(news.data.news_image?.alt)
+            ),
+        };
         return {
-            tag: news.tags[0] || "News",
+            image: mappedImage,
+            tag: news.tags && news.tags[0] && news.tags[0] || "News",
             publishDate: new Date(news.last_publication_date || ""),
-            title: getText(news.data.news_heading),
-            text: getHtmlText(news.data.news_intro),
+            title: news?.data?.news_heading && getText(news.data.news_heading) || "",
+            text: news.data && news.data.news_intro && getHtmlText(news.data.news_intro),
             secondaryAction: (isInverted: boolean) =>
                 secondaryAction &&
                 secondaryAction({
