@@ -31,11 +31,11 @@
     "homepage": "https://github.com/blateral/b.kit-prismic#readme",
     "husky": {
         "hooks": {
-            "pre-push": "yarn tc"
+            "pre-push": "yarn tc && yarn lookup"
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "^0.10.10",
+        "@blateral/b.kit": "file:.yalc/@blateral/b.kit",
         "@prismicio/client": "^4.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",

@@ -113,8 +113,7 @@ export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
 
             images={items?.map((item) => {
                 // get image format
-                console.log(item)
-                const imageStyle = ImageStyleMap[imagestyle || "Halbe Breite"];
+                const imageStyle = items.length > 1 ? "half" : "full"
 
 
 
