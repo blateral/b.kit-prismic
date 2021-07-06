@@ -14,7 +14,7 @@ import {
     PrismicRichText,
     getHtmlElementFromPrismicType,
     getImageFromUrls,
-} from '../../utils/prismic';
+} from 'utils/prismic';
 
 import { NewsList } from '@blateral/b.kit';
 import React from 'react';
@@ -126,6 +126,14 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
     return newsCollection?.map(news => {
         const introImageUrl = news?.data?.news_image?.url && getImg(news?.data?.news_image)?.url || "";
 
+        let publicationDate = undefined;
+        try {
+            publicationDate = news.data.publication_date ? generatePublicationDateObject(news.data.publication_date) : new Date(news.first_publication_date || "")
+        }
+        catch {
+            publicationDate = undefined;
+        }
+
         const mappedImage: ImageProps = {
             ...getImageFromUrls(
                 {
@@ -138,7 +146,7 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
         return {
             image: mappedImage,
             tag: news.tags && news.tags[0] && news.tags[0] || "News",
-            publishDate: new Date(news.last_publication_date || ""),
+            publishDate: publicationDate,
             title: news?.data?.news_heading && getText(news.data.news_heading) || "",
             text: news.data && news.data.news_intro && getHtmlText(news.data.news_intro),
             secondaryAction: (isInverted: boolean) =>
@@ -155,3 +163,22 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
     })
 }
 
+
+
+function generatePublicationDateObject(publication_date?: PrismicKeyText) {
+    if (!publication_date) return undefined;
+
+    const parts = publication_date?.split("/").filter(Boolean);
+    try {
+        const dateParts = parts[0].split("-").filter(Boolean);
+
+        const publicationDate = new Date(+dateParts[0], (+dateParts[1] - 1), +dateParts[2])
+
+        return publicationDate;
+    }
+    catch (e) {
+        console.error("Error in NewsIntro date generation. \n", e)
+        return undefined;
+    }
+
+}
