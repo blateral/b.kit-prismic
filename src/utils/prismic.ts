@@ -31,6 +31,7 @@ import { NewsIntroSliceType } from 'slices/News/Intro';
 import { NewsVideoSliceType } from 'slices/News/Video';
 import { NewsListSliceType } from 'slices/News/List';
 import { NewsImagesSliceType } from 'slices/News/Images';
+import { NewsOverviewSliceType } from 'slices/News/Overview';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -237,6 +238,7 @@ export interface PrismicPage extends Document {
             | TableSliceType
             | FormSliceType
             | NewsListSliceType
+            | NewsOverviewSliceType
         >;
     };
 }
