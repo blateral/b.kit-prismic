@@ -1,6 +1,6 @@
 {
     "name": "@blateral/b.kit-prismic",
-    "version": "0.10.1",
+    "version": "0.11.0",
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
@@ -31,11 +31,11 @@
     "homepage": "https://github.com/blateral/b.kit-prismic#readme",
     "husky": {
         "hooks": {
-            "pre-push": "yarn tc"
+            "pre-push": "yarn check-yalc && yarn tc"
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "^0.10.10",
+        "@blateral/b.kit": "0.10.11",
         "@prismicio/client": "^4.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",

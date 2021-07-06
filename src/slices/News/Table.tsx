@@ -9,9 +9,8 @@ import {
 
     resolveUnknownLink,
     getText,
-} from '../../utils/prismic';
+} from 'utils/prismic';
 
-import { AliasSelectMapperType } from '../../utils/mapping';
 import { NewsTable } from '@blateral/b.kit';
 import React from 'react';
 import { TableProps } from '@blateral/b.kit/lib/components/sections/Table';
@@ -22,12 +21,6 @@ interface TableItem {
     table_title?: PrismicKeyText;
     table?: PrismicRichText;
 }
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
 
 export interface NewsTableSliceType extends PrismicSlice<'NewsTable', TableItem> {
     primary: {
@@ -40,8 +33,7 @@ export interface NewsTableSliceType extends PrismicSlice<'NewsTable', TableItem>
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
-    // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
+
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -72,6 +64,7 @@ export const NewsTableSlice: React.FC<NewsTableSliceType> = ({
         <NewsTable
             tableItems={createTableItems(items)}
             isInverted={is_inverted}
+
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction({

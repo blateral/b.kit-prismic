@@ -9,19 +9,13 @@ import {
     getImageFromUrls,
     getPrismicImage as getImg,
 
-} from '../../utils/prismic';
+} from 'utils/prismic';
 
-import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
+import { ImageSizeSettings } from 'utils/mapping';
 import { NewsFooter } from '@blateral/b.kit';
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
 
 export interface NewsFooterSliceType extends PrismicSlice<'NewsFooter', PrismicNewsPage> {
     primary: {
@@ -34,8 +28,6 @@ export interface NewsFooterSliceType extends PrismicSlice<'NewsFooter', PrismicN
 
 
     };
-    // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -96,10 +88,19 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
                 getText(news.data.news_image?.alt)
             ),
         };
+
+        let publicationDate = undefined;
+        try {
+            publicationDate = news.data.publication_date ? generatePublicationDateObject(news.data.publication_date) : new Date(news.first_publication_date || "")
+        }
+        catch {
+            publicationDate = undefined;
+        }
+
         return {
             image: mappedImage,
             tag: news.tags[0] || "News",
-            publishDate: new Date(news.last_publication_date || ""),
+            publishDate: publicationDate,
             title: getText(news.data.news_heading),
             text: getHtmlText(news.data.news_intro),
             secondaryAction: (isInverted: boolean) =>
@@ -116,3 +117,22 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
     })
 }
 
+
+
+function generatePublicationDateObject(publication_date?: PrismicKeyText) {
+    if (!publication_date) return undefined;
+
+    const parts = publication_date?.split("/").filter(Boolean);
+    try {
+        const dateParts = parts[0].split("-").filter(Boolean);
+
+        const publicationDate = new Date(+dateParts[0], (+dateParts[1] - 1), +dateParts[2])
+
+        return publicationDate;
+    }
+    catch (e) {
+        console.error("Error in NewsFooter date generation. \n", e)
+        return undefined;
+    }
+
+}
