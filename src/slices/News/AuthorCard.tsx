@@ -4,23 +4,15 @@ import {
     PrismicSlice,
     PrismicImage,
     getPrismicImage as getImg,
-    getImageFromUrls,
     getText,
+    getImageFromUrl,
 
-} from '../../utils/prismic';
+} from 'utils/prismic';
 
-import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
+import { ImageSizeSettings } from 'utils/mapping';
 import { NewsAuthorCard } from '@blateral/b.kit';
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
-
 
 const imageSizes = {
     main: {
@@ -37,8 +29,6 @@ export interface NewsAuthorCardSliceType extends PrismicSlice<'NewsAuthor'> {
         author_label?: PrismicKeyText
 
     };
-    // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
 
 
 }
@@ -56,21 +46,19 @@ export const NewsAuthorCardSlice: React.FC<NewsAuthorCardSliceType> = ({
 }) => {
 
     const introImageUrl = author_image && getImg(author_image).url;
-    const mappedImage: ImageProps = {
-        ...getImageFromUrls(
-            {
-                small: introImageUrl || ''
-            },
+    const mappedImage = introImageUrl && {
+        ...getImageFromUrl(
+            introImageUrl,
             imageSizes.main,
             getText(author_image?.alt)
         ),
-    };
+    } || undefined;
 
 
     return (
         <NewsAuthorCard
             author={author_name || ""}
-            avatar={{ src: mappedImage.small || "" }}
+            avatar={mappedImage && { src: mappedImage.small || "" }}
             hasBack={has_background}
             isInverted={is_inverted}
             label={author_label || "Geschrieben von"}

@@ -11,20 +11,12 @@ import {
     getText,
     PrismicImage,
     PrismicSelectField,
-    getImageFromUrls,
-} from '../../utils/prismic';
+    getImageFromUrl,
+} from 'utils/prismic';
 
-import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
+import { ImageSizeSettings } from 'utils/mapping';
 import { NewsImages } from '@blateral/b.kit';
 import React from 'react';
-
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
-
 
 interface ImageFormats {
     half: string;
@@ -32,10 +24,7 @@ interface ImageFormats {
 }
 
 
-const ImageStyleMap = {
-    "Volle Breite": "full",
-    "Halbe Breite": "half"
-}
+
 export interface NewsImagesSliceType extends PrismicSlice<'NewsImages', { image: PrismicImage }> {
     primary: {
         is_active?: PrismicBoolean;
@@ -47,8 +36,6 @@ export interface NewsImagesSliceType extends PrismicSlice<'NewsImages', { image:
         secondary_label?: PrismicKeyText;
         imagestyle?: PrismicSelectField;
     };
-    // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -65,7 +52,6 @@ export interface NewsImagesSliceType extends PrismicSlice<'NewsImages', { image:
 
 export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
     primary: {
-        imagestyle,
         is_inverted,
         primary_link,
         primary_label,
@@ -85,8 +71,8 @@ export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
         },
         full: {
             small: { width: 619, height: 305 },
-            medium: { width: 983, height: 483 }
-        },
+            medium: { width: 929, height: 698 }
+        }
     } as ImageSizeSettings<ImageFormats>;
 
     return (
@@ -125,14 +111,8 @@ export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
 
 
                 return {
-                    ...getImageFromUrls(
-                        {
-                            small: imgUrl,
-                            medium: imgUrl,
-                            semilarge: imgUrl,
-                            large: imgUrl,
-                            xlarge: imgUrl,
-                        },
+                    ...getImageFromUrl(
+                        imgUrl,
                         imageSizes[imageStyle || 'half'],
                         getText(item.image.alt)
                     ),
