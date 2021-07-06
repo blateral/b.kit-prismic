@@ -349,6 +349,7 @@ export interface PrismicRelationship {
 }
 
 export const linkResolver = (doc: Document) => {
+    if (doc.type === "news_page") return `/news/${doc.uid}`;
     if (doc.type === 'page' && doc.uid !== 'start') return `/${doc.uid}`;
     return `/`;
 };
