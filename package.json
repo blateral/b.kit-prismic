@@ -1,6 +1,6 @@
 {
     "name": "@blateral/b.kit-prismic",
-    "version": "0.10.0",
+    "version": "0.10.1",
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
@@ -35,7 +35,7 @@
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "file:.yalc/@blateral/b.kit",
+        "@blateral/b.kit": "^0.10.10",
         "@prismicio/client": "^4.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",
