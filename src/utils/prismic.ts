@@ -30,6 +30,7 @@ import { NewsTableSliceType } from 'slices/News/Table';
 import { NewsIntroSliceType } from 'slices/News/Intro';
 import { NewsVideoSliceType } from 'slices/News/Video';
 import { NewsListSliceType } from 'slices/News/List';
+import { NewsImagesSliceType } from 'slices/News/Images';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -171,6 +172,7 @@ export interface PrismicNewsPage extends Document {
         news_footer_inverted?: PrismicBoolean;
         news_footer_background?: PrismicBoolean
 
+        publication_date?: PrismicKeyText;
 
         primary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
@@ -183,7 +185,7 @@ export interface PrismicNewsPage extends Document {
         author_has_background?: PrismicBoolean;
         author_is_inverted?: PrismicBoolean;
 
-        body: Array<NewsTextSliceType | NewsTableSliceType | NewsIntroSliceType | NewsVideoSliceType>;
+        body: Array<NewsTextSliceType | NewsTableSliceType | NewsIntroSliceType | NewsVideoSliceType | NewsImagesSliceType>;
     };
 }
 

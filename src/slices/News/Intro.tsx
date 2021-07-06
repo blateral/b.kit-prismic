@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
     PrismicBoolean,
     PrismicHeading,
@@ -8,22 +10,15 @@ import {
     PrismicImage,
     getHtmlText,
     getPrismicImage as getImg,
-    getImageFromUrls,
     getText,
+    getImageFromUrl,
 
-} from '../../utils/prismic';
+} from 'utils/prismic';
 
-import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
+import { ImageSizeSettings } from 'utils/mapping';
 import { NewsIntro } from '@blateral/b.kit';
-import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
 
 
 const imageSizes = {
@@ -49,8 +44,7 @@ export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
-    // helpers to define component elements outside of slice
-    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
+
 
 
 }
@@ -70,13 +64,9 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
 }) => {
 
     const introImageUrl = news_image && getImg(news_image).url;
-    const mappedImage: ImageProps = {
-        ...getImageFromUrls(
-            {
-                small: introImageUrl || '',
-                medium: introImageUrl,
-                semilarge: introImageUrl,
-            },
+    const mappedImage = introImageUrl && {
+        ...getImageFromUrl(
+            introImageUrl,
             imageSizes.main,
             getText(news_image?.alt)
         ),
@@ -88,7 +78,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
         <NewsIntro
             title={getHtmlText(intro_heading)}
             text={getHtmlText(intro)}
-            image={mappedImage}
+            image={mappedImage || undefined}
             isInverted={is_inverted}
             tag={tag || ""}
 
@@ -109,9 +99,8 @@ function generatePublicationDateObject(publication_date?: PrismicKeyText) {
     const parts = publication_date?.split("/").filter(Boolean);
     try {
         const dateParts = parts[0].split("-").filter(Boolean);
-        const timeParts = parts[1].split(":");
 
-        const publicationDate = new Date(+dateParts[0], (+dateParts[1] - 1), +dateParts[2], +timeParts[0], +timeParts[1])
+        const publicationDate = new Date(+dateParts[0], (+dateParts[1] - 1), +dateParts[2])
 
         return publicationDate;
     }
