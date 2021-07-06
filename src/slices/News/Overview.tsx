@@ -1,13 +1,10 @@
 import {
     PrismicBoolean,
     PrismicHeading,
-    PrismicKeyText,
-    PrismicLink,
     PrismicSlice,
     isPrismicLinkExternal,
     getPrismicImage as getImg,
 
-    resolveUnknownLink,
     getText,
     PrismicNewsPage,
     getHtmlText,
@@ -16,7 +13,7 @@ import {
     getImageFromUrls,
 } from '../../utils/prismic';
 
-import { NewsList, NewsOverview } from '@blateral/b.kit';
+import { NewsOverview } from '@blateral/b.kit';
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { ImageSizeSettings } from '../../utils/mapping';
@@ -27,25 +24,10 @@ export interface NewsOverviewSliceType extends PrismicSlice<'NewsOverview', Pris
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        tags?: string[];
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
-        show_more_text?: PrismicKeyText;
+
     };
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-    secondaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
+    tags?: string[];
+
 }
 
 const imageSizes = {
@@ -59,18 +41,15 @@ const imageSizes = {
 
 export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
     primary: {
-
         title,
         super_title,
-        text
+        text,
+
     },
     items,
 
 }) => {
 
-
-
-    const newsListMap = mapNewsListData(items);
     return (
         <NewsOverview
             superTitle={getText(super_title)}
@@ -79,14 +58,24 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
             titleAs={title && title[0] && getHtmlElementFromPrismicType(title[0] as any) || "div"}
 
             text={getHtmlText(text)}
-            tags={["Test", "Test 1", "Test 2"]}
-            news={newsListMap || []}
+            tags={generateUniqueTags(items)}
+            news={mapNewsListData(items) || []}
 
 
 
         />
     );
 };
+
+function generateUniqueTags(newsCollection?: PrismicNewsPage[]) {
+    if (!newsCollection || newsCollection.length === 0) return [];
+
+    const newsTagsCollection = newsCollection?.map(news => news.tags) || [];
+    const flatNewsTags = flatten(newsTagsCollection);
+    const uniqueNewsTags = Array.from(new Set(flatNewsTags));
+    return uniqueNewsTags;
+}
+
 function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
     secondaryAction?: (props: {
         isInverted?: boolean;
@@ -98,7 +87,7 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
 
 
 
-    return newsCollection?.map(news => {
+    return newsCollection?.sort(byDateDescending)?.map(news => {
         const introImageUrl = news?.data?.news_image?.url && getImg(news?.data?.news_image)?.url || "";
 
         let publicationDate = undefined;
@@ -140,7 +129,43 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
 
 
 
-function generatePublicationDateObject(publication_date?: PrismicKeyText) {
+const byDateDescending = (a: PrismicNewsPage, b: PrismicNewsPage) => {
+    let aDate: Date | undefined = new Date();
+    let bDate: Date | undefined = new Date();
+    if (a.data.publication_date && b.data.publication_date) {
+        aDate = generatePublicationDateObject(a.data.publication_date);
+        bDate = generatePublicationDateObject(b.data.publication_date);
+    } else
+        if (!a.data.publication_date && b.data.publication_date) {
+            aDate = new Date(a.first_publication_date || a.last_publication_date || "");
+            bDate = generatePublicationDateObject(b.data.publication_date);
+        }
+        else
+            if (a.data.publication_date && !b.data.publication_date) {
+                aDate = generatePublicationDateObject(a.data.publication_date);
+                bDate = new Date(b.first_publication_date || b.last_publication_date || "");
+            }
+            else if (!a.data.publication_date && !b.data.publication_date) {
+                aDate = new Date(a.first_publication_date || a.last_publication_date || "");
+                bDate = new Date(b.first_publication_date || b.last_publication_date || "");
+
+            }
+            else {
+                return -1
+            }
+
+    return (bDate as any) - (aDate as any);
+}
+
+
+function flatten(arr: any[]): any[] {
+    return arr.reduce(function (flat, toFlatten) {
+        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+    }, []);
+}
+
+
+function generatePublicationDateObject(publication_date?: string) {
     if (!publication_date) return undefined;
 
     const parts = publication_date?.split("/").filter(Boolean);
