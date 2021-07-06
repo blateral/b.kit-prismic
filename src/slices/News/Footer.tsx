@@ -75,8 +75,9 @@ function mapNewsListData(newsCollection: PrismicNewsPage[] | undefined,
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode) {
+    if (!newsCollection) return [];
 
-    return newsCollection?.map(news => {
+    return newsCollection.sort(byDateDescending).map(news => {
         const introImageUrl = news?.data?.news_image?.url && getImg(news?.data?.news_image)?.url || "";
 
         const mappedImage: ImageProps = {
@@ -135,4 +136,33 @@ function generatePublicationDateObject(publication_date?: PrismicKeyText) {
         return undefined;
     }
 
+}
+
+
+const byDateDescending = (a: PrismicNewsPage, b: PrismicNewsPage) => {
+    let aDate: Date | undefined = new Date();
+    let bDate: Date | undefined = new Date();
+    if (a.data.publication_date && b.data.publication_date) {
+        aDate = generatePublicationDateObject(a.data.publication_date);
+        bDate = generatePublicationDateObject(b.data.publication_date);
+    } else
+        if (!a.data.publication_date && b.data.publication_date) {
+            aDate = new Date(a.first_publication_date || a.last_publication_date || "");
+            bDate = generatePublicationDateObject(b.data.publication_date);
+        }
+        else
+            if (a.data.publication_date && !b.data.publication_date) {
+                aDate = generatePublicationDateObject(a.data.publication_date);
+                bDate = new Date(b.first_publication_date || b.last_publication_date || "");
+            }
+            else if (!a.data.publication_date && !b.data.publication_date) {
+                aDate = new Date(a.first_publication_date || a.last_publication_date || "");
+                bDate = new Date(b.first_publication_date || b.last_publication_date || "");
+
+            }
+            else {
+                return -1
+            }
+
+    return (bDate as any) - (aDate as any);
 }
