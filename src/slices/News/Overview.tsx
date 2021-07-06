@@ -24,10 +24,20 @@ export interface NewsOverviewSliceType extends PrismicSlice<'NewsOverview', Pris
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
+        secondaryAction?: (props: {
+            isInverted?: boolean;
+            label?: string;
+            href?: string;
+            isExternal?: boolean;
+        }) => React.ReactNode;
 
     };
-    tags?: string[];
-
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
 }
 
 const imageSizes = {
@@ -45,7 +55,9 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
         super_title,
         text,
 
+
     },
+    secondaryAction,
     items,
 
 }) => {
@@ -59,7 +71,7 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
 
             text={getHtmlText(text)}
             tags={generateUniqueTags(items)}
-            news={mapNewsListData(items) || []}
+            news={mapNewsListData(items, secondaryAction) || []}
 
 
 
