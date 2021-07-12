@@ -28,7 +28,7 @@ const imageSizes = {
 export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
     primary: {
         is_active?: PrismicBoolean;
-        intro_heading?: PrismicHeading;
+        news_heading?: PrismicHeading;
         intro?: PrismicRichText;
         news_image?: PrismicImage;
         author_name?: PrismicKeyText;
@@ -51,7 +51,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
         publication_date,
         news_image,
         intro,
-        intro_heading,
+        news_heading,
     },
     tags,
 
@@ -68,7 +68,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     const publicationDate = generatePublicationDateObject(publication_date);
     return (
         <NewsIntro
-            title={getHtmlText(intro_heading)}
+            title={getHtmlText(news_heading)}
             text={getHtmlText(intro)}
             image={mappedImage || undefined}
             isInverted={is_inverted}
