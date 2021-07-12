@@ -1,12 +1,8 @@
 import {
     PrismicBoolean,
     PrismicHeading,
-    PrismicKeyText,
-    PrismicLink,
     PrismicRichText,
     PrismicSlice,
-    isPrismicLinkExternal,
-    resolveUnknownLink,
     getText,
 } from 'utils/prismic';
 
@@ -14,95 +10,55 @@ import { NewsTable } from '@blateral/b.kit';
 import React from 'react';
 import { TableProps } from '@blateral/b.kit/lib/components/sections/Table';
 
-interface TableItem {
-    table_title?: PrismicKeyText;
-    table?: PrismicRichText;
-}
-
 export interface NewsTableSliceType
-    extends PrismicSlice<'NewsTable', TableItem> {
+    extends PrismicSlice<'NewsTable'> {
     primary: {
         is_active?: PrismicBoolean;
-        title?: PrismicHeading;
+        table_title?: PrismicHeading;
         table?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
+        as_table_header?: PrismicBoolean;
     };
 
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-    secondaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
+
 }
 
 export const NewsTableSlice: React.FC<NewsTableSliceType> = ({
     primary: {
-        is_inverted,
-        primary_label,
-        secondary_label,
-        primary_link,
-        secondary_link,
+        table_title,
+        table,
+        as_table_header
     },
-    items,
-    primaryAction,
-    secondaryAction,
+
 }) => {
     return (
         <NewsTable
-            tableItems={createTableItems(items)}
-            isInverted={is_inverted}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
-            }
-            secondaryAction={(isInverted) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
-            }
+
+            tableItems={[createTableItem(getText(table), getText(table_title), as_table_header)]}
+
         />
     );
 };
 
-function createTableItems(tableItems: TableItem[]): TableProps[] {
-    return tableItems
-        .filter((item) => item.table && item.table.length > 0)
-        .map((item) => {
-            const { tableHeaders, sliceRows } = convertCsvToTable(
-                getText(item.table!)
-            );
+function createTableItem(tableItem: string, tableTitle?: string, firstRowAsHeadings?: boolean): TableProps {
+    if (!tableItem) return { row: [], rowTitle: [] };
 
-            return {
-                tableTitle: item.table_title || '',
-                rowTitle: tableHeaders || [],
-                row: sliceRows || [],
-            };
-        });
+
+    const { tableHeaders, sliceRows } = convertCsvToTable(
+        getText(tableItem),
+        firstRowAsHeadings
+    );
+
+    return {
+        tableTitle: tableTitle,
+        rowTitle: tableHeaders || [],
+        row: sliceRows || [],
+    };
+
 }
 
-function convertCsvToTable(tableCsv: string) {
+function convertCsvToTable(tableCsv: string, firstRowAsHeading = false) {
     const rows = tableCsv.split('\n');
-    const tableHeaders = rows[0].split(',');
+
 
     const sliceRows = rows.map((row) => {
         const columns = row.split(',');
@@ -111,7 +67,14 @@ function convertCsvToTable(tableCsv: string) {
         };
     });
 
-    sliceRows.shift();
+    if (firstRowAsHeading) {
+        const tableHeaders = rows[0].split(',');
+        sliceRows.shift();
 
-    return { tableHeaders, sliceRows };
+        return { tableHeaders, sliceRows }
+
+    }
+
+
+    return { sliceRows };
 }
