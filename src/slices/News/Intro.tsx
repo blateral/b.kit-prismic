@@ -68,7 +68,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     const publicationDate = generatePublicationDateObject(publication_date);
     return (
         <NewsIntro
-            title={getHtmlText(news_heading)}
+            title={getText(news_heading)}
             text={getHtmlText(intro)}
             image={mappedImage || undefined}
             isInverted={is_inverted}
