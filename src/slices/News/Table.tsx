@@ -6,7 +6,6 @@ import {
     PrismicRichText,
     PrismicSlice,
     isPrismicLinkExternal,
-
     resolveUnknownLink,
     getText,
 } from 'utils/prismic';
@@ -15,14 +14,13 @@ import { NewsTable } from '@blateral/b.kit';
 import React from 'react';
 import { TableProps } from '@blateral/b.kit/lib/components/sections/Table';
 
-
-
 interface TableItem {
     table_title?: PrismicKeyText;
     table?: PrismicRichText;
 }
 
-export interface NewsTableSliceType extends PrismicSlice<'NewsTable', TableItem> {
+export interface NewsTableSliceType
+    extends PrismicSlice<'NewsTable', TableItem> {
     primary: {
         is_active?: PrismicBoolean;
         title?: PrismicHeading;
@@ -64,7 +62,6 @@ export const NewsTableSlice: React.FC<NewsTableSliceType> = ({
         <NewsTable
             tableItems={createTableItems(items)}
             isInverted={is_inverted}
-
             primaryAction={(isInverted) =>
                 primaryAction &&
                 primaryAction({
@@ -87,37 +84,34 @@ export const NewsTableSlice: React.FC<NewsTableSliceType> = ({
     );
 };
 
-
-
 function createTableItems(tableItems: TableItem[]): TableProps[] {
-    return tableItems.filter(item => item.table && item.table.length > 0).map(item => {
-        const { tableHeaders, sliceRows } = convertCsvToTable(getText(item.table!));
+    return tableItems
+        .filter((item) => item.table && item.table.length > 0)
+        .map((item) => {
+            const { tableHeaders, sliceRows } = convertCsvToTable(
+                getText(item.table!)
+            );
 
-        return {
-            tableTitle: item.table_title || "",
-            rowTitle: tableHeaders || [],
-            row: sliceRows || []
-
-        }
-    })
-
+            return {
+                tableTitle: item.table_title || '',
+                rowTitle: tableHeaders || [],
+                row: sliceRows || [],
+            };
+        });
 }
 
-
 function convertCsvToTable(tableCsv: string) {
-
-    const rows = tableCsv.split("\n");
-    const tableHeaders = rows[0].split(",");
+    const rows = tableCsv.split('\n');
+    const tableHeaders = rows[0].split(',');
 
     const sliceRows = rows.map((row) => {
-        const columns = row.split(",");
+        const columns = row.split(',');
         return {
-            cols: columns
-        }
-    })
-
+            cols: columns,
+        };
+    });
 
     sliceRows.shift();
 
-    return { tableHeaders, sliceRows }
+    return { tableHeaders, sliceRows };
 }

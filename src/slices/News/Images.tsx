@@ -6,7 +6,6 @@ import {
     PrismicSlice,
     isPrismicLinkExternal,
     getPrismicImage as getImg,
-
     resolveUnknownLink,
     getText,
     PrismicImage,
@@ -23,9 +22,8 @@ interface ImageFormats {
     full: string;
 }
 
-
-
-export interface NewsImagesSliceType extends PrismicSlice<'NewsImages', { image: PrismicImage }> {
+export interface NewsImagesSliceType
+    extends PrismicSlice<'NewsImages', { image: PrismicImage }> {
     primary: {
         is_active?: PrismicBoolean;
         text?: PrismicRichText;
@@ -62,17 +60,16 @@ export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
-
     const imageSizes = {
         half: {
             small: { width: 619, height: 465 },
             medium: { width: 376, height: 282 },
-            large: { width: 452, height: 339 }
+            large: { width: 452, height: 339 },
         },
         full: {
             small: { width: 619, height: 305 },
-            medium: { width: 929, height: 698 }
-        }
+            medium: { width: 929, height: 698 },
+        },
     } as ImageSizeSettings<ImageFormats>;
 
     return (
@@ -96,19 +93,12 @@ export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
                     isExternal: isPrismicLinkExternal(secondary_link),
                 })
             }
-
             images={items?.map((item) => {
                 // get image format
-                const imageStyle = items.length > 1 ? "half" : "full"
-
-
+                const imageStyle = items.length > 1 ? 'half' : 'full';
 
                 // get image format url for landscape
-                const imgUrl = getImg(
-                    item.image,
-                    imageStyle
-                ).url;
-
+                const imgUrl = getImg(item.image, imageStyle).url;
 
                 return {
                     ...getImageFromUrl(

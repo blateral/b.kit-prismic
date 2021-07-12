@@ -5,7 +5,6 @@ import {
     PrismicRichText,
     PrismicSlice,
     isPrismicLinkExternal,
-
     resolveUnknownLink,
     getText,
     getHtmlText,

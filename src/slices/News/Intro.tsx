@@ -12,14 +12,11 @@ import {
     getPrismicImage as getImg,
     getText,
     getImageFromUrl,
-
 } from 'utils/prismic';
 
 import { ImageSizeSettings } from 'utils/mapping';
 import { NewsIntro } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-
-
 
 const imageSizes = {
     main: {
@@ -44,9 +41,6 @@ export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
-
-
-
 }
 
 export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
@@ -58,11 +52,8 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
         news_image,
         intro,
         intro_heading,
-
-    }
-
+    },
 }) => {
-
     const introImageUrl = news_image && getImg(news_image).url;
     const mappedImage = introImageUrl && {
         ...getImageFromUrl(
@@ -72,7 +63,6 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
         ),
     };
 
-
     const publicationDate = generatePublicationDateObject(publication_date);
     return (
         <NewsIntro
@@ -80,34 +70,30 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
             text={getHtmlText(intro)}
             image={mappedImage || undefined}
             isInverted={is_inverted}
-            tag={tag || ""}
-
-            meta={
-                {
-                    author: author_name || "",
-                    date: publicationDate
-                }
-            }
-
-
+            tag={tag || ''}
+            meta={{
+                author: author_name || '',
+                date: publicationDate,
+            }}
         />
     );
 };
 function generatePublicationDateObject(publication_date?: PrismicKeyText) {
     if (!publication_date) return undefined;
 
-    const parts = publication_date?.split("/").filter(Boolean);
+    const parts = publication_date?.split('/').filter(Boolean);
     try {
-        const dateParts = parts[0].split("-").filter(Boolean);
+        const dateParts = parts[0].split('-').filter(Boolean);
 
-        const publicationDate = new Date(+dateParts[0], (+dateParts[1] - 1), +dateParts[2])
+        const publicationDate = new Date(
+            +dateParts[0],
+            +dateParts[1] - 1,
+            +dateParts[2]
+        );
 
         return publicationDate;
-    }
-    catch (e) {
-        console.error("Error in NewsIntro date generation. \n", e)
+    } catch (e) {
+        console.error('Error in NewsIntro date generation. \n', e);
         return undefined;
     }
-
 }
-
