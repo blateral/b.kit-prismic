@@ -16,7 +16,7 @@
         "deploy": "yarn tc && yarn build && yarn publish",
         "check-yalc": "if yalc --version; then yalc check; else echo Skipping yalc check; fi",
         "lookup": "yarn --check-files",
-        "publish-yalc": "rm -rf lib && yarn build && yalc publish"
+        "publish-yalc": "rm -rf lib && yalc update && yarn build && yalc publish"
     },
     "repository": {
         "type": "git",
@@ -35,7 +35,7 @@
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "0.10.12",
+        "@blateral/b.kit": "0.10.13",
         "@prismicio/client": "^4.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",

@@ -30,7 +30,6 @@ export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
         is_active?: PrismicBoolean;
         intro_heading?: PrismicHeading;
         intro?: PrismicRichText;
-        tag?: PrismicKeyText;
         news_image?: PrismicImage;
         author_name?: PrismicKeyText;
         author_image?: PrismicImage;
@@ -41,11 +40,12 @@ export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
+    tags?: string[];
+
 }
 
 export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     primary: {
-        tag,
         is_inverted,
         author_name,
         publication_date,
@@ -53,6 +53,8 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
         intro,
         intro_heading,
     },
+    tags,
+
 }) => {
     const introImageUrl = news_image && getImg(news_image).url;
     const mappedImage = introImageUrl && {
@@ -70,7 +72,10 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
             text={getHtmlText(intro)}
             image={mappedImage || undefined}
             isInverted={is_inverted}
-            tag={tag || ''}
+            tags={tags?.filter(Boolean) || []}
+            onTagClick={(tag) => {
+                window.location.href = `/news?selected=${encodeURI(tag)}`
+            }}
             meta={{
                 author: author_name || '',
                 date: publicationDate,
