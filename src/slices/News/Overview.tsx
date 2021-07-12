@@ -31,6 +31,7 @@ export interface NewsOverviewSliceType
             isExternal?: boolean;
         }) => React.ReactNode;
     };
+    queryParams?: Record<string, any>;
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -51,8 +52,11 @@ const imageSizes = {
 export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
     primary: { title, super_title, text },
     secondaryAction,
+    queryParams,
     items,
 }) => {
+
+
     return (
         <NewsOverview
             superTitle={getText(super_title)}
@@ -61,6 +65,7 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
             titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
             tags={generateUniqueTags(items)}
+            queryParams={queryParams}
             news={mapNewsListData(items, secondaryAction) || []}
         />
     );
