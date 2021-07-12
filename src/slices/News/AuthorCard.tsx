@@ -6,7 +6,6 @@ import {
     getPrismicImage as getImg,
     getText,
     getImageFromUrl,
-
 } from 'utils/prismic';
 
 import { ImageSizeSettings } from 'utils/mapping';
@@ -16,7 +15,7 @@ import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
 const imageSizes = {
     main: {
-        small: { width: 150, height: 150 }
+        small: { width: 150, height: 150 },
     },
 } as ImageSizeSettings<{ main: ImageProps }>;
 export interface NewsAuthorCardSliceType extends PrismicSlice<'NewsAuthor'> {
@@ -26,11 +25,8 @@ export interface NewsAuthorCardSliceType extends PrismicSlice<'NewsAuthor'> {
         is_inverted?: PrismicBoolean;
         author_name?: PrismicKeyText;
         author_image?: PrismicImage;
-        author_label?: PrismicKeyText
-
+        author_label?: PrismicKeyText;
     };
-
-
 }
 
 export const NewsAuthorCardSlice: React.FC<NewsAuthorCardSliceType> = ({
@@ -39,31 +35,27 @@ export const NewsAuthorCardSlice: React.FC<NewsAuthorCardSliceType> = ({
         has_background,
         author_name,
         author_image,
-        author_label
-
-    }
-
+        author_label,
+    },
 }) => {
-
     const introImageUrl = author_image && getImg(author_image).url;
-    const mappedImage = introImageUrl && {
-        ...getImageFromUrl(
-            introImageUrl,
-            imageSizes.main,
-            getText(author_image?.alt)
-        ),
-    } || undefined;
-
+    const mappedImage =
+        (introImageUrl && {
+            ...getImageFromUrl(
+                introImageUrl,
+                imageSizes.main,
+                getText(author_image?.alt)
+            ),
+        }) ||
+        undefined;
 
     return (
         <NewsAuthorCard
-            author={author_name || ""}
-            avatar={mappedImage && { src: mappedImage.small || "" }}
+            author={author_name || ''}
+            avatar={mappedImage && { src: mappedImage.small || '' }}
             hasBack={has_background}
             isInverted={is_inverted}
-            label={author_label || "Geschrieben von"}
-
-
+            label={author_label || 'Geschrieben von'}
         />
     );
 };

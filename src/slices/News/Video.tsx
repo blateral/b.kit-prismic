@@ -9,10 +9,9 @@ import {
     PrismicLink,
     isPrismicLinkExternal,
     resolveUnknownLink,
+} from 'utils/prismic';
 
-} from '../../utils/prismic';
-
-import { AliasSelectMapperType, ImageSizeSettings } from '../../utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
@@ -25,14 +24,12 @@ type BgMode =
     | 'larger-left'
     | 'larger-right';
 
-
 const imageSizes = {
     main: {
         small: { width: 640, height: 480 },
         medium: { width: 1024, height: 576 },
         large: { width: 1440, height: 810 },
-        xlarge: { width: 1680, height: 810 }
-
+        xlarge: { width: 1680, height: 810 },
     },
 } as ImageSizeSettings<{ main: ImageProps }>;
 export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
@@ -41,12 +38,11 @@ export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
         has_background?: PrismicBoolean;
         is_inverted?: PrismicBoolean;
         external_video?: PrismicLink;
-        image?: PrismicImage
+        image?: PrismicImage;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
-
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
@@ -62,7 +58,6 @@ export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
-
 }
 
 export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
@@ -74,15 +69,11 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
         primary_link,
         primary_label,
         secondary_link,
-        secondary_label
-
-
+        secondary_label,
     },
     primaryAction,
-    secondaryAction
-
+    secondaryAction,
 }) => {
-
     const introImageUrl = image && getImg(image).url;
     const mappedImage: ImageProps = {
         ...getImageFromUrls(
@@ -90,14 +81,12 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
                 small: introImageUrl || '',
                 medium: introImageUrl || '',
                 large: introImageUrl || '',
-                xlarge: introImageUrl || ''
-
+                xlarge: introImageUrl || '',
             },
             imageSizes.main,
             getText(image?.alt)
         ),
     };
-
 
     let embedId = external_video?.url?.split('v=')[1] || null;
     if (embedId) {
@@ -108,11 +97,9 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
     }
     return (
         <NewsVideo
-            embedId={embedId || ""}
+            embedId={embedId || ''}
             hasBack={has_background}
             isInverted={is_inverted}
-
-
             bgImage={mappedImage}
             primaryAction={(isInverted) =>
                 primaryAction &&
@@ -132,7 +119,6 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
                     isExternal: isPrismicLinkExternal(secondary_link),
                 })
             }
-
         />
     );
 };
