@@ -29,7 +29,7 @@ export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
     primary: {
         is_active?: PrismicBoolean;
         news_heading?: PrismicHeading;
-        intro?: PrismicRichText;
+        news_intro?: PrismicRichText;
         news_image?: PrismicImage;
         author_name?: PrismicKeyText;
         author_image?: PrismicImage;
@@ -50,7 +50,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
         author_name,
         publication_date,
         news_image,
-        intro,
+        news_intro,
         news_heading,
     },
     tags,
@@ -69,7 +69,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     return (
         <NewsIntro
             title={getText(news_heading)}
-            text={getHtmlText(intro)}
+            text={getHtmlText(news_intro)}
             image={mappedImage || undefined}
             isInverted={is_inverted}
             tags={tags?.filter(Boolean) || []}
