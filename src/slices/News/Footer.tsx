@@ -60,6 +60,7 @@ export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
             news={newsListMap || []}
             isInverted={is_inverted}
             hasBack={news_footer_background}
+            showMoreText={'mehr anzeigen'}
         />
     );
 };
