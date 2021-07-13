@@ -60,6 +60,7 @@ export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
             news={newsListMap || []}
             isInverted={is_inverted}
             hasBack={news_footer_background}
+            showMoreText={'mehr anzeigen'}
         />
     );
 };
@@ -119,7 +120,7 @@ function mapNewsListData({
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label: getText(news.data.secondary_label) || '',
+                    label: 'Beitrag lesen',
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
