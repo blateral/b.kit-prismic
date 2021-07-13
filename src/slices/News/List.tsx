@@ -47,6 +47,7 @@ export interface NewsListSliceType
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
+    onTagClick?: (name: string) => void;
 }
 
 const imageSizes = {
@@ -68,14 +69,18 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         title,
         super_title,
         has_back,
-        show_more_text,
         text,
     },
     items,
     primaryAction,
     secondaryAction,
+    onTagClick,
 }) => {
-    const newsListMap = mapNewsListData(items);
+    const newsListMap = mapNewsListData({
+        newsCollection: items,
+        secondaryAction,
+        onTagClick,
+    });
     return (
         <NewsList
             superTitle={getText(super_title)}
@@ -83,7 +88,7 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
-            showMoreText={show_more_text || ''}
+            showMoreText={'mehr anzeigen'}
             hasBack={has_back}
             news={newsListMap}
             isInverted={is_inverted}
@@ -108,15 +113,20 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         />
     );
 };
-function mapNewsListData(
-    newsCollection: PrismicNewsPage[] | undefined,
+function mapNewsListData({
+    newsCollection,
+    secondaryAction,
+    onTagClick,
+}: {
+    newsCollection: PrismicNewsPage[] | undefined;
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
         isExternal?: boolean;
-    }) => React.ReactNode
-) {
+    }) => React.ReactNode;
+    onTagClick?: (name?: string) => void;
+}) {
     if (!newsCollection) return [];
 
     return newsCollection.sort(byDateDescending).map((news) => {
@@ -154,15 +164,16 @@ function mapNewsListData(
                 news.data &&
                 news.data.news_intro &&
                 getHtmlText(news.data.news_intro),
+
             secondaryAction: (isInverted: boolean) =>
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label:
-                        getText(news.data.secondary_label) || 'Mehr erfahren',
+                    label: getText(news.data.secondary_label) || '',
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
+            onTagClick: onTagClick || undefined,
         };
     });
 }

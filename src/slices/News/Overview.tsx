@@ -10,6 +10,7 @@ import {
     PrismicRichText,
     getImageFromUrls,
     getHeadlineTag,
+    PrismicImage,
 } from 'utils/prismic';
 
 import { NewsOverview } from '@blateral/b.kit';
@@ -64,19 +65,20 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
-            tags={generateUniqueTags(items)}
+            tags={generateUniqueTag(items)}
             queryParams={queryParams}
             news={mapNewsListData(items, secondaryAction) || []}
         />
     );
 };
 
-function generateUniqueTags(newsCollection?: PrismicNewsPage[]) {
+function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
     if (!newsCollection || newsCollection.length === 0) return [];
 
     const newsTagsCollection = newsCollection?.map((news) => news.tags) || [];
     const flatNewsTags = flatten(newsTagsCollection);
     const uniqueNewsTags = Array.from(new Set(flatNewsTags));
+
     return uniqueNewsTags;
 }
 
@@ -90,30 +92,14 @@ function mapNewsListData(
     }) => React.ReactNode
 ) {
     return newsCollection?.sort(byDateDescending)?.map((news) => {
-        const introImageUrl =
-            (news?.data?.news_image?.url &&
-                getImg(news?.data?.news_image)?.url) ||
-            '';
+        const introImageUrl = createImageUrl(news.data.news_image)
+        const publicationDate = generatePublicationDate(news.data.publication_date || "", news.first_publication_date || "")
 
-        let publicationDate = undefined;
-        try {
-            publicationDate = news.data.publication_date
-                ? generatePublicationDateObject(news.data.publication_date)
-                : new Date(news.first_publication_date || '');
-        } catch {
-            publicationDate = undefined;
-        }
 
-        const mappedImage: ImageProps = {
-            ...getImageFromUrls(
-                {
-                    small: introImageUrl || '',
-                },
-                imageSizes.main,
-                getText(news.data.news_image?.alt)
-            ),
-        };
-        return {
+        const mappedImage: ImageProps = createMappedImage(introImageUrl, news?.data?.news_image?.alt || "")
+
+
+        const newsData = {
             image: mappedImage,
             tag: (news.tags && news.tags[0] && news.tags[0]) || 'News',
             publishDate: publicationDate,
@@ -128,13 +114,46 @@ function mapNewsListData(
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label:
-                        getText(news.data.secondary_label) || 'Mehr erfahren',
+                    label: "Beitrag lesen",
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
         };
+
+        return newsData;
     });
+}
+
+
+const generatePublicationDate = (publication_date?: string, first_publication_date?: string) => {
+    if (!publication_date && !first_publication_date) return undefined
+    try {
+        return publication_date
+            ? generatePublicationDateObject(publication_date)
+            : first_publication_date ? new Date(first_publication_date) : undefined;
+    } catch {
+        console.error("Error whlie generating publication date for news")
+        return undefined;
+    }
+}
+
+const createImageUrl = (image?: PrismicImage) => {
+
+    return (image &&
+        getImg(image)?.url) ||
+        '';
+}
+
+const createMappedImage = (imageUrl?: string, imageAlt?: string) => {
+    return {
+        ...getImageFromUrls(
+            {
+                small: imageUrl || '',
+            },
+            imageSizes.main,
+            getText(imageAlt)
+        ),
+    };
 }
 
 const byDateDescending = (a: PrismicNewsPage, b: PrismicNewsPage) => {
