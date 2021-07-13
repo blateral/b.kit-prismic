@@ -85,7 +85,7 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
-            showMoreText={show_more_text || ''}
+            showMoreText={'mehr anzeigen'}
             hasBack={has_back}
             news={newsListMap}
             isInverted={is_inverted}
@@ -163,7 +163,7 @@ function mapNewsListData(
                 secondaryAction({
                     isInverted,
                     label:
-                        getText(news.data.secondary_label) || 'Mehr erfahren',
+                        getText(news.data.secondary_label) || '',
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),

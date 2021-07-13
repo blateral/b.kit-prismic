@@ -129,8 +129,7 @@ function mapNewsListData(
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label:
-                        getText(news.data.secondary_label) || 'Mehr erfahren',
+                    label: "Beitrag lesen",
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
