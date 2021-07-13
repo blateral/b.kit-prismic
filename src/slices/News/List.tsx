@@ -47,6 +47,7 @@ export interface NewsListSliceType
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
+    onTagClick?: (name: string) => void
 }
 
 const imageSizes = {
@@ -74,8 +75,9 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
     items,
     primaryAction,
     secondaryAction,
+    onTagClick
 }) => {
-    const newsListMap = mapNewsListData(items);
+    const newsListMap = mapNewsListData(items, undefined, onTagClick);
     return (
         <NewsList
             superTitle={getText(super_title)}
@@ -115,7 +117,8 @@ function mapNewsListData(
         label?: string;
         href?: string;
         isExternal?: boolean;
-    }) => React.ReactNode
+    }) => React.ReactNode,
+    onTagClick?: (name?: string) => void
 ) {
     if (!newsCollection) return [];
 
@@ -154,6 +157,7 @@ function mapNewsListData(
                 news.data &&
                 news.data.news_intro &&
                 getHtmlText(news.data.news_intro),
+
             secondaryAction: (isInverted: boolean) =>
                 secondaryAction &&
                 secondaryAction({
@@ -163,6 +167,7 @@ function mapNewsListData(
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
+            onTagClick: onTagClick || undefined
         };
     });
 }

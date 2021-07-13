@@ -64,19 +64,20 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
-            tags={generateUniqueTags(items)}
+            tags={generateUniqueTag(items)}
             queryParams={queryParams}
             news={mapNewsListData(items, secondaryAction) || []}
         />
     );
 };
 
-function generateUniqueTags(newsCollection?: PrismicNewsPage[]) {
+function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
     if (!newsCollection || newsCollection.length === 0) return [];
 
     const newsTagsCollection = newsCollection?.map((news) => news.tags) || [];
     const flatNewsTags = flatten(newsTagsCollection);
     const uniqueNewsTags = Array.from(new Set(flatNewsTags));
+
     return uniqueNewsTags;
 }
 

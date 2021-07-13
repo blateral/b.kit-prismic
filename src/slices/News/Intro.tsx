@@ -72,7 +72,7 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
             text={getHtmlText(news_intro)}
             image={mappedImage || undefined}
             isInverted={is_inverted}
-            tags={tags?.filter(Boolean) || []}
+            tags={tags && tags.length > 0 ? [tags[0]] : []}
             onTagClick={(tag) => {
                 window.location.href = `/news?selected=${encodeURI(tag)}`
             }}
