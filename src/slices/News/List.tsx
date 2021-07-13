@@ -47,7 +47,7 @@ export interface NewsListSliceType
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
-    onTagClick?: (name: string) => void
+    onTagClick?: (name: string) => void;
 }
 
 const imageSizes = {
@@ -69,15 +69,18 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         title,
         super_title,
         has_back,
-        show_more_text,
         text,
     },
     items,
     primaryAction,
     secondaryAction,
-    onTagClick
+    onTagClick,
 }) => {
-    const newsListMap = mapNewsListData(items, undefined, onTagClick);
+    const newsListMap = mapNewsListData({
+        newsCollection: items,
+        secondaryAction,
+        onTagClick,
+    });
     return (
         <NewsList
             superTitle={getText(super_title)}
@@ -110,16 +113,20 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         />
     );
 };
-function mapNewsListData(
-    newsCollection: PrismicNewsPage[] | undefined,
+function mapNewsListData({
+    newsCollection,
+    secondaryAction,
+    onTagClick,
+}: {
+    newsCollection: PrismicNewsPage[] | undefined;
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
         isExternal?: boolean;
-    }) => React.ReactNode,
-    onTagClick?: (name?: string) => void
-) {
+    }) => React.ReactNode;
+    onTagClick?: (name?: string) => void;
+}) {
     if (!newsCollection) return [];
 
     return newsCollection.sort(byDateDescending).map((news) => {
@@ -162,12 +169,11 @@ function mapNewsListData(
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label:
-                        getText(news.data.secondary_label) || '',
+                    label: getText(news.data.secondary_label) || '',
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
-            onTagClick: onTagClick || undefined
+            onTagClick: onTagClick || undefined,
         };
     });
 }

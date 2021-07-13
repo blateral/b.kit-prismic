@@ -30,6 +30,8 @@ export interface NewsFooterSliceType
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
+
+    onTagClick?: (name?: string) => void;
 }
 
 const imageSizes = {
@@ -45,8 +47,13 @@ export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
     primary: { news_footer_background, is_inverted },
     items,
     secondaryAction,
+    onTagClick,
 }) => {
-    const newsListMap = mapNewsListData(items, secondaryAction);
+    const newsListMap = mapNewsListData({
+        newsCollection: items,
+        secondaryAction,
+        onTagClick,
+    });
 
     return (
         <NewsFooter
@@ -56,15 +63,20 @@ export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
         />
     );
 };
-function mapNewsListData(
-    newsCollection: PrismicNewsPage[] | undefined,
+function mapNewsListData({
+    newsCollection,
+    secondaryAction,
+    onTagClick,
+}: {
+    newsCollection: PrismicNewsPage[] | undefined;
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
         isExternal?: boolean;
-    }) => React.ReactNode
-) {
+    }) => React.ReactNode;
+    onTagClick?: (name?: string) => void;
+}) {
     if (!newsCollection) return [];
 
     return newsCollection.sort(byDateDescending).map((news) => {
@@ -72,16 +84,6 @@ function mapNewsListData(
             (news?.data?.news_image?.url &&
                 getImg(news?.data?.news_image)?.url) ||
             '';
-
-        const mappedImage: ImageProps = {
-            ...getImageFromUrls(
-                {
-                    small: introImageUrl || '',
-                },
-                imageSizes.main,
-                getText(news.data.news_image?.alt)
-            ),
-        };
 
         let publicationDate = undefined;
         try {
@@ -92,21 +94,36 @@ function mapNewsListData(
             publicationDate = undefined;
         }
 
+        const mappedImage: ImageProps = {
+            ...getImageFromUrls(
+                {
+                    small: introImageUrl || '',
+                },
+                imageSizes.main,
+                getText(news.data.news_image?.alt)
+            ),
+        };
         return {
             image: mappedImage,
-            tag: news.tags[0] || 'News',
+            tag: (news.tags && news.tags[0] && news.tags[0]) || 'News',
             publishDate: publicationDate,
-            title: getText(news.data.news_heading),
-            text: getHtmlText(news.data.news_intro),
+            title:
+                (news?.data?.news_heading && getText(news.data.news_heading)) ||
+                '',
+            text:
+                news.data &&
+                news.data.news_intro &&
+                getHtmlText(news.data.news_intro),
+
             secondaryAction: (isInverted: boolean) =>
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label:
-                        getText(news.data.secondary_label) || 'Mehr erfahren',
+                    label: getText(news.data.secondary_label) || '',
                     href: `/news/${news.uid}`,
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
+            onTagClick: onTagClick || undefined,
         };
     });
 }
