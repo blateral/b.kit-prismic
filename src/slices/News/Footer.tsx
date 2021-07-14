@@ -115,6 +115,7 @@ function mapNewsListData({
                 news.data &&
                 news.data.news_intro &&
                 getHtmlText(news.data.news_intro),
+            link: { href: `/news/${news.uid}`, isExternal: false },
 
             secondaryAction: (isInverted: boolean) =>
                 secondaryAction &&

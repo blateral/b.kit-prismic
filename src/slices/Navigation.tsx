@@ -191,13 +191,20 @@ const createMenu = ({
         else return true;
     });
 
+    const logoLinkParsed = resolveUnknownLink(settingsData?.logo_href);
+    const logoLinkCleaned =
+        logoLinkParsed && /index/.test(logoLinkParsed)
+            ? logoLinkParsed.replace('index', '')
+            : logoLinkParsed
+            ? logoLinkParsed
+            : '';
     return {
         isLargeMenu: menu_islargemenu || false,
         isTopbarInverted: tb_istopbarinverted,
         isMenuInverted: menu_ismenuinverted,
         logo: {
             icon: logo && logo.icon,
-            link: resolveUnknownLink(settingsData?.logo_href) || '',
+            link: logoLinkCleaned,
             pageTopScale: logo && logo.pageTopScale,
         },
         socials: socials,
