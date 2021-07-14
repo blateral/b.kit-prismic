@@ -1,4 +1,4 @@
-/***** Version: 0.9.6 *****/
+/***** Version: 0.11.11 *****/
 
 // export util types and functions
 export * from 'utils/prismic';
@@ -35,7 +35,3 @@ export * from 'slices/News/AuthorCard';
 export * from 'slices/News/Video';
 export * from 'slices/News/Images';
 export * from 'slices/News/Overview';
-
-
-
-
