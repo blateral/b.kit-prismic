@@ -209,7 +209,7 @@ const createMenu = ({
         },
         socials: socials,
         search: search && search,
-        primaryCta: ({ isInverted }) =>
+        primaryCta: ({ isInverted, size }) =>
             nav_primaryCtaFn &&
             !isPrismicLinkEmpty(settingsData?.header_primary_link) &&
             settingsData?.header_primary_label
@@ -219,10 +219,14 @@ const createMenu = ({
                           resolveUnknownLink(
                               settingsData?.header_primary_link
                           ) || '',
-                      label: settingsData?.header_primary_label || '',
+                      label:
+                          (size === 'desktop' ||
+                          !settingsData?.header_primary_label_short
+                              ? settingsData?.header_primary_label
+                              : settingsData?.header_primary_label_short) || '',
                   })
                 : undefined,
-        secondaryCta: ({ isInverted }) =>
+        secondaryCta: ({ isInverted, size }) =>
             nav_secondaryCtaFn &&
             !isPrismicLinkEmpty(settingsData?.header_secondary_link) &&
             settingsData?.header_secondary_label
@@ -232,7 +236,12 @@ const createMenu = ({
                           resolveUnknownLink(
                               settingsData?.header_secondary_link
                           ) || '',
-                      label: settingsData?.header_secondary_label || '',
+                      label:
+                          (size === 'desktop' ||
+                          !settingsData?.header_secondary_label_short
+                              ? settingsData?.header_secondary_label
+                              : settingsData?.header_secondary_label_short) ||
+                          '',
                   })
                 : undefined,
 
