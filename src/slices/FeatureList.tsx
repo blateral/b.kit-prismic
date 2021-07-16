@@ -16,6 +16,7 @@ import {
     getText,
     getHtmlText,
     getHeadlineTag,
+    isValidAction,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -175,22 +176,26 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         superTitle: getText(super_title),
         superTitleAs: getHeadlineTag(super_title),
         text: getHtmlText(text),
-        primaryAction: (isInverted: boolean) =>
-            primaryAction &&
-            primaryAction({
-                isInverted,
-                label: getText(primary_label),
-                href: resolveUnknownLink(primary_link) || '',
-                isExternal: isPrismicLinkExternal(primary_link),
-            }),
-        secondaryAction: (isInverted: boolean) =>
-            secondaryAction &&
-            secondaryAction({
-                isInverted,
-                label: getText(secondary_label),
-                href: resolveUnknownLink(secondary_link) || '',
-                isExternal: isPrismicLinkExternal(secondary_link),
-            }),
+        primaryAction:
+            primaryAction && isValidAction(primary_label, primary_link)
+                ? (isInverted: boolean) =>
+                      primaryAction({
+                          isInverted,
+                          label: getText(primary_label),
+                          href: resolveUnknownLink(primary_link) || '',
+                          isExternal: isPrismicLinkExternal(primary_link),
+                      })
+                : undefined,
+        secondaryAction:
+            secondaryAction && isValidAction(secondary_label, secondary_link)
+                ? (isInverted: boolean) =>
+                      secondaryAction({
+                          isInverted,
+                          label: getText(secondary_label),
+                          href: resolveUnknownLink(secondary_link) || '',
+                          isExternal: isPrismicLinkExternal(secondary_link),
+                      })
+                : undefined,
         features: items.map(
             ({
                 title,
@@ -236,22 +241,34 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                         coverSpace: !isSvgImage,
                     },
 
-                    primaryAction: (isInverted: boolean) =>
+                    primaryAction:
                         primaryAction &&
-                        primaryAction({
-                            isInverted,
-                            label: getText(primary_label),
-                            href: resolveUnknownLink(primary_link) || '',
-                            isExternal: isPrismicLinkExternal(primary_link),
-                        }),
-                    secondaryAction: (isInverted: boolean) =>
+                        isValidAction(primary_label, primary_link)
+                            ? (isInverted: boolean) =>
+                                  primaryAction({
+                                      isInverted,
+                                      label: getText(primary_label),
+                                      href:
+                                          resolveUnknownLink(primary_link) ||
+                                          '',
+                                      isExternal:
+                                          isPrismicLinkExternal(primary_link),
+                                  })
+                            : undefined,
+                    secondaryAction:
                         secondaryAction &&
-                        secondaryAction({
-                            isInverted,
-                            label: getText(secondary_label),
-                            href: resolveUnknownLink(secondary_link) || '',
-                            isExternal: isPrismicLinkExternal(secondary_link),
-                        }),
+                        isValidAction(secondary_label, secondary_link)
+                            ? (isInverted: boolean) =>
+                                  secondaryAction({
+                                      isInverted,
+                                      label: getText(secondary_label),
+                                      href:
+                                          resolveUnknownLink(secondary_link) ||
+                                          '',
+                                      isExternal:
+                                          isPrismicLinkExternal(secondary_link),
+                                  })
+                            : undefined,
                 };
             }
         ),

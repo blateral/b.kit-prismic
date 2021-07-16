@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     AliasMapperType,
     AliasSelectMapperType,
@@ -19,11 +20,11 @@ import {
     isPrismicLinkExternal,
     mapPrismicSelect,
     resolveUnknownLink,
-} from '../utils/prismic';
+    isValidAction,
+} from 'utils/prismic';
 
 import { Header } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-import React from 'react';
 
 interface HeaderImageItem {
     image?: PrismicImage;
@@ -175,23 +176,28 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
             badge={headerBadge(badge, badge_on_mobile)}
-            primaryCta={(isInverted: boolean) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryCta={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted: boolean) =>
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryCta={(isInverted: boolean) =>
+            secondaryCta={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted: boolean) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
             customTopGradient={customTopGradient}
             customBottomGradient={customBottomGradient}

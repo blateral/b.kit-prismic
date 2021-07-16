@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     PrismicKeyText,
     PrismicLink,
@@ -6,11 +7,8 @@ import {
     getText,
     resolveUnknownLink,
     isPrismicLinkExternal,
-} from '../utils/prismic';
-
+} from 'utils/prismic';
 import { Footer } from '@blateral/b.kit';
-// import { FactList } from '@blateral/b.kit';
-import React from 'react';
 
 export interface FooterSliceType {
     settingsPage?: PrismicSettingsPage;

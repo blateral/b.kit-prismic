@@ -15,7 +15,8 @@ import {
     resolveUnknownLink,
     getPrismicImage as getImg,
     getImageFromUrls,
-} from '../utils/prismic';
+    isValidAction,
+} from 'utils/prismic';
 
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
@@ -141,23 +142,28 @@ export const FactGridSlice: React.FC<FactGridSliceType> = ({
             superTitleAs={getHeadlineTag(super_title)}
             intro={getHtmlText(intro)}
             columns={columnsPerRow && (parseInt(columnsPerRow) as 3 | 4 | 6)}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryAction={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted) =>
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryAction={(isInverted) =>
+            secondaryAction={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
             facts={items?.map(({ title, sub_title, text, icon }) => {
                 // get image urls

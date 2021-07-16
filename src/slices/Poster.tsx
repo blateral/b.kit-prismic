@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     getHtmlText,
     getText,
@@ -13,10 +14,10 @@ import {
     getPrismicImage as getImg,
     getImageFromUrls,
     getHeadlineTag,
-} from '../utils/prismic';
+    isValidAction,
+} from 'utils/prismic';
 
 import { Poster } from '@blateral/b.kit';
-import React from 'react';
 import { AliasMapperType, ImageSizeSettings } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
@@ -67,7 +68,6 @@ const imageSizes = {
 export const PosterSlice: React.FC<PosterSliceType> = ({
     primary: {
         image,
-        is_inverted,
         super_title,
         title,
         text,
@@ -109,23 +109,28 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
             superTitle={getText(super_title)}
             superTitleAs={getHeadlineTag(super_title)}
             text={getHtmlText(text)}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryAction={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted) =>
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryAction={(isInverted) =>
+            secondaryAction={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
         />
     );

@@ -1,9 +1,11 @@
+import React from 'react';
 import {
     getHeadlineTag,
     getHtmlText,
     getText,
     isPrismicLinkExternal,
     isRichTextEmpty,
+    isValidAction,
     PrismicBoolean,
     PrismicGeopoint,
     PrismicHeading,
@@ -13,9 +15,7 @@ import {
     PrismicRichText,
     PrismicSlice,
     resolveUnknownLink,
-} from '../utils/prismic';
-
-import React from 'react';
+} from 'utils/prismic';
 import {
     FlyToIcon,
     MailIcon,
@@ -161,31 +161,48 @@ export const MapSlice: React.FC<MapSliceType> = ({
                         titleAs: 'span',
                         superTitle: getText(location.super_title),
                         superTitleAs: getHeadlineTag(location.super_title),
-                        primaryAction: (isInverted?: boolean) =>
+                        primaryAction:
                             primaryAction &&
-                            primaryAction({
-                                isInverted,
-                                label: getText(location.primary_label),
-                                href:
-                                    resolveUnknownLink(location.primary_link) ||
-                                    '',
-                                isExternal: isPrismicLinkExternal(
-                                    location.primary_link
-                                ),
-                            }),
-                        secondaryAction: (isInverted?: boolean) =>
+                            isValidAction(
+                                location.primary_label,
+                                location.primary_link
+                            )
+                                ? (isInverted?: boolean) =>
+                                      primaryAction({
+                                          isInverted,
+                                          label: getText(
+                                              location.primary_label
+                                          ),
+                                          href:
+                                              resolveUnknownLink(
+                                                  location.primary_link
+                                              ) || '',
+                                          isExternal: isPrismicLinkExternal(
+                                              location.primary_link
+                                          ),
+                                      })
+                                : undefined,
+                        secondaryAction:
                             secondaryAction &&
-                            secondaryAction({
-                                isInverted,
-                                label: getText(location.secondary_label),
-                                href:
-                                    resolveUnknownLink(
-                                        location.secondary_link
-                                    ) || '',
-                                isExternal: isPrismicLinkExternal(
-                                    location.secondary_link
-                                ),
-                            }),
+                            isValidAction(
+                                location.secondary_label,
+                                location.secondary_link
+                            )
+                                ? (isInverted?: boolean) =>
+                                      secondaryAction({
+                                          isInverted,
+                                          label: getText(
+                                              location.secondary_label
+                                          ),
+                                          href:
+                                              resolveUnknownLink(
+                                                  location.secondary_link
+                                              ) || '',
+                                          isExternal: isPrismicLinkExternal(
+                                              location.secondary_link
+                                          ),
+                                      })
+                                : undefined,
 
                         contact: contactInfo,
                     },
