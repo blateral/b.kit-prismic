@@ -1,6 +1,6 @@
 {
     "name": "@blateral/b.kit-prismic",
-    "version": "0.11.13",
+    "version": "0.11.14",
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
@@ -63,7 +63,7 @@
         "typescript": "^4.1.2"
     },
     "peerDependencies": {
-        "@blateral/b.kit": "^0.10.16",
+        "@blateral/b.kit": "^0.10.17",
         "@prismicio/client": "^4.0.0",
         "prismic-dom": "^2.2.4",
         "prismic-javascript": "^3.0.2",
