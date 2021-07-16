@@ -106,7 +106,7 @@ function mapNewsListData({
         };
         return {
             image: mappedImage,
-            tag: (news.tags && news.tags[0] && news.tags[0]) || 'News',
+            tag: news?.tags?.[0],
             publishDate: publicationDate,
             title:
                 (news?.data?.news_heading && getText(news.data.news_heading)) ||
