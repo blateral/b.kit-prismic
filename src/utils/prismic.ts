@@ -641,3 +641,7 @@ export const getHtmlText = (prismicValue?: PrismicRichText) => {
     }
     return text;
 };
+
+export const isValidAction = (label?: PrismicKeyText, link?: PrismicLink) => {
+    return label && !isPrismicLinkEmpty(link);
+};

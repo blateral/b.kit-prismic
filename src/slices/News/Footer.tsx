@@ -117,14 +117,17 @@ function mapNewsListData({
                 getHtmlText(news.data.news_intro),
             link: { href: `/news/${news.uid}`, isExternal: false },
 
-            secondaryAction: (isInverted: boolean) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: 'Beitrag lesen',
-                    href: `/news/${news.uid}`,
-                    isExternal: isPrismicLinkExternal(news.data.secondary_link),
-                }),
+            secondaryAction: secondaryAction
+                ? (isInverted: boolean) =>
+                      secondaryAction({
+                          isInverted,
+                          label: 'Beitrag lesen',
+                          href: `/news/${news.uid}`,
+                          isExternal: isPrismicLinkExternal(
+                              news.data.secondary_link
+                          ),
+                      })
+                : undefined,
             onTagClick: onTagClick || undefined,
         };
     });
