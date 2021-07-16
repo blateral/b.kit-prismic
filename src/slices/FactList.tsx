@@ -3,6 +3,7 @@ import {
     getHtmlText,
     getText,
     isPrismicLinkExternal,
+    isValidAction,
     PrismicBoolean,
     PrismicHeading,
     PrismicImage,
@@ -11,7 +12,7 @@ import {
     PrismicRichText,
     PrismicSlice,
     resolveUnknownLink,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
@@ -87,23 +88,28 @@ export const FactListSlice: React.FC<FactListSliceType> = ({
                     },
                 };
             })}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryAction={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted) =>
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryAction={(isInverted) =>
+            secondaryAction={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
         />
     );

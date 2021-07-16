@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     LogoProps,
     NavProps,
@@ -7,7 +8,7 @@ import {
     NavItem,
 } from '@blateral/b.kit/lib/components/sections/navigation/menu/Flyout';
 import {
-    isPrismicLinkEmpty,
+    isValidAction,
     PrismicKeyText,
     PrismicLink,
     PrismicSettingsData,
@@ -16,7 +17,6 @@ import {
 } from 'utils/prismic';
 
 import { Navigation } from '@blateral/b.kit';
-import React from 'react';
 
 // export interface NavigationSliceType {
 //     nav_primaryAction?: (props: {
@@ -209,40 +209,47 @@ const createMenu = ({
         },
         socials: socials,
         search: search && search,
-        primaryCta: ({ isInverted, size }) =>
+        primaryCta:
             nav_primaryCtaFn &&
-            !isPrismicLinkEmpty(settingsData?.header_primary_link) &&
-            settingsData?.header_primary_label
-                ? nav_primaryCtaFn({
-                      isInverted,
-                      href:
-                          resolveUnknownLink(
-                              settingsData?.header_primary_link
-                          ) || '',
-                      label:
-                          (size === 'desktop' ||
-                          !settingsData?.header_primary_label_short
-                              ? settingsData?.header_primary_label
-                              : settingsData?.header_primary_label_short) || '',
-                  })
+            isValidAction(
+                settingsData?.header_primary_label,
+                settingsData?.header_primary_link
+            )
+                ? ({ isInverted, size }) =>
+                      nav_primaryCtaFn({
+                          isInverted,
+                          href:
+                              resolveUnknownLink(
+                                  settingsData?.header_primary_link
+                              ) || '',
+                          label:
+                              (size === 'desktop' ||
+                              !settingsData?.header_primary_label_short
+                                  ? settingsData?.header_primary_label
+                                  : settingsData?.header_primary_label_short) ||
+                              '',
+                      })
                 : undefined,
-        secondaryCta: ({ isInverted, size }) =>
+        secondaryCta:
             nav_secondaryCtaFn &&
-            !isPrismicLinkEmpty(settingsData?.header_secondary_link) &&
-            settingsData?.header_secondary_label
-                ? nav_secondaryCtaFn({
-                      isInverted,
-                      href:
-                          resolveUnknownLink(
-                              settingsData?.header_secondary_link
-                          ) || '',
-                      label:
-                          (size === 'desktop' ||
-                          !settingsData?.header_secondary_label_short
-                              ? settingsData?.header_secondary_label
-                              : settingsData?.header_secondary_label_short) ||
-                          '',
-                  })
+            isValidAction(
+                settingsData?.header_secondary_label,
+                settingsData?.header_secondary_link
+            )
+                ? ({ isInverted, size }) =>
+                      nav_secondaryCtaFn({
+                          isInverted,
+                          href:
+                              resolveUnknownLink(
+                                  settingsData?.header_secondary_link
+                              ) || '',
+                          label:
+                              (size === 'desktop' ||
+                              !settingsData?.header_secondary_label_short
+                                  ? settingsData?.header_secondary_label
+                                  : settingsData?.header_secondary_label_short) ||
+                              '',
+                      })
                 : undefined,
 
         activeNavItem: `navGroup${activeItemIndexes.groupId}.nav-link${activeItemIndexes.itemId}`,

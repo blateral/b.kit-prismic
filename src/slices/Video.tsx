@@ -1,3 +1,4 @@
+import React from 'react';
 import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import {
     PrismicBoolean,
@@ -16,11 +17,10 @@ import {
     isPrismicLinkExternal,
     mapPrismicSelect,
     resolveUnknownLink,
+    isValidAction,
 } from 'utils/prismic';
 import { Video, VideoCarousel } from '@blateral/b.kit';
-
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-import React from 'react';
 import { ResponsiveObject } from './slick';
 
 type BgMode = 'full' | 'splitted';
@@ -129,22 +129,26 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         superTitle: getText(super_title),
         superTitleAs: getHeadlineTag(super_title),
         text: getHtmlText(text),
-        primaryAction: (isInverted: boolean) =>
-            primaryAction &&
-            primaryAction({
-                isInverted,
-                label: getText(primary_label),
-                href: resolveUnknownLink(primary_link) || '',
-                isExternal: isPrismicLinkExternal(primary_link),
-            }),
-        secondaryAction: (isInverted: boolean) =>
-            secondaryAction &&
-            secondaryAction({
-                isInverted,
-                label: getText(secondary_label),
-                href: resolveUnknownLink(secondary_link) || '',
-                isExternal: isPrismicLinkExternal(secondary_link),
-            }),
+        primaryAction:
+            primaryAction && isValidAction(primary_label, primary_link)
+                ? (isInverted: boolean) =>
+                      primaryAction({
+                          isInverted,
+                          label: getText(primary_label),
+                          href: resolveUnknownLink(primary_link) || '',
+                          isExternal: isPrismicLinkExternal(primary_link),
+                      })
+                : undefined,
+        secondaryAction:
+            secondaryAction && isValidAction(secondary_label, secondary_link)
+                ? (isInverted: boolean) =>
+                      secondaryAction({
+                          isInverted,
+                          label: getText(secondary_label),
+                          href: resolveUnknownLink(secondary_link) || '',
+                          isExternal: isPrismicLinkExternal(secondary_link),
+                      })
+                : undefined,
     };
 
     // if more than one items are defined create a carousel
@@ -196,7 +200,6 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         return (
             <Video
                 {...shardProps}
-
                 // FIXME: hasBack={bgMode === 'full' || bgMode === 'splitted'}
                 bgImage={mappedImage}
                 embedId={getText(embedId)}

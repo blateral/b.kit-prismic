@@ -51,11 +51,11 @@ export const NewsAuthorCardSlice: React.FC<NewsAuthorCardSliceType> = ({
 
     return (
         <NewsAuthorCard
-            author={author_name || ''}
+            author={getText(author_name)}
             avatar={mappedImage && { src: mappedImage.small || '' }}
             hasBack={has_background}
             isInverted={is_inverted}
-            label={author_label || 'Geschrieben von'}
+            label={getText(author_label) || 'Geschrieben von'}
         />
     );
 };

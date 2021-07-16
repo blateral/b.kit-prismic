@@ -11,6 +11,7 @@ import {
     PrismicImage,
     PrismicSelectField,
     getImageFromUrl,
+    isValidAction,
 } from 'utils/prismic';
 
 import { ImageSizeSettings } from 'utils/mapping';
@@ -75,23 +76,29 @@ export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
     return (
         <NewsImages
             isInverted={is_inverted}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryAction={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted) =>
+                          primaryAction &&
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryAction={(isInverted) =>
+            secondaryAction={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
             images={items?.map((item) => {
                 // get image format

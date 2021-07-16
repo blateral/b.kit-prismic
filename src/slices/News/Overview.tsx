@@ -25,12 +25,6 @@ export interface NewsOverviewSliceType
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        secondaryAction?: (props: {
-            isInverted?: boolean;
-            label?: string;
-            href?: string;
-            isExternal?: boolean;
-        }) => React.ReactNode;
     };
     queryParams?: Record<string, any>;
     secondaryAction?: (props: {
@@ -78,7 +72,7 @@ function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
     flatNewsTags.push('News');
     const uniqueNewsTags = Array.from(new Set(flatNewsTags));
 
-    uniqueNewsTags.sort();
+    // uniqueNewsTags.sort();
 
     return uniqueNewsTags;
 }
@@ -93,16 +87,20 @@ function mapNewsListData(
     }) => React.ReactNode
 ) {
     return newsCollection?.sort(byDateDescending)?.map((news) => {
-        const introImageUrl = createImageUrl(news.data.news_image)
-        const publicationDate = generatePublicationDate(news.data.publication_date || "", news.first_publication_date || "")
+        const introImageUrl = createImageUrl(news.data.news_image);
+        const publicationDate = generatePublicationDate(
+            news.data.publication_date || '',
+            news.first_publication_date || ''
+        );
 
-
-        const mappedImage: ImageProps = createMappedImage(introImageUrl, news?.data?.news_image?.alt || "")
-
+        const mappedImage: ImageProps = createMappedImage(
+            introImageUrl,
+            news?.data?.news_image?.alt || ''
+        );
 
         const newsData = {
             image: mappedImage,
-            tag: (news.tags && news.tags[0] && news.tags[0]) || 'News',
+            tag: news?.tags?.[0],
             publishDate: publicationDate,
             title:
                 (news?.data?.news_heading && getText(news.data.news_heading)) ||
@@ -113,39 +111,43 @@ function mapNewsListData(
                 getHtmlText(news.data.news_intro),
             link: { href: `/news/${news.uid}`, isExternal: false },
 
-            secondaryAction: (isInverted: boolean) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: 'Beitrag lesen',
-                    href: `/news/${news.uid}`,
-                    isExternal: isPrismicLinkExternal(news.data.secondary_link),
-                }),
+            secondaryAction: secondaryAction
+                ? (isInverted: boolean) =>
+                      secondaryAction({
+                          isInverted,
+                          label: 'Beitrag lesen',
+                          href: `/news/${news.uid}`,
+                          isExternal: isPrismicLinkExternal(
+                              news.data.secondary_link
+                          ),
+                      })
+                : undefined,
         };
 
         return newsData;
     });
 }
 
-
-const generatePublicationDate = (publication_date?: string, first_publication_date?: string) => {
-    if (!publication_date && !first_publication_date) return undefined
+const generatePublicationDate = (
+    publication_date?: string,
+    first_publication_date?: string
+) => {
+    if (!publication_date && !first_publication_date) return undefined;
     try {
         return publication_date
             ? generatePublicationDateObject(publication_date)
-            : first_publication_date ? new Date(first_publication_date) : undefined;
+            : first_publication_date
+            ? new Date(first_publication_date)
+            : undefined;
     } catch {
-        console.error("Error whlie generating publication date for news")
+        console.error('Error whlie generating publication date for news');
         return undefined;
     }
-}
+};
 
 const createImageUrl = (image?: PrismicImage) => {
-
-    return (image &&
-        getImg(image)?.url) ||
-        '';
-}
+    return (image && getImg(image)?.url) || '';
+};
 
 const createMappedImage = (imageUrl?: string, imageAlt?: string) => {
     return {
@@ -157,7 +159,7 @@ const createMappedImage = (imageUrl?: string, imageAlt?: string) => {
             getText(imageAlt)
         ),
     };
-}
+};
 
 const byDateDescending = (a: PrismicNewsPage, b: PrismicNewsPage) => {
     let aDate: Date | undefined = new Date();

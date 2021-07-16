@@ -22,6 +22,7 @@ import {
     getPrismicImage as getImg,
     getImageFromUrls,
     getHeadlineTag,
+    isValidAction,
 } from 'utils/prismic';
 
 type BgMode = 'full' | 'splitted';
@@ -150,22 +151,26 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
         intro: getText(intro),
         text: getHtmlText(text),
         subText: getHtmlText(sub_text),
-        primaryAction: (isInverted: boolean) =>
-            primaryAction &&
-            primaryAction({
-                isInverted,
-                label: getText(primary_label),
-                href: resolveUnknownLink(primary_link) || '',
-                isExternal: isPrismicLinkExternal(primary_link),
-            }),
-        secondaryAction: (isInverted: boolean) =>
-            secondaryAction &&
-            secondaryAction({
-                isInverted,
-                label: getText(secondary_label),
-                href: resolveUnknownLink(secondary_link) || '',
-                isExternal: isPrismicLinkExternal(secondary_link),
-            }),
+        primaryAction:
+            primaryAction && isValidAction(primary_label, primary_link)
+                ? (isInverted: boolean) =>
+                      primaryAction({
+                          isInverted,
+                          label: getText(primary_label),
+                          href: resolveUnknownLink(primary_link) || '',
+                          isExternal: isPrismicLinkExternal(primary_link),
+                      })
+                : undefined,
+        secondaryAction:
+            secondaryAction && isValidAction(secondary_label, secondary_link)
+                ? (isInverted: boolean) =>
+                      secondaryAction({
+                          isInverted,
+                          label: getText(secondary_label),
+                          href: resolveUnknownLink(secondary_link) || '',
+                          isExternal: isPrismicLinkExternal(secondary_link),
+                      })
+                : undefined,
     };
 
     // get urls for fixed ratios

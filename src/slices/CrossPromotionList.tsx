@@ -21,6 +21,7 @@ import {
     isPrismicLinkExternal,
     mapPrismicSelect,
     resolveUnknownLink,
+    isValidAction,
 } from '../utils/prismic';
 
 import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/PromotionCard';
@@ -274,23 +275,28 @@ const createCPromoList = ({
                       )
                     : undefined
             }
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryAction={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted) =>
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryAction={(isInverted) =>
+            secondaryAction={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
         />
     );
@@ -345,23 +351,28 @@ const createCPromoCarousel = ({
             superTitle={getText(super_title)}
             superTitleAs={getHeadlineTag(super_title)}
             text={getHtmlText(text)}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryAction={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted) =>
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryAction={(isInverted) =>
+            secondaryAction={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
             promotions={items.map(({ image, title, link }) => {
                 // get image urls

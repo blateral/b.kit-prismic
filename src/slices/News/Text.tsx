@@ -8,6 +8,7 @@ import {
     resolveUnknownLink,
     getText,
     getHtmlText,
+    isValidAction,
 } from 'utils/prismic';
 
 import { NewsText } from '@blateral/b.kit';
@@ -57,23 +58,28 @@ export const NewsTextSlice: React.FC<NewsTextSliceType> = ({
             text={getHtmlText(text)}
             isInverted={is_inverted}
             hasBack={has_background}
-            primaryAction={(isInverted) =>
-                primaryAction &&
-                primaryAction({
-                    isInverted,
-                    label: getText(primary_label),
-                    href: resolveUnknownLink(primary_link) || '',
-                    isExternal: isPrismicLinkExternal(primary_link),
-                })
+            primaryAction={
+                primaryAction && isValidAction(primary_label, primary_link)
+                    ? (isInverted) =>
+                          primaryAction({
+                              isInverted,
+                              label: getText(primary_label),
+                              href: resolveUnknownLink(primary_link) || '',
+                              isExternal: isPrismicLinkExternal(primary_link),
+                          })
+                    : undefined
             }
-            secondaryAction={(isInverted) =>
+            secondaryAction={
                 secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: getText(secondary_label),
-                    href: resolveUnknownLink(secondary_link) || '',
-                    isExternal: isPrismicLinkExternal(secondary_link),
-                })
+                isValidAction(secondary_label, secondary_link)
+                    ? (isInverted) =>
+                          secondaryAction({
+                              isInverted,
+                              label: getText(secondary_label),
+                              href: resolveUnknownLink(secondary_link) || '',
+                              isExternal: isPrismicLinkExternal(secondary_link),
+                          })
+                    : undefined
             }
         />
     );

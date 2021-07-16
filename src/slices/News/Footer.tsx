@@ -106,7 +106,7 @@ function mapNewsListData({
         };
         return {
             image: mappedImage,
-            tag: (news.tags && news.tags[0] && news.tags[0]) || 'News',
+            tag: news?.tags?.[0],
             publishDate: publicationDate,
             title:
                 (news?.data?.news_heading && getText(news.data.news_heading)) ||
@@ -117,14 +117,17 @@ function mapNewsListData({
                 getHtmlText(news.data.news_intro),
             link: { href: `/news/${news.uid}`, isExternal: false },
 
-            secondaryAction: (isInverted: boolean) =>
-                secondaryAction &&
-                secondaryAction({
-                    isInverted,
-                    label: 'Beitrag lesen',
-                    href: `/news/${news.uid}`,
-                    isExternal: isPrismicLinkExternal(news.data.secondary_link),
-                }),
+            secondaryAction: secondaryAction
+                ? (isInverted: boolean) =>
+                      secondaryAction({
+                          isInverted,
+                          label: 'Beitrag lesen',
+                          href: `/news/${news.uid}`,
+                          isExternal: isPrismicLinkExternal(
+                              news.data.secondary_link
+                          ),
+                      })
+                : undefined,
             onTagClick: onTagClick || undefined,
         };
     });
