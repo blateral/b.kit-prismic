@@ -8,7 +8,6 @@ import {
     NavItem,
 } from '@blateral/b.kit/lib/components/sections/navigation/menu/Flyout';
 import {
-    isPrismicLinkEmpty,
     isValidAction,
     PrismicKeyText,
     PrismicLink,
