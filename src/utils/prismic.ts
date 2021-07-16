@@ -171,7 +171,7 @@ export interface PrismicNewsPage extends Document {
         news_heading?: PrismicHeading;
         news_intro?: PrismicRichText;
         news_footer_inverted?: PrismicBoolean;
-        news_footer_background?: PrismicBoolean
+        news_footer_background?: PrismicBoolean;
 
         publication_date?: PrismicKeyText;
 
@@ -186,10 +186,15 @@ export interface PrismicNewsPage extends Document {
         author_has_background?: PrismicBoolean;
         author_is_inverted?: PrismicBoolean;
 
-        body: Array<NewsTextSliceType | NewsTableSliceType | NewsIntroSliceType | NewsVideoSliceType | NewsImagesSliceType>;
+        body: Array<
+            | NewsTextSliceType
+            | NewsTableSliceType
+            | NewsIntroSliceType
+            | NewsVideoSliceType
+            | NewsImagesSliceType
+        >;
     };
 }
-
 
 export interface PrismicPage extends Document {
     data: {
@@ -217,8 +222,6 @@ export interface PrismicPage extends Document {
         }>;
         header_badge?: PrismicImage;
         header_badge_on_mobile?: PrismicBoolean;
-
-
 
         body: Array<
             | ArticleSliceType
@@ -250,7 +253,6 @@ export interface PrismicNavigationSliceType {
     };
     items: never[];
 }
-
 
 export const getHtmlElementFromPrismicType = (
     props: PrismicHeading[0] | undefined
@@ -308,8 +310,10 @@ export interface PrismicSettingsData {
 
     header_is_inverted?: PrismicBoolean;
     header_primary_label?: PrismicKeyText;
+    header_primary_label_short?: PrismicKeyText;
     header_primary_link?: PrismicLink;
     header_secondary_label?: PrismicKeyText;
+    header_secondary_label_short?: PrismicKeyText;
     header_secondary_link?: PrismicLink;
 
     menu_islargemenu?: PrismicBoolean;
@@ -349,7 +353,7 @@ export interface PrismicRelationship {
 }
 
 export const linkResolver = (doc: Document) => {
-    if (doc.type === "news_page") return `/news/${doc.uid}`;
+    if (doc.type === 'news_page') return `/news/${doc.uid}`;
     if (doc.type === 'page' && doc.uid !== 'start') return `/${doc.uid}`;
     return `/`;
 };
