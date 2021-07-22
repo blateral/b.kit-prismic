@@ -69,10 +69,8 @@ function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
 
     const newsTagsCollection = newsCollection?.map((news) => news.tags) || [];
     const flatNewsTags = flatten(newsTagsCollection);
-    flatNewsTags.push('News');
     const uniqueNewsTags = Array.from(new Set(flatNewsTags));
 
-    // uniqueNewsTags.sort();
 
     return uniqueNewsTags;
 }
