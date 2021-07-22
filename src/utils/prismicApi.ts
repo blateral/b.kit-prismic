@@ -8,8 +8,8 @@ import {
 import Prismic from 'prismic-javascript';
 
 export const initPrismicApi = async (req: any) => {
-    const API_ENDPOINT = process.env.API_ENDPOINT || '';
-    const TOKEN = process.env.TOKEN || '';
+    const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || '';
+    const TOKEN = process.env.NEXT_PUBLIC_TOKEN || '';
 
     if (!API_ENDPOINT) throw Error('MISSING ENV: API_ENDPOINT not defined');
     if (!TOKEN) throw Error('MISSING ENV: TOKEN not defined');
