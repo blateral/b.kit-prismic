@@ -19,7 +19,7 @@ export async function generateRobotsTxt({
         res.statusCode = 500;
         res.setHeader('Content-Type', 'application/json');
         res.write({
-            error: `Settingspage of Repository '${process.env.API_ENDPOINT}' was not found. Not creating robots.txtx`,
+            error: `Settingspage of Repository '${process.env.NEXT_PUBLIC_API_ENDPOINT}' was not found. Not creating robots.txtx`,
             code: 500,
         });
         return res.end();
