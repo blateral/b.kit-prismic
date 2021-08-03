@@ -159,6 +159,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                 {
                     small: imgUrlPortrait || '',
                     medium: imgUrlPortrait,
+                    semilarge: imgUrlLandscape,
                     large: imgUrlLandscape,
                     xlarge: imgUrlLandscape,
                 },
