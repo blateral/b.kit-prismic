@@ -11,7 +11,7 @@ import {
     isPrismicLinkExternal,
     resolveUnknownLink,
     isValidAction,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 import React from 'react';
 import { Table } from '@blateral/b.kit';

@@ -28,12 +28,7 @@ import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/Promot
 import React from 'react';
 import { ResponsiveObject } from './slick';
 
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
+type BgMode = 'full' | 'splitted';
 
 interface ImageFormats {
     square: string;
@@ -194,10 +189,7 @@ const createCPromoList = ({
     },
     bgModeSelectAlias = {
         full: 'full',
-        'half-right': 'splitted',
-        'half-left': 'splitted',
-        'larger-left': 'splitted',
-        'larger-right': 'splitted',
+        splitted: 'splitted',
     },
     imageFormatAlias = {
         square: 'square',
@@ -317,10 +309,7 @@ const createCPromoCarousel = ({
     },
     bgModeSelectAlias = {
         full: 'full',
-        'half-right': 'splitted',
-        'half-left': 'splitted',
-        'larger-left': 'splitted',
-        'larger-right': 'splitted',
+        splitted: 'splitted',
     },
     imageFormatAlias = {
         square: 'square',

@@ -8,19 +8,14 @@ import {
     PrismicSelectField,
     mapPrismicSelect,
     getImageFromUrl,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 import { ComparisonSlider } from '@blateral/b.kit';
 import React from 'react';
 import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
+type BgMode = 'full' | 'splitted';
 
 export interface ComparisonSliderSliceType
     extends PrismicSlice<'ComparisonSlider'> {
@@ -65,10 +60,7 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
     },
     bgModeSelectAlias = {
         full: 'full',
-        'half-right': 'splitted',
-        'half-left': 'splitted',
-        'larger-left': 'splitted',
-        'larger-right': 'splitted',
+        splitted: 'splitted',
     },
     initalValue,
     overlayColor,

@@ -11,7 +11,7 @@ import {
     PrismicRichText,
     PrismicSlice,
     resolveUnknownLink,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 import React from 'react';
 import { Form } from '@blateral/b.kit';
@@ -102,7 +102,7 @@ export const FormSlice: React.FC<FormSliceType> = ({
     return (
         <Form
             isInverted={is_inverted}
-            bgMode={has_back ? 'full' : undefined}
+            hasBack={has_back}
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
