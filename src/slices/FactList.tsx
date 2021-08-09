@@ -4,12 +4,14 @@ import {
     getText,
     isPrismicLinkExternal,
     isValidAction,
+    mapPrismicSelect,
     PrismicBoolean,
     PrismicHeading,
     PrismicImage,
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
+    PrismicSelectField,
     PrismicSlice,
     resolveUnknownLink,
 } from 'utils/prismic';
@@ -17,12 +19,15 @@ import {
 // import { FactList } from '@blateral/b.kit';
 import React from 'react';
 import { FactList } from '@blateral/b.kit';
+import { AliasSelectMapperType } from 'utils/mapping';
 
 interface FactListEntryItems {
     label?: PrismicKeyText;
     text?: PrismicRichText;
     icon?: PrismicImage;
 }
+
+type BgMode = 'full' | 'inverted';
 
 export interface FactListSliceType
     extends PrismicSlice<'FactList', FactListEntryItems> {
@@ -31,14 +36,14 @@ export interface FactListSliceType
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         intro?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
-        has_back?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -58,21 +63,27 @@ export const FactListSlice: React.FC<FactListSliceType> = ({
         super_title,
         title,
         intro,
-        is_inverted,
-        has_back,
+        bg_mode,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     primaryAction,
     secondaryAction,
 }) => {
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <FactList
-            isInverted={is_inverted}
-            hasBack={has_back}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
