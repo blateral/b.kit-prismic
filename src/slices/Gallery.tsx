@@ -27,7 +27,7 @@ import {
 import { Gallery, ImageCarousel } from '@blateral/b.kit';
 import { ResponsiveObject } from 'slices/slick';
 
-type BgMode = 'full' | 'splitted';
+type BgMode = 'full' | 'splitted' | 'inverted';
 interface ImageFormats {
     square: string;
     landscape: string;
@@ -45,7 +45,6 @@ export interface GallerySliceType
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
         is_carousel?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
 
@@ -132,7 +131,6 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
         text,
         is_carousel,
         bg_mode,
-        is_inverted,
         primary_link,
         primary_label,
         secondary_link,
@@ -140,8 +138,9 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
     },
     items,
     bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     imageFormatAlias = {
         square: 'square',
@@ -164,7 +163,6 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
 
     // create props object
     const sharedProps = {
-        isInverted: is_inverted,
         title: getText(title),
         titleAs: getHeadlineTag(title),
         superTitle: getText(super_title),
@@ -243,6 +241,15 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
             />
         );
     } else {
-        return <Gallery {...sharedProps} hasBack={bgMode !== undefined} />;
+        return (
+            <Gallery
+                {...sharedProps}
+                bgMode={
+                    bgMode === 'full' || bgMode === 'inverted'
+                        ? bgMode
+                        : undefined
+                }
+            />
+        );
     }
 };
