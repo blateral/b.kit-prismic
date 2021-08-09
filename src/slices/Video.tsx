@@ -23,7 +23,7 @@ import { Video, VideoCarousel } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { ResponsiveObject } from './slick';
 
-type BgMode = 'full' | 'splitted';
+type BgMode = 'full' | 'splitted' | 'inverted';
 export interface VideoCardItem {
     bg_image: PrismicImage;
     embed_id: PrismicKeyText;
@@ -34,7 +34,6 @@ export interface VideoSliceType extends PrismicSlice<'Video', VideoCardItem> {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
 
         primary_link?: PrismicLink;
@@ -95,7 +94,6 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         super_title,
         title,
         text,
-        is_inverted,
         bg_mode,
         primary_link,
         primary_label,
@@ -104,8 +102,9 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     },
     items,
     bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     primaryAction,
     secondaryAction,
@@ -123,7 +122,6 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
 
     const shardProps = {
-        isInverted: is_inverted,
         title: getText(title),
         titleAs: getHeadlineTag(title),
         superTitle: getText(super_title),
@@ -200,7 +198,11 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         return (
             <Video
                 {...shardProps}
-                // FIXME: hasBack={bgMode === 'full' || bgMode === 'splitted'}
+                bgMode={
+                    bgMode === 'full' || bgMode === 'inverted'
+                        ? bgMode
+                        : undefined
+                }
                 bgImage={mappedImage}
                 embedId={getText(embedId)}
                 playIcon={playIcon}
