@@ -11,21 +11,27 @@ import {
     isPrismicLinkExternal,
     resolveUnknownLink,
     isValidAction,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
 import React from 'react';
 import { Table } from '@blateral/b.kit';
 import { TableProps } from '@blateral/b.kit/lib/components/sections/Table';
+import { AliasSelectMapperType } from 'utils/mapping';
 
 interface TableItem {
     table_title?: PrismicKeyText;
     table?: PrismicRichText;
 }
+
+type BgMode = 'full' | 'inverted';
+
 export interface TableSliceType extends PrismicSlice<'Table', TableItem> {
     primary: {
         is_active?: PrismicBoolean;
 
-        is_inverted?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
@@ -35,6 +41,7 @@ export interface TableSliceType extends PrismicSlice<'Table', TableItem> {
         secondary_link?: PrismicLink;
     };
     // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -54,19 +61,26 @@ export const TableSlice: React.FC<TableSliceType> = ({
         super_title,
         title,
         text,
+        bg_mode,
         primary_label,
         secondary_label,
         primary_link,
         secondary_link,
     },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     primaryAction,
     secondaryAction,
 }) => {
     const tableData = createTableItems(items);
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
 
     return (
         <Table
+            bgMode={bgMode === 'inverted' ? 'inverted' : 'full'}
             title={getText(title) || ''}
             titleAs={getHeadlineTag(title) || 'div'}
             superTitle={getText(super_title) || ''}
