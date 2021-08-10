@@ -25,7 +25,7 @@ import {
     isValidAction,
 } from 'utils/prismic';
 
-type BgMode = 'full' | 'splitted';
+type BgMode = 'full' | 'inverted';
 
 interface ImageFormats {
     square: string;
@@ -37,7 +37,6 @@ interface ImageFormats {
 export interface TeaserSliceType extends PrismicSlice<'Teaser'> {
     primary: {
         is_active?: PrismicBoolean;
-        is_inverted?: PrismicBoolean;
         is_mirrored?: PrismicBoolean;
         is_wide?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
@@ -106,7 +105,6 @@ const imageSizes = {
 
 export const TeaserSlice: React.FC<TeaserSliceType> = ({
     primary: {
-        is_inverted,
         is_mirrored,
         is_wide,
         bg_mode,
@@ -125,8 +123,8 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
         secondary_label,
     },
     bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
+        full: 'soft',
+        inverted: 'heavy',
     },
     imageFormatAlias = {
         square: 'square',
@@ -142,7 +140,6 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
 
     const sharedProps = {
-        isInverted: is_inverted,
         isMirrored: is_mirrored,
         superTitle: getText(super_title),
         superTitleAs: getHeadlineTag(super_title),
@@ -188,7 +185,11 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
         return (
             <TeaserWide
                 {...sharedProps}
-                hasBack={bgMode !== undefined}
+                bgMode={
+                    bgMode === 'full' || bgMode === 'inverted'
+                        ? bgMode
+                        : undefined
+                }
                 image={{
                     ...getImageFromUrls(
                         {
@@ -209,7 +210,11 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
         return (
             <Teaser
                 {...sharedProps}
-                bgMode={bgMode}
+                bgMode={
+                    bgMode === 'full' || bgMode === 'inverted'
+                        ? bgMode
+                        : undefined
+                }
                 image={{
                     ...getImageFromUrls(
                         {
