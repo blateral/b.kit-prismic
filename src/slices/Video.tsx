@@ -121,7 +121,7 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     // get background mode
     const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
 
-    const shardProps = {
+    const sharedProps = {
         title: getText(title),
         titleAs: getHeadlineTag(title),
         superTitle: getText(super_title),
@@ -153,7 +153,7 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     if (items.length > 1) {
         return (
             <VideoCarousel
-                {...shardProps}
+                {...sharedProps}
                 bgMode={bgMode}
                 videos={items.map((item) => {
                     // get image url
@@ -197,7 +197,7 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
 
         return (
             <Video
-                {...shardProps}
+                {...sharedProps}
                 bgMode={
                     bgMode === 'full' || bgMode === 'inverted'
                         ? bgMode
