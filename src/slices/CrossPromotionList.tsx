@@ -28,7 +28,7 @@ import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/Promot
 import React from 'react';
 import { ResponsiveObject } from './slick';
 
-type BgMode = 'full' | 'splitted';
+type BgMode = 'full' | 'splitted' | 'inverted';
 
 interface ImageFormats {
     square: string;
@@ -51,7 +51,6 @@ export interface CrossPromotionListSliceType
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
         is_carousel?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         format?: PrismicSelectField;
@@ -179,7 +178,6 @@ const createCPromoList = ({
         super_title,
         title,
         text,
-        is_inverted,
         bg_mode,
         format,
         primary_link,
@@ -188,8 +186,9 @@ const createCPromoList = ({
         secondary_label,
     },
     bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     imageFormatAlias = {
         square: 'square',
@@ -202,8 +201,9 @@ const createCPromoList = ({
     secondaryAction,
 }: CrossPromotionListSliceType) => {
     const promoItems: Array<CrossPromotionItems> = items;
-    const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const itemCount = promoItems.length;
+
     const mapPromotionItem = (item: CrossPromotionItems) => {
         // get image format
         let imgFormat = mapPrismicSelect(imageFormatAlias, format || 'square');
@@ -246,7 +246,6 @@ const createCPromoList = ({
 
     return (
         <CrossPromotion
-            isInverted={is_inverted}
             bgMode={bgMode}
             superTitle={getText(super_title)}
             superTitleAs={getHeadlineTag(super_title)}
@@ -299,7 +298,6 @@ const createCPromoCarousel = ({
         super_title,
         title,
         text,
-        is_inverted,
         bg_mode,
         format,
         primary_link,
@@ -308,8 +306,9 @@ const createCPromoCarousel = ({
         secondary_label,
     },
     bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     imageFormatAlias = {
         square: 'square',
@@ -334,7 +333,6 @@ const createCPromoCarousel = ({
     return (
         <PromotionCarousel
             bgMode={bgMode}
-            isInverted={is_inverted}
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
