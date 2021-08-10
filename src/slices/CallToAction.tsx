@@ -12,10 +12,15 @@ import {
     getHeadlineTag,
     PrismicImage,
     isValidAction,
+    mapPrismicSelect,
+    PrismicSelectField,
 } from 'utils/prismic';
 
 import React from 'react';
 import { CallToAction } from '@blateral/b.kit';
+import { AliasSelectMapperType } from 'utils/mapping';
+
+type BgMode = 'full' | 'inverted';
 
 interface AddressSliceType {
     decorator?: PrismicImage;
@@ -29,10 +34,10 @@ export interface CallToActionSliceType
     > {
     primary: {
         is_active?: PrismicBoolean;
-        is_inverted?: PrismicBoolean;
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
+        bg_mode?: PrismicSelectField;
 
         contact_avatar?: PrismicImage;
         contact_name?: PrismicKeyText;
@@ -49,6 +54,7 @@ export interface CallToActionSliceType
         badge?: PrismicImage;
     };
     // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     injectForm?: (props: {
         isInverted?: boolean;
         placeholder?: string;
@@ -73,7 +79,7 @@ export const CallToActionSlice: React.FC<CallToActionSliceType> = ({
         super_title,
         title,
         text,
-        is_inverted,
+        bg_mode,
 
         contact_avatar,
         contact_name,
@@ -89,13 +95,19 @@ export const CallToActionSlice: React.FC<CallToActionSliceType> = ({
         badge,
     },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     injectForm,
     primaryAction,
     secondaryAction,
 }) => {
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <CallToAction
-            isInverted={is_inverted}
+            bgMode={bgMode === 'inverted' ? 'inverted' : 'full'}
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}
