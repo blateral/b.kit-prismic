@@ -1,22 +1,13 @@
 import React from 'react';
 import {
     PrismicBoolean,
-    PrismicHeading,
-    PrismicRichText,
     PrismicSlice,
-    PrismicLink,
     PrismicImage,
     PrismicSelectField,
     mapPrismicSelect,
-    resolveUnknownLink,
-    isPrismicLinkExternal,
     getPrismicImage as getImg,
     getImageFromUrls,
-    PrismicKeyText,
     getText,
-    getHtmlText,
-    getHeadlineTag,
-    isValidAction,
 } from 'utils/prismic';
 import {
     AliasMapperType,
@@ -42,33 +33,13 @@ export interface GallerySliceType
     > {
     primary: {
         is_active?: PrismicBoolean;
-        super_title?: PrismicHeading;
-        title?: PrismicHeading;
-        text?: PrismicRichText;
         is_carousel?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
-
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
     };
 
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     imageFormatAlias?: AliasMapperType<ImageFormats>;
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-    secondaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
     controlNext?: (props: {
         isInverted?: boolean;
         isActive?: boolean;
@@ -125,17 +96,7 @@ const imageSizes = {
 } as ImageSizeSettings<ImageFormats>;
 
 export const GallerySlice: React.FC<GallerySliceType> = ({
-    primary: {
-        super_title,
-        title,
-        text,
-        is_carousel,
-        bg_mode,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
-    },
+    primary: { is_carousel, bg_mode },
     items,
     bgModeSelectAlias = {
         full: 'soft',
@@ -148,8 +109,6 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
         'landscape-wide': 'landscape-wide',
         portrait: 'portrait',
     },
-    primaryAction,
-    secondaryAction,
     controlNext,
     controlPrev,
     dot,
@@ -163,11 +122,6 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
 
     // create props object
     const sharedProps = {
-        title: getText(title),
-        titleAs: getHeadlineTag(title),
-        superTitle: getText(super_title),
-        superTitleAs: getHeadlineTag(super_title),
-        text: getHtmlText(text),
         images: items?.map((item) => {
             // get image format
             let imgFormat = mapPrismicSelect(imageFormatAlias, item.format);
@@ -203,26 +157,6 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                 isFull: imgFormat === 'landscape-wide',
             };
         }),
-        primaryAction:
-            primaryAction && isValidAction(primary_label, secondary_link)
-                ? (isInverted?: boolean) =>
-                      primaryAction({
-                          isInverted,
-                          label: getText(primary_label),
-                          href: resolveUnknownLink(primary_link) || '',
-                          isExternal: isPrismicLinkExternal(primary_link),
-                      })
-                : undefined,
-        secondaryAction:
-            secondaryAction && isValidAction(secondary_label, secondary_link)
-                ? (isInverted?: boolean) =>
-                      secondaryAction({
-                          isInverted,
-                          label: getText(secondary_label),
-                          href: resolveUnknownLink(secondary_link) || '',
-                          isExternal: isPrismicLinkExternal(secondary_link),
-                      })
-                : undefined,
     };
 
     if (is_carousel) {

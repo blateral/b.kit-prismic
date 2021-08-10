@@ -15,7 +15,6 @@ import {
     PrismicKeyText,
     getText,
     getHtmlText,
-    getHeadlineTag,
     isValidAction,
 } from 'utils/prismic';
 import {
@@ -54,18 +53,10 @@ export interface FeatureListSliceType
     primary: {
         is_active?: PrismicBoolean;
         is_carousel?: PrismicBoolean;
-        title?: PrismicHeading;
-        super_title?: PrismicHeading;
-        text?: PrismicRichText;
 
         is_centered?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         image_format?: PrismicSelectField;
-
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
     };
 
     // helpers to define elements outside of slice
@@ -128,19 +119,7 @@ const imageSizes = {
 } as ImageSizeSettings<ImageFormats>;
 
 export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
-    primary: {
-        is_carousel,
-        title,
-        super_title,
-        text,
-        is_centered,
-        bg_mode,
-        image_format,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
-    },
+    primary: { is_carousel, is_centered, bg_mode, image_format },
     items,
     bgModeSelectAlias = {
         full: 'soft',
@@ -169,31 +148,6 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
 
     const sharedProps = {
         isCentered: is_centered,
-        title: getText(title),
-        titleAs: getHeadlineTag(title),
-        superTitle: getText(super_title),
-        superTitleAs: getHeadlineTag(super_title),
-        text: getHtmlText(text),
-        primaryAction:
-            primaryAction && isValidAction(primary_label, primary_link)
-                ? (isInverted: boolean) =>
-                      primaryAction({
-                          isInverted,
-                          label: getText(primary_label),
-                          href: resolveUnknownLink(primary_link) || '',
-                          isExternal: isPrismicLinkExternal(primary_link),
-                      })
-                : undefined,
-        secondaryAction:
-            secondaryAction && isValidAction(secondary_label, secondary_link)
-                ? (isInverted: boolean) =>
-                      secondaryAction({
-                          isInverted,
-                          label: getText(secondary_label),
-                          href: resolveUnknownLink(secondary_link) || '',
-                          isExternal: isPrismicLinkExternal(secondary_link),
-                      })
-                : undefined,
         features: items.map(
             ({
                 title,
@@ -238,7 +192,6 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                         ),
                         coverSpace: !isSvgImage,
                     },
-
                     primaryAction:
                         primaryAction &&
                         isValidAction(primary_label, primary_link)

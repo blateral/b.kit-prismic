@@ -35,7 +35,7 @@
         }
     },
     "devDependencies": {
-        "@blateral/b.kit": "0.10.19",
+        "@blateral/b.kit": "file:.yalc/@blateral/b.kit",
         "@prismicio/client": "^4.0.0",
         "@rollup/plugin-commonjs": "^17.1.0",
         "@rollup/plugin-node-resolve": "^11.1.1",

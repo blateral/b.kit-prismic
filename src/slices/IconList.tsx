@@ -1,16 +1,12 @@
 import {
-    getHeadlineTag,
-    getHtmlText,
     getText,
     isPrismicLinkExternal,
     isValidAction,
     mapPrismicSelect,
     PrismicBoolean,
-    PrismicHeading,
     PrismicImage,
     PrismicKeyText,
     PrismicLink,
-    PrismicRichText,
     PrismicSelectField,
     PrismicSlice,
     resolveUnknownLink,
@@ -31,9 +27,6 @@ export interface IconListSliceType
     primary: {
         is_active?: PrismicBoolean;
 
-        super_title?: PrismicHeading;
-        title?: PrismicHeading;
-        text?: PrismicRichText;
         is_centered?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
@@ -60,9 +53,6 @@ export interface IconListSliceType
 
 export const IconListSlice: React.FC<IconListSliceType> = ({
     primary: {
-        super_title,
-        title,
-        text,
         bg_mode,
         is_centered,
         primary_link,
@@ -83,11 +73,6 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
 
     return (
         <IconList
-            superTitle={super_title && getText(super_title)}
-            superTitleAs={getHeadlineTag(super_title)}
-            title={title && getText(title)}
-            titleAs={getHeadlineTag(title)}
-            text={text && getHtmlText(text)}
             isCentered={is_centered}
             bgMode={
                 bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
