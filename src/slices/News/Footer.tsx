@@ -8,22 +8,26 @@ import {
     isPrismicLinkExternal,
     getImageFromUrls,
     getPrismicImage as getImg,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
-import { ImageSizeSettings } from 'utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import { NewsFooter } from '@blateral/b.kit';
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+
+type BgMode = 'full' | 'inverted';
 
 export interface NewsFooterSliceType
     extends PrismicSlice<'NewsFooter', PrismicNewsPage> {
     primary: {
         is_active?: PrismicBoolean;
-
-        publication_date?: PrismicKeyText;
-        is_inverted?: PrismicBoolean;
-        news_footer_background?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
     };
+
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -44,11 +48,17 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
-    primary: { news_footer_background, is_inverted },
+    primary: { bg_mode },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     secondaryAction,
     onTagClick,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const newsListMap = mapNewsListData({
         newsCollection: items,
         secondaryAction,
@@ -58,8 +68,9 @@ export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
     return (
         <NewsFooter
             news={newsListMap || []}
-            isInverted={is_inverted}
-            hasBack={news_footer_background}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             showMoreText={'mehr anzeigen'}
         />
     );
