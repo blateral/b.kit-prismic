@@ -11,12 +11,16 @@ import {
     getImageFromUrls,
     getHeadlineTag,
     PrismicImage,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
 import { NewsOverview } from '@blateral/b.kit';
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-import { ImageSizeSettings } from 'utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
+
+type BgMode = 'full' | 'inverted';
 
 export interface NewsOverviewSliceType
     extends PrismicSlice<'NewsOverview', PrismicNewsPage> {
@@ -25,7 +29,11 @@ export interface NewsOverviewSliceType
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
+        bg_mode?: PrismicSelectField;
     };
+
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     queryParams?: Record<string, any>;
     secondaryAction?: (props: {
         isInverted?: boolean;
@@ -45,11 +53,18 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
-    primary: { title, super_title, text },
+    primary: { title, super_title, text, bg_mode },
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     secondaryAction,
     queryParams,
     items,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <NewsOverview
             superTitle={getText(super_title)}
@@ -60,6 +75,9 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
             tags={generateUniqueTag(items)}
             queryParams={queryParams}
             news={mapNewsListData(items, secondaryAction) || []}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
         />
     );
 };
@@ -70,7 +88,6 @@ function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
     const newsTagsCollection = newsCollection?.map((news) => news.tags) || [];
     const flatNewsTags = flatten(newsTagsCollection);
     const uniqueNewsTags = Array.from(new Set(flatNewsTags));
-
 
     return uniqueNewsTags;
 }

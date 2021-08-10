@@ -12,11 +12,15 @@ import {
     getPrismicImage as getImg,
     getText,
     getImageFromUrl,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
-import { ImageSizeSettings } from 'utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import { NewsIntro } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+
+type BgMode = 'full' | 'inverted';
 
 const imageSizes = {
     main: {
@@ -34,28 +38,35 @@ export interface NewsIntroSliceType extends PrismicSlice<'NewsIntro'> {
         author_name?: PrismicKeyText;
         author_image?: PrismicImage;
         publication_date?: PrismicKeyText;
-        is_inverted?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
-    tags?: string[];
 
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
+    tags?: string[];
 }
 
 export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
     primary: {
-        is_inverted,
+        bg_mode,
         author_name,
         publication_date,
         news_image,
         news_intro,
         news_heading,
     },
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     tags,
-
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const introImageUrl = news_image && getImg(news_image).url;
     const mappedImage = introImageUrl && {
         ...getImageFromUrl(
@@ -71,10 +82,12 @@ export const NewsIntroSlice: React.FC<NewsIntroSliceType> = ({
             title={getText(news_heading)}
             text={getHtmlText(news_intro)}
             image={mappedImage || undefined}
-            isInverted={is_inverted}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             tags={tags && tags.length > 0 ? [tags[0]] : []}
             onTagClick={(tag) => {
-                window.location.href = `/news?selected=${encodeURI(tag)}`
+                window.location.href = `/news?selected=${encodeURI(tag)}`;
             }}
             meta={{
                 author: author_name || '',

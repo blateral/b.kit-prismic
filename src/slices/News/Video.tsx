@@ -10,6 +10,8 @@ import {
     isPrismicLinkExternal,
     resolveUnknownLink,
     isValidAction,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
 import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
@@ -18,12 +20,7 @@ import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { NewsVideo } from '@blateral/b.kit';
 
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
+type BgMode = 'full' | 'inverted';
 
 const imageSizes = {
     main: {
@@ -36,8 +33,7 @@ const imageSizes = {
 export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
     primary: {
         is_active?: PrismicBoolean;
-        has_background?: PrismicBoolean;
-        is_inverted?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         external_video?: PrismicLink;
         image?: PrismicImage;
         primary_link?: PrismicLink;
@@ -63,8 +59,7 @@ export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
 
 export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
     primary: {
-        is_inverted,
-        has_background,
+        bg_mode,
         external_video,
         image,
         primary_link,
@@ -72,9 +67,15 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
         secondary_link,
         secondary_label,
     },
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     primaryAction,
     secondaryAction,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const introImageUrl = image && getImg(image).url;
     const mappedImage: ImageProps = {
         ...getImageFromUrls(
@@ -99,8 +100,9 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
     return (
         <NewsVideo
             embedId={embedId || ''}
-            hasBack={has_background}
-            isInverted={is_inverted}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             bgImage={mappedImage}
             primaryAction={
                 primaryAction && isValidAction(primary_label, primary_link)

@@ -14,12 +14,16 @@ import {
     getImageFromUrls,
     getHeadlineTag,
     isValidAction,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
 import { NewsList } from '@blateral/b.kit';
 import React from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
-import { ImageSizeSettings } from 'utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
+
+type BgMode = 'full' | 'inverted';
 
 export interface NewsListSliceType
     extends PrismicSlice<'NewsList', PrismicNewsPage> {
@@ -28,14 +32,16 @@ export interface NewsListSliceType
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
-        has_back?: PrismicBoolean;
-        is_inverted?: PrismicBoolean;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
         show_more_text?: PrismicKeyText;
+        bg_mode?: PrismicSelectField;
     };
+
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -62,26 +68,32 @@ const imageSizes = {
 
 export const NewsListSlice: React.FC<NewsListSliceType> = ({
     primary: {
-        is_inverted,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
         title,
         super_title,
-        has_back,
+        bg_mode,
         text,
     },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     primaryAction,
     secondaryAction,
     onTagClick,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const newsListMap = mapNewsListData({
         newsCollection: items,
         secondaryAction,
         onTagClick,
     });
+
     return (
         <NewsList
             superTitle={getText(super_title)}
@@ -90,9 +102,10 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
             titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
             showMoreText={'mehr anzeigen'}
-            hasBack={has_back}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             news={newsListMap}
-            isInverted={is_inverted}
             primaryAction={
                 primaryAction && isValidAction(primary_label, primary_link)
                     ? (isInverted) =>

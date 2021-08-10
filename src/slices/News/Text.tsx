@@ -9,23 +9,29 @@ import {
     getText,
     getHtmlText,
     isValidAction,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
 import { NewsText } from '@blateral/b.kit';
 import React from 'react';
+import { AliasSelectMapperType } from 'utils/mapping';
+
+type BgMode = 'full' | 'inverted';
 
 export interface NewsTextSliceType extends PrismicSlice<'NewsText'> {
     primary: {
         is_active?: PrismicBoolean;
         text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
-        has_background?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
     };
 
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -43,21 +49,28 @@ export interface NewsTextSliceType extends PrismicSlice<'NewsText'> {
 export const NewsTextSlice: React.FC<NewsTextSliceType> = ({
     primary: {
         text,
-        is_inverted,
-        has_background,
+        bg_mode,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     primaryAction,
     secondaryAction,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <NewsText
             text={getHtmlText(text)}
-            isInverted={is_inverted}
-            hasBack={has_background}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             primaryAction={
                 primaryAction && isValidAction(primary_label, primary_link)
                     ? (isInverted) =>

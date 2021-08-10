@@ -4,28 +4,45 @@ import {
     PrismicRichText,
     PrismicSlice,
     getText,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
 import { NewsTable } from '@blateral/b.kit';
 import React from 'react';
 import { TableProps } from '@blateral/b.kit/lib/components/sections/Table';
+import { AliasSelectMapperType } from 'utils/mapping';
+
+type BgMode = 'full' | 'inverted';
 
 export interface NewsTableSliceType extends PrismicSlice<'NewsTable'> {
     primary: {
         is_active?: PrismicBoolean;
-        has_back?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         table_title?: PrismicHeading;
         table?: PrismicRichText;
         as_table_header?: PrismicBoolean;
     };
+
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
 }
 
 export const NewsTableSlice: React.FC<NewsTableSliceType> = ({
-    primary: { has_back, table_title, table, as_table_header },
+    primary: { bg_mode, table_title, table, as_table_header },
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <NewsTable
-            hasBack={has_back}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             tableItems={[
                 createTableItem(
                     getText(table),
