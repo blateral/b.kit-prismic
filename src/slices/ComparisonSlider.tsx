@@ -15,14 +15,13 @@ import React from 'react';
 import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 
-type BgMode = 'full' | 'splitted';
+type BgMode = 'full' | 'splitted' | 'inverted';
 
 export interface ComparisonSliderSliceType
     extends PrismicSlice<'ComparisonSlider'> {
     primary: {
         is_active?: PrismicBoolean;
 
-        is_inverted?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         has_anim?: PrismicBoolean;
         foreground_img?: PrismicImage;
@@ -50,7 +49,6 @@ const imageSizes = {
 
 export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
     primary: {
-        is_inverted,
         bg_mode,
         has_anim,
         foreground_img,
@@ -59,8 +57,9 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
         background_label,
     },
     bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     initalValue,
     overlayColor,
@@ -93,7 +92,6 @@ export const ComparisonSliderSlice: React.FC<ComparisonSliderSliceType> = ({
 
     return (
         <ComparisonSlider
-            isInverted={is_inverted}
             bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
             initialValue={initalValue}
             foregroundImg={mappedForegroundImage}
