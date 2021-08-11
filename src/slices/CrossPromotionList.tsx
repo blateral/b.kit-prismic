@@ -43,6 +43,7 @@ export interface CrossPromotionListSliceType
     primary: {
         is_active?: PrismicBoolean;
         is_carousel?: PrismicBoolean;
+        is_mirrored?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         format?: PrismicSelectField;
     };
@@ -148,7 +149,7 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (
 };
 
 const createCPromoList = ({
-    primary: { bg_mode, format },
+    primary: { bg_mode, format, is_mirrored },
     bgModeSelectAlias = {
         full: 'soft',
         splitted: 'soft-splitted',
@@ -208,6 +209,7 @@ const createCPromoList = ({
 
     return (
         <CrossPromotion
+            isMirrored={is_mirrored}
             bgMode={bgMode}
             main={
                 mainItems.length > 0
