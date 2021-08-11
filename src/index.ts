@@ -1,4 +1,4 @@
-/***** Version: 1.0.2 *****/
+/***** Version: 1.1.0 *****/
 
 // export util types and functions
 export * from 'utils/prismic';
@@ -7,6 +7,8 @@ export * from 'utils/sitemapGenerator';
 export * from 'utils/robotsGenerator';
 
 // slice exports
+export * from 'slices/Intro';
+export * from 'slices/Accordion';
 export * from 'slices/Article';
 export * from 'slices/CallToAction';
 export * from 'slices/CookieConsent';

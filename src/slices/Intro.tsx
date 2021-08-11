@@ -22,15 +22,14 @@ type BgMode = 'full' | 'splitted' | 'inverted';
 
 export interface IntroSliceType extends PrismicSlice<'Intro'> {
     primary: {
+        is_active?: PrismicBoolean;
+
         title: PrismicHeading;
         super_title?: PrismicHeading;
         text?: PrismicRichText;
 
         is_centered?: PrismicBoolean;
-        clamp_title?: PrismicBoolean;
-        clamp_text?: PrismicBoolean;
         is_stackable?: PrismicBoolean;
-        class_name?: string;
 
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
@@ -39,6 +38,7 @@ export interface IntroSliceType extends PrismicSlice<'Intro'> {
 
         bg_mode?: PrismicSelectField;
     };
+
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
@@ -60,9 +60,6 @@ export const IntroSlice: React.FC<IntroSliceType> = ({
         super_title,
         text,
         is_centered,
-        clamp_title,
-        clamp_text,
-        class_name,
         is_stackable,
         primary_label,
         primary_link,
@@ -79,6 +76,7 @@ export const IntroSlice: React.FC<IntroSliceType> = ({
     secondaryAction,
 }) => {
     const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <Intro
             bgMode={bgMode}
@@ -110,9 +108,6 @@ export const IntroSlice: React.FC<IntroSliceType> = ({
                           })
                     : undefined
             }
-            className={class_name}
-            clampTitle={clamp_title}
-            clampText={clamp_text}
             isStackable={is_stackable}
             isCentered={is_centered}
         />

@@ -1,19 +1,13 @@
 import {
     PrismicBoolean,
-    PrismicHeading,
     PrismicKeyText,
-    PrismicLink,
     PrismicSlice,
     isPrismicLinkExternal,
     getPrismicImage as getImg,
-    resolveUnknownLink,
     getText,
     PrismicNewsPage,
     getHtmlText,
-    PrismicRichText,
     getImageFromUrls,
-    getHeadlineTag,
-    isValidAction,
     PrismicSelectField,
     mapPrismicSelect,
 } from 'utils/prismic';
@@ -29,26 +23,13 @@ export interface NewsListSliceType
     extends PrismicSlice<'NewsList', PrismicNewsPage> {
     primary: {
         is_active?: PrismicBoolean;
-        super_title?: PrismicHeading;
-        title?: PrismicHeading;
-        text?: PrismicRichText;
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
         show_more_text?: PrismicKeyText;
         bg_mode?: PrismicSelectField;
     };
 
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-    secondaryAction?: (props: {
+    cardAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
@@ -67,78 +48,40 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const NewsListSlice: React.FC<NewsListSliceType> = ({
-    primary: {
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
-        title,
-        super_title,
-        bg_mode,
-        text,
-    },
+    primary: { show_more_text, bg_mode },
     items,
+    cardAction,
     bgModeSelectAlias = {
         full: 'soft',
         inverted: 'heavy',
     },
-    primaryAction,
-    secondaryAction,
     onTagClick,
 }) => {
     // get background mode
     const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const newsListMap = mapNewsListData({
         newsCollection: items,
-        secondaryAction,
+        cardAction,
         onTagClick,
     });
 
     return (
         <NewsList
-            superTitle={getText(super_title)}
-            superTitleAs={getHeadlineTag(super_title)}
-            title={getText(title)}
-            titleAs={getHeadlineTag(title)}
-            text={getHtmlText(text)}
-            showMoreText={'mehr anzeigen'}
+            showMoreText={getText(show_more_text)}
             bgMode={
                 bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
             }
             news={newsListMap}
-            primaryAction={
-                primaryAction && isValidAction(primary_label, primary_link)
-                    ? (isInverted) =>
-                          primaryAction({
-                              isInverted,
-                              label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
-                              isExternal: isPrismicLinkExternal(primary_link),
-                          })
-                    : undefined
-            }
-            secondaryAction={
-                secondaryAction &&
-                isValidAction(secondary_label, secondary_link)
-                    ? (isInverted) =>
-                          secondaryAction({
-                              isInverted,
-                              label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
-                              isExternal: isPrismicLinkExternal(secondary_link),
-                          })
-                    : undefined
-            }
         />
     );
 };
 function mapNewsListData({
     newsCollection,
-    secondaryAction,
+    cardAction,
     onTagClick,
 }: {
     newsCollection: PrismicNewsPage[] | undefined;
-    secondaryAction?: (props: {
+    cardAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
@@ -186,8 +129,8 @@ function mapNewsListData({
 
             link: { href: `/news/${news.uid}`, isExternal: false },
             secondaryAction: (isInverted: boolean) =>
-                secondaryAction &&
-                secondaryAction({
+                cardAction &&
+                cardAction({
                     isInverted,
                     label: 'Beitrag lesen',
                     href: `/news/${news.uid}`,

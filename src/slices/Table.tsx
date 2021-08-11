@@ -48,7 +48,9 @@ export const TableSlice: React.FC<TableSliceType> = ({
 
     return (
         <Table
-            bgMode={bgMode === 'inverted' ? 'inverted' : 'full'}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             tableItems={tableData}
         />
     );
