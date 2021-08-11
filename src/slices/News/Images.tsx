@@ -12,9 +12,10 @@ import {
     PrismicSelectField,
     getImageFromUrl,
     isValidAction,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
-import { ImageSizeSettings } from 'utils/mapping';
+import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import { NewsImages } from '@blateral/b.kit';
 import React from 'react';
 
@@ -23,18 +24,23 @@ interface ImageFormats {
     full: string;
 }
 
+type BgMode = 'full' | 'inverted';
+
 export interface NewsImagesSliceType
     extends PrismicSlice<'NewsImages', { image: PrismicImage }> {
     primary: {
         is_active?: PrismicBoolean;
         text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
         imagestyle?: PrismicSelectField;
     };
+
+    // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -51,16 +57,22 @@ export interface NewsImagesSliceType
 
 export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
     primary: {
-        is_inverted,
+        bg_mode,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     primaryAction,
     secondaryAction,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const imageSizes = {
         half: {
             small: { width: 619, height: 465 },
@@ -75,7 +87,9 @@ export const NewsImagesSlice: React.FC<NewsImagesSliceType> = ({
 
     return (
         <NewsImages
-            isInverted={is_inverted}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             primaryAction={
                 primaryAction && isValidAction(primary_label, primary_link)
                     ? (isInverted) =>

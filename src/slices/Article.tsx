@@ -19,12 +19,7 @@ import { AliasSelectMapperType } from 'utils/mapping';
 import { Article } from '@blateral/b.kit';
 import React from 'react';
 
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
+type BgMode = 'full' | 'splitted' | 'inverted';
 
 export interface ArticleSliceType extends PrismicSlice<'Article'> {
     primary: {
@@ -33,7 +28,6 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
         title?: PrismicHeading;
         text?: PrismicRichText;
         aside_text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
@@ -62,7 +56,6 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
         title,
         text,
         aside_text,
-        is_inverted,
         bg_mode,
         primary_link,
         primary_label,
@@ -70,19 +63,18 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
         secondary_label,
     },
     bgModeSelectAlias = {
-        full: 'full',
-        'half-right': 'splitted',
-        'half-left': 'splitted',
-        'larger-left': 'splitted',
-        'larger-right': 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     primaryAction,
     secondaryAction,
 }) => {
+    const mode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <Article
-            isInverted={is_inverted}
-            bgMode={mapPrismicSelect(bgModeSelectAlias, bg_mode)}
+            bgMode={mode}
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             superTitle={getText(super_title)}

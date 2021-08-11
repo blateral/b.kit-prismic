@@ -29,7 +29,6 @@ export interface PosterSliceType extends PrismicSlice<'Poster'> {
     primary: {
         is_active?: PrismicBoolean;
 
-        is_inverted?: PrismicBoolean;
         image?: PrismicImage;
         super_title?: PrismicHeading;
         title?: PrismicHeading;

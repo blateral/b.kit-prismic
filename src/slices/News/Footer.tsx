@@ -19,11 +19,11 @@ export interface NewsFooterSliceType
     extends PrismicSlice<'NewsFooter', PrismicNewsPage> {
     primary: {
         is_active?: PrismicBoolean;
-
-        publication_date?: PrismicKeyText;
         is_inverted?: PrismicBoolean;
         news_footer_background?: PrismicBoolean;
     };
+
+    // helpers to define component elements outside of slice
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -44,7 +44,7 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
-    primary: { news_footer_background, is_inverted },
+    primary: { is_inverted, news_footer_background },
     items,
     secondaryAction,
     onTagClick,
@@ -58,8 +58,13 @@ export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
     return (
         <NewsFooter
             news={newsListMap || []}
-            isInverted={is_inverted}
-            hasBack={news_footer_background}
+            bgMode={
+                is_inverted
+                    ? 'inverted'
+                    : news_footer_background
+                    ? 'full'
+                    : undefined
+            }
             showMoreText={'mehr anzeigen'}
         />
     );

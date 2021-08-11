@@ -1,17 +1,15 @@
 import {
-    getHeadlineTag,
     getHtmlText,
     getText,
-    isPrismicLinkExternal,
-    isValidAction,
+    mapPrismicSelect,
     PrismicBoolean,
-    PrismicHeading,
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
+    PrismicSelectField,
     PrismicSlice,
     resolveUnknownLink,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 import React from 'react';
 import { Form } from '@blateral/b.kit';
@@ -20,6 +18,7 @@ import {
     FormData,
     FormFieldProps,
 } from '@blateral/b.kit/lib/components/sections/Form';
+import { AliasSelectMapperType } from 'utils/mapping';
 
 export interface MailInfo {
     targetMails?: string[];
@@ -27,18 +26,12 @@ export interface MailInfo {
     redirectUrl?: string;
 }
 
+type BgMode = 'full' | 'inverted';
+
 export interface FormSliceType extends PrismicSlice<'Form'> {
     primary: {
         is_active?: PrismicBoolean;
-        super_title?: PrismicHeading;
-        title?: PrismicHeading;
-        intro?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
-        has_back?: PrismicBoolean;
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
+        bg_mode?: PrismicSelectField;
         submit_label?: PrismicKeyText;
         checkbox_label?: PrismicRichText;
 
@@ -46,19 +39,9 @@ export interface FormSliceType extends PrismicSlice<'Form'> {
         redirect_url?: PrismicLink;
         target_mails?: PrismicKeyText;
     };
+
     // helpers to define component elements outside of slice
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-    secondaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     submitAction?: (props: {
         isInverted?: boolean;
         isDisabled?: boolean;
@@ -75,15 +58,7 @@ export interface FormSliceType extends PrismicSlice<'Form'> {
 
 export const FormSlice: React.FC<FormSliceType> = ({
     primary: {
-        super_title,
-        title,
-        intro,
-        is_inverted,
-        has_back,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
+        bg_mode,
         submit_label,
         checkbox_label,
 
@@ -91,23 +66,23 @@ export const FormSlice: React.FC<FormSliceType> = ({
         redirect_url,
         target_mails,
     },
-    primaryAction,
-    secondaryAction,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     submitAction,
     yupValidationSchema,
     validation,
     onSubmit,
     fieldSettings,
 }) => {
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <Form
-            isInverted={is_inverted}
-            bgMode={has_back ? 'full' : undefined}
-            title={getText(title)}
-            titleAs={getHeadlineTag(title)}
-            superTitle={getText(super_title)}
-            superTitleAs={getHeadlineTag(super_title)}
-            intro={getHtmlText(intro)}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             formFields={{
                 name: {
                     isRequired: fieldSettings?.name?.isRequired,
@@ -138,29 +113,6 @@ export const FormSlice: React.FC<FormSliceType> = ({
             checkbox={{
                 label: getHtmlText(checkbox_label),
             }}
-            primaryAction={
-                primaryAction && isValidAction(primary_label, primary_link)
-                    ? (isInverted) =>
-                          primaryAction({
-                              isInverted,
-                              label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
-                              isExternal: isPrismicLinkExternal(primary_link),
-                          })
-                    : undefined
-            }
-            secondaryAction={
-                secondaryAction &&
-                isValidAction(secondary_label, secondary_link)
-                    ? (isInverted) =>
-                          secondaryAction({
-                              isInverted,
-                              label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
-                              isExternal: isPrismicLinkExternal(secondary_link),
-                          })
-                    : undefined
-            }
             submitAction={
                 submitAction && submit_label
                     ? ({ isInverted, isDisabled, additionalProps }) =>

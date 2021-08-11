@@ -6,6 +6,7 @@ import {
     isPrismicLinkExternal,
     isRichTextEmpty,
     isValidAction,
+    mapPrismicSelect,
     PrismicBoolean,
     PrismicGeopoint,
     PrismicHeading,
@@ -13,6 +14,7 @@ import {
     PrismicKeyText,
     PrismicLink,
     PrismicRichText,
+    PrismicSelectField,
     PrismicSlice,
     resolveUnknownLink,
 } from 'utils/prismic';
@@ -23,6 +25,7 @@ import {
     PhoneIcon,
     RouteIcon,
 } from '@blateral/b.kit/lib';
+import { AliasSelectMapperType } from 'utils/mapping';
 
 interface MapLocationItems {
     super_title?: PrismicHeading;
@@ -40,14 +43,17 @@ interface MapLocationItems {
     secondary_label?: PrismicKeyText;
 }
 
+type BgMode = 'full' | 'inverted';
+
 export interface MapSliceType extends PrismicSlice<'Map', MapLocationItems> {
     primary: {
         is_active?: PrismicBoolean;
-        is_inverted?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         is_mirrored?: PrismicBoolean;
         with_fly_to?: PrismicBoolean;
     };
     // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     center?: [number, number];
     zoom?: number;
     flyToZoom?: number;
@@ -95,8 +101,12 @@ export interface MapSliceType extends PrismicSlice<'Map', MapLocationItems> {
 }
 
 export const MapSlice: React.FC<MapSliceType> = ({
-    primary: { is_inverted, is_mirrored, with_fly_to },
+    primary: { bg_mode, is_mirrored, with_fly_to },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     iconSettings,
     center,
     zoom,
@@ -113,9 +123,12 @@ export const MapSlice: React.FC<MapSliceType> = ({
     mailIcon,
     routingIcon,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <Map
-            isInverted={is_inverted}
+            bgMode={bgMode === 'inverted' ? 'inverted' : 'full'}
             isMirrored={is_mirrored}
             initialLocation={items?.length > 0 ? `location-0` : undefined}
             center={center}

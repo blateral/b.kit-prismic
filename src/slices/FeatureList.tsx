@@ -15,7 +15,6 @@ import {
     PrismicKeyText,
     getText,
     getHtmlText,
-    getHeadlineTag,
     isValidAction,
 } from 'utils/prismic';
 import {
@@ -28,7 +27,7 @@ import {
 import { FeatureCarousel, FeatureList } from '@blateral/b.kit';
 import { ResponsiveObject } from './slick';
 
-type BgMode = 'full' | 'splitted';
+type BgMode = 'full' | 'splitted' | 'inverted';
 interface ImageFormats {
     square: string;
     landscape: string;
@@ -54,19 +53,10 @@ export interface FeatureListSliceType
     primary: {
         is_active?: PrismicBoolean;
         is_carousel?: PrismicBoolean;
-        title?: PrismicHeading;
-        super_title?: PrismicHeading;
-        text?: PrismicRichText;
 
-        is_inverted?: PrismicBoolean;
         is_centered?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         image_format?: PrismicSelectField;
-
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
     };
 
     // helpers to define elements outside of slice
@@ -129,24 +119,12 @@ const imageSizes = {
 } as ImageSizeSettings<ImageFormats>;
 
 export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
-    primary: {
-        is_carousel,
-        title,
-        super_title,
-        text,
-        is_inverted,
-        is_centered,
-        bg_mode,
-        image_format,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
-    },
+    primary: { is_carousel, is_centered, bg_mode, image_format },
     items,
     bgModeSelectAlias = {
-        full: 'full',
-        splitted: 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     imageFormatAlias = {
         square: 'square',
@@ -166,36 +144,10 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
 }) => {
     // get image format for all images
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
 
     const sharedProps = {
-        isInverted: is_inverted,
         isCentered: is_centered,
-        bgMode: mapPrismicSelect(bgModeSelectAlias, bg_mode),
-        title: getText(title),
-        titleAs: getHeadlineTag(title),
-        superTitle: getText(super_title),
-        superTitleAs: getHeadlineTag(super_title),
-        text: getHtmlText(text),
-        primaryAction:
-            primaryAction && isValidAction(primary_label, primary_link)
-                ? (isInverted: boolean) =>
-                      primaryAction({
-                          isInverted,
-                          label: getText(primary_label),
-                          href: resolveUnknownLink(primary_link) || '',
-                          isExternal: isPrismicLinkExternal(primary_link),
-                      })
-                : undefined,
-        secondaryAction:
-            secondaryAction && isValidAction(secondary_label, secondary_link)
-                ? (isInverted: boolean) =>
-                      secondaryAction({
-                          isInverted,
-                          label: getText(secondary_label),
-                          href: resolveUnknownLink(secondary_link) || '',
-                          isExternal: isPrismicLinkExternal(secondary_link),
-                      })
-                : undefined,
         features: items.map(
             ({
                 title,
@@ -240,7 +192,6 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                         ),
                         coverSpace: !isSvgImage,
                     },
-
                     primaryAction:
                         primaryAction &&
                         isValidAction(primary_label, primary_link)
@@ -278,6 +229,7 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
         return (
             <FeatureCarousel
                 {...sharedProps}
+                bgMode={bgMode}
                 controlNext={controlNext}
                 controlPrev={controlPrev}
                 beforeChange={beforeChange}
@@ -289,6 +241,6 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
             />
         );
     } else {
-        return <FeatureList {...sharedProps} />;
+        return <FeatureList {...sharedProps} bgMode={bgMode} />;
     }
 };

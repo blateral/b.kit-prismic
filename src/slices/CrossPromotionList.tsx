@@ -2,38 +2,27 @@ import {
     AliasMapperType,
     AliasSelectMapperType,
     ImageSizeSettings,
-} from '../utils/mapping';
+} from 'utils/mapping';
 import { CrossPromotion, PromotionCarousel } from '@blateral/b.kit';
 import {
     PrismicBoolean,
     PrismicHeading,
     PrismicImage,
-    PrismicKeyText,
     PrismicLink,
-    PrismicRichText,
     PrismicSelectField,
     PrismicSlice,
-    getHeadlineTag,
-    getHtmlText,
     getImageFromUrls,
     getPrismicImage as getImg,
     getText,
-    isPrismicLinkExternal,
     mapPrismicSelect,
     resolveUnknownLink,
-    isValidAction,
-} from '../utils/prismic';
+} from 'utils/prismic';
 
 import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/PromotionCard';
 import React from 'react';
 import { ResponsiveObject } from './slick';
 
-type BgMode =
-    | 'full'
-    | 'half-left'
-    | 'half-right'
-    | 'larger-left'
-    | 'larger-right';
+type BgMode = 'full' | 'splitted' | 'inverted';
 
 interface ImageFormats {
     square: string;
@@ -53,35 +42,14 @@ export interface CrossPromotionListSliceType
     extends PrismicSlice<'CrossPromotionList', CrossPromotionItems> {
     primary: {
         is_active?: PrismicBoolean;
-        super_title?: PrismicHeading;
-        title?: PrismicHeading;
-        text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
         is_carousel?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
         format?: PrismicSelectField;
-
-        primary_link?: PrismicLink;
-        secondary_link?: PrismicLink;
-        primary_label?: PrismicKeyText;
-        secondary_label?: PrismicKeyText;
     };
 
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     imageFormatAlias?: AliasMapperType<ImageFormats>;
-    primaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
-    secondaryAction?: (props: {
-        isInverted?: boolean;
-        label?: string;
-        href?: string;
-        isExternal?: boolean;
-    }) => React.ReactNode;
 
     controlNext?: (props: {
         isInverted?: boolean;
@@ -180,24 +148,11 @@ export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (
 };
 
 const createCPromoList = ({
-    primary: {
-        super_title,
-        title,
-        text,
-        is_inverted,
-        bg_mode,
-        format,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
-    },
+    primary: { bg_mode, format },
     bgModeSelectAlias = {
-        full: 'full',
-        'half-right': 'splitted',
-        'half-left': 'splitted',
-        'larger-left': 'splitted',
-        'larger-right': 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     imageFormatAlias = {
         square: 'square',
@@ -206,12 +161,11 @@ const createCPromoList = ({
         portrait: 'portrait',
     },
     items,
-    primaryAction,
-    secondaryAction,
 }: CrossPromotionListSliceType) => {
     const promoItems: Array<CrossPromotionItems> = items;
-    const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const itemCount = promoItems.length;
+
     const mapPromotionItem = (item: CrossPromotionItems) => {
         // get image format
         let imgFormat = mapPrismicSelect(imageFormatAlias, format || 'square');
@@ -254,13 +208,7 @@ const createCPromoList = ({
 
     return (
         <CrossPromotion
-            isInverted={is_inverted}
             bgMode={bgMode}
-            superTitle={getText(super_title)}
-            superTitleAs={getHeadlineTag(super_title)}
-            title={getText(title)}
-            titleAs={getHeadlineTag(title)}
-            text={getHtmlText(text)}
             main={
                 mainItems.length > 0
                     ? mainItems.map((item: CrossPromotionItems) =>
@@ -275,52 +223,16 @@ const createCPromoList = ({
                       )
                     : undefined
             }
-            primaryAction={
-                primaryAction && isValidAction(primary_label, primary_link)
-                    ? (isInverted) =>
-                          primaryAction({
-                              isInverted,
-                              label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
-                              isExternal: isPrismicLinkExternal(primary_link),
-                          })
-                    : undefined
-            }
-            secondaryAction={
-                secondaryAction &&
-                isValidAction(secondary_label, secondary_link)
-                    ? (isInverted) =>
-                          secondaryAction({
-                              isInverted,
-                              label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
-                              isExternal: isPrismicLinkExternal(secondary_link),
-                          })
-                    : undefined
-            }
         />
     );
 };
 
 const createCPromoCarousel = ({
-    primary: {
-        super_title,
-        title,
-        text,
-        is_inverted,
-        bg_mode,
-        format,
-        primary_link,
-        primary_label,
-        secondary_link,
-        secondary_label,
-    },
+    primary: { bg_mode, format },
     bgModeSelectAlias = {
-        full: 'full',
-        'half-right': 'splitted',
-        'half-left': 'splitted',
-        'larger-left': 'splitted',
-        'larger-right': 'splitted',
+        full: 'soft',
+        splitted: 'soft-splitted',
+        inverted: 'heavy',
     },
     imageFormatAlias = {
         square: 'square',
@@ -329,8 +241,6 @@ const createCPromoCarousel = ({
         portrait: 'portrait',
     },
     items,
-    primaryAction,
-    secondaryAction,
     controlNext,
     controlPrev,
     dot,
@@ -345,35 +255,6 @@ const createCPromoCarousel = ({
     return (
         <PromotionCarousel
             bgMode={bgMode}
-            isInverted={is_inverted}
-            title={getText(title)}
-            titleAs={getHeadlineTag(title)}
-            superTitle={getText(super_title)}
-            superTitleAs={getHeadlineTag(super_title)}
-            text={getHtmlText(text)}
-            primaryAction={
-                primaryAction && isValidAction(primary_label, primary_link)
-                    ? (isInverted) =>
-                          primaryAction({
-                              isInverted,
-                              label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
-                              isExternal: isPrismicLinkExternal(primary_link),
-                          })
-                    : undefined
-            }
-            secondaryAction={
-                secondaryAction &&
-                isValidAction(secondary_label, secondary_link)
-                    ? (isInverted) =>
-                          secondaryAction({
-                              isInverted,
-                              label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
-                              isExternal: isPrismicLinkExternal(secondary_link),
-                          })
-                    : undefined
-            }
             promotions={items.map(({ image, title, link }) => {
                 // get image urls
                 const imgUrlLandscape =

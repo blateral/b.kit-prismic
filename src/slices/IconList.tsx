@@ -1,37 +1,34 @@
 import {
-    getHeadlineTag,
-    getHtmlText,
     getText,
     isPrismicLinkExternal,
     isValidAction,
+    mapPrismicSelect,
     PrismicBoolean,
-    PrismicHeading,
     PrismicImage,
     PrismicKeyText,
     PrismicLink,
-    PrismicRichText,
+    PrismicSelectField,
     PrismicSlice,
     resolveUnknownLink,
 } from 'utils/prismic';
 
 import { IconList } from '@blateral/b.kit';
 import React from 'react';
+import { AliasSelectMapperType } from 'utils/mapping';
 
 interface IconListImages {
     image: PrismicImage;
 }
+
+type BgMode = 'full' | 'inverted';
 
 export interface IconListSliceType
     extends PrismicSlice<'IconList', IconListImages> {
     primary: {
         is_active?: PrismicBoolean;
 
-        super_title?: PrismicHeading;
-        title?: PrismicHeading;
-        text?: PrismicRichText;
-        is_inverted?: PrismicBoolean;
         is_centered?: PrismicBoolean;
-        has_back?: PrismicBoolean;
+        bg_mode?: PrismicSelectField;
         primary_link?: PrismicLink;
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
@@ -39,6 +36,7 @@ export interface IconListSliceType
     };
 
     // helpers to define component elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     primaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -55,31 +53,30 @@ export interface IconListSliceType
 
 export const IconListSlice: React.FC<IconListSliceType> = ({
     primary: {
-        super_title,
-        title,
-        text,
-        is_inverted,
+        bg_mode,
         is_centered,
-        has_back,
         primary_link,
         primary_label,
         secondary_link,
         secondary_label,
     },
     items,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
     primaryAction,
     secondaryAction,
 }) => {
+    // get background mode
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <IconList
-            superTitle={super_title && getText(super_title)}
-            superTitleAs={getHeadlineTag(super_title)}
-            title={title && getText(title)}
-            titleAs={getHeadlineTag(title)}
-            text={text && getHtmlText(text)}
             isCentered={is_centered}
-            isInverted={is_inverted}
-            hasBack={has_back}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
             items={items.map((item) => {
                 return {
                     src: item?.image?.url || '',
