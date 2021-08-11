@@ -7,6 +7,7 @@ export * from 'utils/sitemapGenerator';
 export * from 'utils/robotsGenerator';
 
 // slice exports
+export * from 'slices/Intro';
 export * from 'slices/Article';
 export * from 'slices/CallToAction';
 export * from 'slices/CookieConsent';
