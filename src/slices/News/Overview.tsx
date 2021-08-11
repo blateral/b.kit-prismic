@@ -1,18 +1,16 @@
 import {
     PrismicBoolean,
-    PrismicHeading,
     PrismicSlice,
     isPrismicLinkExternal,
     getPrismicImage as getImg,
     getText,
     PrismicNewsPage,
     getHtmlText,
-    PrismicRichText,
     getImageFromUrls,
-    getHeadlineTag,
     PrismicImage,
     PrismicSelectField,
     mapPrismicSelect,
+    PrismicKeyText,
 } from 'utils/prismic';
 
 import { NewsOverview } from '@blateral/b.kit';
@@ -26,16 +24,14 @@ export interface NewsOverviewSliceType
     extends PrismicSlice<'NewsOverview', PrismicNewsPage> {
     primary: {
         is_active?: PrismicBoolean;
-        super_title?: PrismicHeading;
-        title?: PrismicHeading;
-        text?: PrismicRichText;
         bg_mode?: PrismicSelectField;
+        show_more_text?: PrismicKeyText;
     };
 
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
     queryParams?: Record<string, any>;
-    secondaryAction?: (props: {
+    cardAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
@@ -53,12 +49,12 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
-    primary: { title, super_title, text, bg_mode },
+    primary: { bg_mode, show_more_text },
     bgModeSelectAlias = {
         full: 'soft',
         inverted: 'heavy',
     },
-    secondaryAction,
+    cardAction,
     queryParams,
     items,
 }) => {
@@ -67,17 +63,13 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
 
     return (
         <NewsOverview
-            superTitle={getText(super_title)}
-            superTitleAs={getHeadlineTag(super_title)}
-            title={getText(title)}
-            titleAs={getHeadlineTag(title)}
-            text={getHtmlText(text)}
             tags={generateUniqueTag(items)}
             queryParams={queryParams}
-            news={mapNewsListData(items, secondaryAction) || []}
+            news={mapNewsListData(items, cardAction) || []}
             bgMode={
                 bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
             }
+            showMoreText={getText(show_more_text)}
         />
     );
 };
@@ -94,7 +86,7 @@ function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
 
 function mapNewsListData(
     newsCollection: PrismicNewsPage[] | undefined,
-    secondaryAction?: (props: {
+    cardAction?: (props: {
         isInverted?: boolean;
         label?: string;
         href?: string;
@@ -126,9 +118,9 @@ function mapNewsListData(
                 getHtmlText(news.data.news_intro),
             link: { href: `/news/${news.uid}`, isExternal: false },
 
-            secondaryAction: secondaryAction
+            secondaryAction: cardAction
                 ? (isInverted: boolean) =>
-                      secondaryAction({
+                      cardAction({
                           isInverted,
                           label: 'Beitrag lesen',
                           href: `/news/${news.uid}`,
