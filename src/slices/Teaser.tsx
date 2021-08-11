@@ -25,7 +25,7 @@ import {
     isValidAction,
 } from 'utils/prismic';
 
-type BgMode = 'full' | 'inverted';
+type BgMode = 'full' | 'splitted' | 'inverted';
 
 interface ImageFormats {
     square: string;
@@ -124,6 +124,7 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
     },
     bgModeSelectAlias = {
         full: 'soft',
+        splitted: 'soft-splitted',
         inverted: 'heavy',
     },
     imageFormatAlias = {
@@ -210,11 +211,7 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
         return (
             <Teaser
                 {...sharedProps}
-                bgMode={
-                    bgMode === 'full' || bgMode === 'inverted'
-                        ? bgMode
-                        : undefined
-                }
+                bgMode={bgMode}
                 image={{
                     ...getImageFromUrls(
                         {
