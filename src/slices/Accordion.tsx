@@ -1,5 +1,4 @@
 import { Accordion } from '@blateral/b.kit';
-import { ColorType } from '@blateral/b.kit/lib/utils/styles';
 import React from 'react';
 import { AliasSelectMapperType } from 'utils/mapping';
 import {
@@ -9,17 +8,19 @@ import {
     PrismicSelectField,
     PrismicSlice,
     getText,
+    PrismicKeyText,
+    getHtmlText,
 } from 'utils/prismic';
 
 type BgMode = 'full' | 'inverted';
 
 export interface AccordionSliceType extends PrismicSlice<'Accordion'> {
     primary: {
-        border_color?: ColorType;
+        is_active?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
     };
     items: {
-        label: PrismicRichText;
+        label: PrismicKeyText;
         text?: PrismicRichText;
         has_columns?: PrismicBoolean;
     }[];
@@ -27,7 +28,7 @@ export interface AccordionSliceType extends PrismicSlice<'Accordion'> {
 }
 
 export const AccordionSlice: React.FC<AccordionSliceType> = ({
-    primary: { border_color, bg_mode },
+    primary: { bg_mode },
     items,
     bgModeSelectAlias = {
         full: 'soft',
@@ -35,17 +36,19 @@ export const AccordionSlice: React.FC<AccordionSliceType> = ({
     },
 }) => {
     const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
+
     return (
         <Accordion
-            borderColor={border_color}
             items={items.map((item) => {
                 return {
                     label: getText(item.label),
-                    text: getText(item.text),
+                    text: getHtmlText(item.text),
                     hasColumns: item.has_columns,
                 };
             })}
-            bgMode={bgMode}
+            bgMode={
+                bgMode === 'full' || bgMode === 'inverted' ? bgMode : undefined
+            }
         />
     );
 };
