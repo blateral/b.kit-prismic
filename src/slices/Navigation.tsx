@@ -8,7 +8,10 @@ import {
     NavItem,
 } from '@blateral/b.kit/lib/components/sections/navigation/menu/Flyout';
 import {
+    getText,
+    isPrismicLinkExternal,
     isValidAction,
+    PrismicBoolean,
     PrismicKeyText,
     PrismicLink,
     PrismicSettingsData,
@@ -72,6 +75,18 @@ export interface NavigationProps {
         size?: 'desktop' | 'mobile';
         name?: string;
     }) => React.ReactNode;
+    primaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
     search?: (isInverted?: boolean) => React.ReactNode;
     openMenuIcon?: (isInverted?: boolean) => React.ReactNode;
     closeMenuIcon?: (isInverted?: boolean) => React.ReactNode;
@@ -86,6 +101,8 @@ export const NavigationSlice: React.FC<
     logo,
     primaryCta,
     secondaryCta,
+    primaryActionPointer,
+    secondaryActionPointer,
     allowTopbarOverflow,
     isTopbarLargeOnPageTop,
     ...rest
@@ -101,6 +118,8 @@ export const NavigationSlice: React.FC<
         tb_istopbarinverted: data?.tb_istopbarinverted,
         nav_primaryCtaFn: primaryCta,
         nav_secondaryCtaFn: secondaryCta,
+        nav_primaryPointerFn: primaryActionPointer,
+        nav_secondaryPointerFn: secondaryActionPointer,
         logo,
     });
     return (
@@ -109,6 +128,7 @@ export const NavigationSlice: React.FC<
             allowTopbarOverflow={allowTopbarOverflow}
             isTopbarLargeOnPageTop={isTopbarLargeOnPageTop}
             {...rest}
+            isMirrored={data?.menu_ismirrored || false}
         />
     );
 };
@@ -131,6 +151,19 @@ interface MenuSliceType {
         href?: string | undefined;
         isExternal?: boolean | undefined;
     }) => React.ReactNode;
+    nav_primaryPointerFn?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    nav_secondaryPointerFn?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+
     socials?: Array<{
         icon: React.ReactNode;
         href: string;
@@ -150,6 +183,8 @@ const createMenu = ({
 
     nav_primaryCtaFn,
     nav_secondaryCtaFn,
+    nav_primaryPointerFn,
+    nav_secondaryPointerFn,
     socials,
     logo,
     search,
@@ -198,6 +233,7 @@ const createMenu = ({
             : logoLinkParsed
             ? logoLinkParsed
             : '';
+
     return {
         isLargeMenu: menu_islargemenu || false,
         isTopbarInverted: tb_istopbarinverted,
@@ -209,49 +245,45 @@ const createMenu = ({
         },
         socials: socials,
         search: search && search,
-        primaryCta:
-            nav_primaryCtaFn &&
-            isValidAction(
-                settingsData?.header_primary_label,
-                settingsData?.header_primary_link
-            )
-                ? ({ isInverted, size }) =>
-                      nav_primaryCtaFn({
-                          isInverted,
-                          href:
-                              resolveUnknownLink(
-                                  settingsData?.header_primary_link
-                              ) || '',
-                          label:
-                              (size === 'desktop' ||
-                              !settingsData?.header_primary_label_short
-                                  ? settingsData?.header_primary_label
-                                  : settingsData?.header_primary_label_short) ||
-                              '',
-                      })
-                : undefined,
-        secondaryCta:
-            nav_secondaryCtaFn &&
-            isValidAction(
-                settingsData?.header_secondary_label,
-                settingsData?.header_secondary_link
-            )
-                ? ({ isInverted, size }) =>
-                      nav_secondaryCtaFn({
-                          isInverted,
-                          href:
-                              resolveUnknownLink(
-                                  settingsData?.header_secondary_link
-                              ) || '',
-                          label:
-                              (size === 'desktop' ||
-                              !settingsData?.header_secondary_label_short
-                                  ? settingsData?.header_secondary_label
-                                  : settingsData?.header_secondary_label_short) ||
-                              '',
-                      })
-                : undefined,
 
+        primaryCta: ({ isInverted, size }) => {
+            const primary = getPrimaryButtonOrPointer({
+                isCta: !!settingsData?.menu_buttonstyle,
+                isInverted: !!isInverted,
+                primary_label:
+                    (size === 'desktop' ||
+                    !settingsData?.header_primary_label_short
+                        ? settingsData?.header_primary_label
+                        : settingsData?.header_primary_label_short) || '',
+                primary_link: settingsData?.header_primary_link,
+                primaryAction: nav_primaryCtaFn,
+                primaryActionPointer: nav_primaryPointerFn,
+            });
+            if (primary) {
+                return primary(!!isInverted);
+            } else {
+                return undefined;
+            }
+        },
+        secondaryCta: ({ isInverted, size }) => {
+            const secondary = getSecondaryButtonOrPointer({
+                isCta: !!settingsData?.menu_buttonstyle,
+                isInverted: !!isInverted,
+                secondary_label:
+                    (size === 'desktop' ||
+                    !settingsData?.header_secondary_label_short
+                        ? settingsData?.header_secondary_label
+                        : settingsData?.header_secondary_label_short) || '',
+                secondary_link: settingsData?.header_primary_link,
+                secondaryAction: nav_secondaryCtaFn,
+                secondaryActionPointer: nav_secondaryPointerFn,
+            });
+            if (secondary) {
+                return secondary(!!isInverted);
+            } else {
+                return undefined;
+            }
+        },
         activeNavItem: `navGroup${activeItemIndexes.groupId}.nav-link${activeItemIndexes.itemId}`,
         navItems: settingsData?.main_nav?.map((navItem: any, index: number) => {
             return {
@@ -275,6 +307,113 @@ const createMenu = ({
             } as NavGroup;
         }),
     };
+};
+
+const getPrimaryButtonOrPointer = ({
+    isCta,
+    isInverted,
+    primaryAction,
+    primaryActionPointer,
+    primary_label,
+    primary_link,
+}: {
+    isCta: PrismicBoolean;
+    isInverted: PrismicBoolean;
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    primaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    primary_label?: PrismicKeyText;
+    primary_link?: PrismicLink;
+}) => {
+    if (isCta) {
+        return primaryAction && isValidAction(primary_label, primary_link)
+            ? (isInverted: boolean) =>
+                  primaryAction({
+                      isInverted,
+                      label: getText(primary_label),
+                      href: resolveUnknownLink(primary_link) || '',
+                      isExternal: isPrismicLinkExternal(primary_link),
+                  })
+            : undefined;
+    }
+
+    if (!isCta) {
+        return primaryActionPointer &&
+            isValidAction(primary_label, primary_link)
+            ? (isInverted: boolean) =>
+                  primaryActionPointer({
+                      isInverted,
+                      label: getText(primary_label),
+                      href: resolveUnknownLink(primary_link) || '',
+                      isExternal: isPrismicLinkExternal(primary_link),
+                  })
+            : undefined;
+    }
+
+    return undefined;
+};
+
+const getSecondaryButtonOrPointer = ({
+    isCta,
+    isInverted,
+    secondaryAction,
+    secondaryActionPointer,
+    secondary_label,
+    secondary_link,
+}: {
+    isCta: PrismicBoolean;
+    isInverted: PrismicBoolean;
+
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondary_label?: PrismicKeyText;
+    secondary_link?: PrismicLink;
+}) => {
+    if (isCta) {
+        return secondaryAction && isValidAction(secondary_label, secondary_link)
+            ? (isInverted: boolean) =>
+                  secondaryAction({
+                      isInverted,
+                      label: getText(secondary_label),
+                      href: resolveUnknownLink(secondary_link) || '',
+                      isExternal: isPrismicLinkExternal(secondary_link),
+                  })
+            : undefined;
+    }
+
+    if (!isCta) {
+        return secondaryActionPointer &&
+            isValidAction(secondary_label, secondary_link)
+            ? (isInverted: boolean) =>
+                  secondaryActionPointer({
+                      isInverted,
+                      label: getText(secondary_label),
+                      href: resolveUnknownLink(secondary_link) || '',
+                      isExternal: isPrismicLinkExternal(secondary_link),
+                  })
+            : undefined;
+    }
+
+    return undefined;
 };
 
 // const logoFn = ({

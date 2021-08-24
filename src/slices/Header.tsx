@@ -46,6 +46,11 @@ export interface HeaderSliceType
         primary_link?: PrismicLink;
         secondary_label?: PrismicKeyText;
         secondary_link?: PrismicLink;
+        header_primary_label?: PrismicKeyText;
+        header_primary_link?: PrismicLink;
+        header_secondary_label?: PrismicKeyText;
+        header_secondary_link?: PrismicLink;
+        header_buttonstyle?: PrismicBoolean;
         badge?: PrismicImage;
         badge_on_mobile?: PrismicBoolean;
         title?: PrismicHeading;
@@ -71,7 +76,18 @@ export interface HeaderSliceType
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
-
+    primaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
     nav_primaryAction?: (props: {
         isInverted?: boolean;
         size?: 'desktop' | 'mobile';
@@ -125,6 +141,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         badge_on_mobile,
         title,
         size,
+        header_buttonstyle,
         primary_label,
         primary_link,
         secondary_label,
@@ -143,6 +160,8 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     },
     primaryAction,
     secondaryAction,
+    primaryActionPointer,
+    secondaryActionPointer,
 }) => {
     // map header images
     const headerImageMap = items.map((item) => {
@@ -177,29 +196,20 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
             badge={headerBadge(badge, badge_on_mobile)}
-            primaryCta={
-                primaryAction && isValidAction(primary_label, primary_link)
-                    ? (isInverted: boolean) =>
-                          primaryAction({
-                              isInverted,
-                              label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
-                              isExternal: isPrismicLinkExternal(primary_link),
-                          })
-                    : undefined
-            }
-            secondaryCta={
-                secondaryAction &&
-                isValidAction(secondary_label, secondary_link)
-                    ? (isInverted: boolean) =>
-                          secondaryAction({
-                              isInverted,
-                              label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
-                              isExternal: isPrismicLinkExternal(secondary_link),
-                          })
-                    : undefined
-            }
+            primaryCta={getPrimaryButtonOrPointer({
+                isCta: !!header_buttonstyle,
+                primary_label,
+                primary_link,
+                primaryAction,
+                primaryActionPointer,
+            })}
+            secondaryCta={getSecondaryButtonOrPointer({
+                isCta: !!header_buttonstyle,
+                secondary_label,
+                secondary_link,
+                secondaryAction,
+                secondaryActionPointer,
+            })}
             customTopGradient={customTopGradient}
             customBottomGradient={customBottomGradient}
         />
@@ -221,6 +231,107 @@ function headerBadge(badge?: PrismicImage, showOnMobile = true) {
         : undefined;
 }
 
+const getPrimaryButtonOrPointer = ({
+    isCta,
+    primaryAction,
+    primaryActionPointer,
+    primary_label,
+    primary_link,
+}: {
+    isCta: PrismicBoolean;
+    primaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    primaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    primary_label?: PrismicKeyText;
+    primary_link?: PrismicLink;
+}) => {
+    if (isCta) {
+        return primaryAction && isValidAction(primary_label, primary_link)
+            ? (isInverted: boolean) =>
+                  primaryAction({
+                      isInverted,
+                      label: getText(primary_label),
+                      href: resolveUnknownLink(primary_link) || '',
+                      isExternal: isPrismicLinkExternal(primary_link),
+                  })
+            : undefined;
+    }
+
+    if (!isCta) {
+        return primaryActionPointer &&
+            isValidAction(primary_label, primary_link)
+            ? (isInverted: boolean) =>
+                  primaryActionPointer({
+                      isInverted,
+                      label: getText(primary_label),
+                      href: resolveUnknownLink(primary_link) || '',
+                      isExternal: isPrismicLinkExternal(primary_link),
+                  })
+            : undefined;
+    }
+
+    return undefined;
+};
+
+const getSecondaryButtonOrPointer = ({
+    isCta,
+    secondaryAction,
+    secondaryActionPointer,
+    secondary_label,
+    secondary_link,
+}: {
+    isCta: PrismicBoolean;
+    secondaryAction?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondaryActionPointer?: (props: {
+        isInverted?: boolean;
+        label?: string;
+        href?: string;
+        isExternal?: boolean;
+    }) => React.ReactNode;
+    secondary_label?: PrismicKeyText;
+    secondary_link?: PrismicLink;
+}) => {
+    if (isCta) {
+        return secondaryAction && isValidAction(secondary_label, secondary_link)
+            ? (isInverted: boolean) =>
+                  secondaryAction({
+                      isInverted,
+                      label: getText(secondary_label),
+                      href: resolveUnknownLink(secondary_link) || '',
+                      isExternal: isPrismicLinkExternal(secondary_link),
+                  })
+            : undefined;
+    }
+
+    if (!isCta) {
+        return secondaryActionPointer &&
+            isValidAction(secondary_label, secondary_link)
+            ? (isInverted: boolean) =>
+                  secondaryActionPointer({
+                      isInverted,
+                      label: getText(secondary_label),
+                      href: resolveUnknownLink(secondary_link) || '',
+                      isExternal: isPrismicLinkExternal(secondary_link),
+                  })
+            : undefined;
+    }
+
+    return undefined;
+};
 // interface MenuSliceType {
 //     settingsData?: PrismicSettingsData;
 //     pageUrl?: string;
