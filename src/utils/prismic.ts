@@ -34,6 +34,7 @@ import { NewsImagesSliceType } from 'slices/News/Images';
 import { NewsOverviewSliceType } from 'slices/News/Overview';
 import { IntroSliceType } from 'slices/Intro';
 import { AccordionSliceType } from 'slices/Accordion';
+import { QuickNavSliceType } from 'slices/QuickNav';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -222,6 +223,12 @@ export interface PrismicPage extends Document {
         header_images?: Array<{
             image?: PrismicImage;
         }>;
+        header_buttonstyle?: PrismicBoolean;
+        header_primary_label?: PrismicKeyText;
+        header_primary_link?: PrismicLink;
+        header_secondary_label?: PrismicKeyText;
+        header_secondary_link?: PrismicLink;
+
         header_badge?: PrismicImage;
         header_badge_on_mobile?: PrismicBoolean;
 
@@ -246,6 +253,7 @@ export interface PrismicPage extends Document {
             | NewsOverviewSliceType
             | IntroSliceType
             | AccordionSliceType
+            | QuickNavSliceType
         >;
     };
 }
@@ -322,6 +330,8 @@ export interface PrismicSettingsData {
 
     menu_islargemenu?: PrismicBoolean;
     menu_ismenuinverted?: PrismicBoolean;
+    menu_ismirrored?: PrismicBoolean;
+    menu_buttonstyle?: PrismicBoolean;
     tb_istopbarinverted?: PrismicBoolean;
     tb_withtopbaroffset?: PrismicBoolean;
     tb_hidetopbarbackundermenu?: PrismicBoolean;
