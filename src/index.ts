@@ -37,3 +37,4 @@ export * from 'slices/News/AuthorCard';
 export * from 'slices/News/Video';
 export * from 'slices/News/Images';
 export * from 'slices/News/Overview';
+export * from 'slices/QuickNav';
