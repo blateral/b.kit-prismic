@@ -218,6 +218,7 @@ export interface PrismicPage extends Document {
         nav_allowtopbaroverflow?: PrismicBoolean;
 
         header_title?: PrismicHeading;
+        header_intro?: PrismicRichText;
         header_size?: PrismicSelectField;
         header_video?: PrismicLink;
         header_images?: Array<{

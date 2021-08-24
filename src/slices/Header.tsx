@@ -21,6 +21,7 @@ import {
     mapPrismicSelect,
     resolveUnknownLink,
     isValidAction,
+    PrismicRichText,
 } from 'utils/prismic';
 
 import { Header } from '@blateral/b.kit';
@@ -54,6 +55,7 @@ export interface HeaderSliceType
         badge?: PrismicImage;
         badge_on_mobile?: PrismicBoolean;
         title?: PrismicHeading;
+        header_intro?: PrismicRichText;
         is_nav_large?: PrismicBoolean;
 
         nav_inverted?: PrismicBoolean;
@@ -140,6 +142,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         badge,
         badge_on_mobile,
         title,
+        header_intro,
         size,
         header_buttonstyle,
         primary_label,
@@ -194,17 +197,18 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             videoUrl={resolveUnknownLink(video_url) || ''}
             images={headerImageMap}
             titleAs={getHeadlineTag(title)}
-            title={getText(title)}
+            // title={getText(title)}
+            intro={{ title: getText(title), text: getText(header_intro) }}
             badge={headerBadge(badge, badge_on_mobile)}
             primaryCta={getPrimaryButtonOrPointer({
-                isCta: !!header_buttonstyle,
+                isCta: !header_buttonstyle,
                 primary_label,
                 primary_link,
                 primaryAction,
                 primaryActionPointer,
             })}
             secondaryCta={getSecondaryButtonOrPointer({
-                isCta: !!header_buttonstyle,
+                isCta: !header_buttonstyle,
                 secondary_label,
                 secondary_link,
                 secondaryAction,
