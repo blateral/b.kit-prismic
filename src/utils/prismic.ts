@@ -199,6 +199,14 @@ export interface PrismicNewsPage extends Document {
     };
 }
 
+export interface QuickNavDataPage extends Document {
+    data: {
+        quicknav_links?: {
+            label: PrismicKeyText;
+            link: PrismicLink;
+        }[];
+    };
+}
 export interface PrismicPage extends Document {
     data: {
         uid: PrismicUid;
