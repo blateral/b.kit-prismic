@@ -668,3 +668,13 @@ export const getHtmlText = (prismicValue?: PrismicRichText) => {
 export const isValidAction = (label?: PrismicKeyText, link?: PrismicLink) => {
     return label && !isPrismicLinkEmpty(link);
 };
+
+export const isExternalLink = (link?: string) => {
+    if (!link) return false;
+
+    if (link.indexOf('http://') !== -1 || link.indexOf('https://') !== -1) {
+        return true;
+    } else {
+        return false;
+    }
+};
