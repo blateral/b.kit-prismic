@@ -4,6 +4,7 @@ import {
     NavProps,
 } from '@blateral/b.kit/lib/components/sections/navigation/Navigation';
 import {
+    FlyoutBackgroundSettings,
     NavGroup,
     NavItem,
 } from '@blateral/b.kit/lib/components/sections/navigation/menu/Flyout';
@@ -65,6 +66,9 @@ export interface NavigationProps {
     }[];
     logo?: LogoProps;
 
+    // flyout background props
+    background?: FlyoutBackgroundSettings;
+
     primaryCta?: (props: {
         isInverted?: boolean;
         size?: 'desktop' | 'mobile';
@@ -99,6 +103,7 @@ export const NavigationSlice: React.FC<
     socialMapper,
     settingsPage,
     logo,
+    background,
     primaryCta,
     secondaryCta,
     primaryActionPointer,
@@ -121,6 +126,7 @@ export const NavigationSlice: React.FC<
         nav_primaryPointerFn: primaryActionPointer,
         nav_secondaryPointerFn: secondaryActionPointer,
         logo,
+        background,
     });
     return (
         <Navigation
@@ -171,9 +177,13 @@ interface MenuSliceType {
     // inject logo icon into slice
     logo?: LogoProps;
 
+    // flyout background props
+    background?: FlyoutBackgroundSettings;
+
     // inject search into slice
     search?: (isInverted?: boolean) => React.ReactNode;
 }
+
 const createMenu = ({
     settingsData,
     pageUrl,
@@ -187,6 +197,7 @@ const createMenu = ({
     nav_secondaryPointerFn,
     socials,
     logo,
+    background,
     search,
 }: MenuSliceType): NavProps => {
     // return logo from prismic
@@ -243,6 +254,7 @@ const createMenu = ({
             link: logoLinkCleaned,
             pageTopScale: logo && logo.pageTopScale,
         },
+        background: background,
         socials: socials,
         search: search && search,
 
