@@ -212,7 +212,13 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
                 };
         }
     });
-    return <DynamicForm onSubmit={onSubmit} fields={fieldObject} />;
+    return (
+        <DynamicForm
+            onSubmit={onSubmit}
+            submitLabel={submit_label || 'senden'}
+            fields={fieldObject}
+        />
+    );
 };
 
 const generateTextField = (formfield?: FieldSlice) => {
