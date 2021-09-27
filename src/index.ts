@@ -38,3 +38,4 @@ export * from 'slices/News/Video';
 export * from 'slices/News/Images';
 export * from 'slices/News/Overview';
 export * from 'slices/QuickNav';
+export * from 'slices/DynamicForm';

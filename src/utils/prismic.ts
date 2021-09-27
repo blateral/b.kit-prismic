@@ -35,6 +35,15 @@ import { NewsOverviewSliceType } from 'slices/News/Overview';
 import { IntroSliceType } from 'slices/Intro';
 import { AccordionSliceType } from 'slices/Accordion';
 import { QuickNavSliceType } from 'slices/QuickNav';
+import {
+    AreaSlice,
+    DatepickerSlice,
+    DynamicFormSliceType,
+    FieldGroupSlice,
+    FieldSlice,
+    FileUploadSlice,
+    SelectSlice,
+} from 'index';
 
 /****** Types ******/
 export interface PrismicSlice<S, I = any> {
@@ -207,6 +216,25 @@ export interface QuickNavDataPage extends Document {
         }[];
     };
 }
+
+export interface QuickNavDataPage extends Document {
+    data: {
+        quicknav_links?: {
+            label: PrismicKeyText;
+            link: PrismicLink;
+        }[];
+    };
+}
+export interface DynamicFormDataPage extends Document {
+    body?: Array<
+        | FieldSlice
+        | AreaSlice
+        | SelectSlice
+        | DatepickerSlice
+        | FieldGroupSlice
+        | FileUploadSlice
+    >;
+}
 export interface PrismicPage extends Document {
     data: {
         uid: PrismicUid;
@@ -263,6 +291,7 @@ export interface PrismicPage extends Document {
             | IntroSliceType
             | AccordionSliceType
             | QuickNavSliceType
+            | DynamicFormSliceType
         >;
     };
 }
