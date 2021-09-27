@@ -1,7 +1,6 @@
 import {
     PrismicKeyText,
     PrismicRichText,
-    PrismicSelectField,
     PrismicSlice,
     PrismicBoolean,
     PrismicImage,
@@ -26,9 +25,15 @@ export interface FormStructure {
 }
 
 export interface FormField {
-    isRequired?: PrismicBoolean;
+    primary?: PrimaryData;
+    items?: any[];
 }
 
+export interface PrimaryData {
+    column?: 'Links' | 'Rechts' | 'Einspaltig';
+    field_name?: PrismicKeyText;
+    is_required?: PrismicBoolean;
+}
 export interface FormData {
     [key: string]:
         | string
@@ -50,14 +55,12 @@ export interface FormField {
 
 export interface FieldSlice extends FormField {
     slice_type: 'Field';
-    primary?: {
-        field_name?: PrismicKeyText;
+    primary?: PrimaryData & {
         input_type?: 'Text' | 'Nummer' | 'Email' | 'Passwort' | 'Telefon';
         inital_value?: PrismicKeyText;
         placeholder?: PrismicKeyText;
         info?: PrismicKeyText;
         icon?: PrismicImage;
-        is_required?: PrismicBoolean;
     };
     validate?: (value: string, config: FieldSlice) => Promise<string>;
     errorMsg?: string;
@@ -65,12 +68,10 @@ export interface FieldSlice extends FormField {
 
 export interface AreaSlice extends FormField {
     slice_type: 'Area';
-    primary?: {
-        field_name?: string;
+    primary?: PrimaryData & {
         inital_value?: PrismicRichText;
         placeholder?: PrismicKeyText;
         info?: PrismicKeyText;
-        is_required?: PrismicBoolean;
     };
     validate?: (value: string, config: AreaSlice) => Promise<string>;
     errorMsg?: string;
@@ -78,13 +79,11 @@ export interface AreaSlice extends FormField {
 
 export interface SelectSlice extends FormField {
     slice_type: 'Select';
-    primary?: {
-        field_name?: PrismicHeading;
+    primary?: PrimaryData & {
         inital_value?: PrismicKeyText;
         placeholder?: PrismicKeyText;
         info?: PrismicKeyText;
         icon?: PrismicImage;
-        is_required?: boolean;
     };
     validate?: (value: string, config: SelectSlice) => Promise<string>;
     errorMsg?: string;
@@ -96,8 +95,7 @@ export interface SelectSlice extends FormField {
 
 export interface DatepickerSlice extends FormField {
     slice_type: 'Datepicker';
-    primary?: {
-        field_name?: PrismicKeyText;
+    primary?: PrimaryData & {
         initialDates?: [Date, Date];
         placeholder?: PrismicKeyText;
         minDate?: Date;
@@ -126,10 +124,9 @@ export interface DatepickerSlice extends FormField {
 
 export interface FieldGroupSlice extends FormField {
     slice_type: 'FieldGroup';
-    primary?: {
+    primary?: PrimaryData & {
         group_type: 'Radio' | 'Checkbox';
         field_name?: PrismicHeading;
-        is_required?: PrismicBoolean;
     };
     items?: Array<{ initialChecked?: PrismicBoolean; text?: PrismicKeyText }>;
     validate?: (
@@ -141,8 +138,7 @@ export interface FieldGroupSlice extends FormField {
 
 export interface FileUploadSlice extends FormField {
     slice_type: 'Upload';
-    primary?: {
-        is_required?: PrismicBoolean;
+    primary?: PrimaryData & {
         field_name?: PrismicHeading;
         add_btn_label?: PrismicKeyText;
         remove_btn_label?: PrismicKeyText;
@@ -158,8 +154,8 @@ export interface DynamicFormSliceType
     onSubmit?: (values: FormData) => Promise<void>;
 
     primary: {
+        bg_mode: 'Voll' | 'Invertiert' | 'Kein' | undefined;
         is_active?: PrismicBoolean;
-        bg_mode?: PrismicSelectField;
         submit_label?: PrismicKeyText;
         bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
         dynamic_form?: DynamicFormDataPage;
@@ -168,7 +164,8 @@ export interface DynamicFormSliceType
 
 export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     onSubmit,
-    primary: { submit_label },
+
+    primary: { submit_label, bg_mode },
     items,
 }) => {
     let fieldObject = {};
@@ -215,6 +212,13 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     return (
         <DynamicForm
             onSubmit={onSubmit}
+            bgMode={
+                bg_mode === 'Invertiert'
+                    ? 'inverted'
+                    : bg_mode === 'Voll'
+                    ? 'full'
+                    : undefined
+            }
             submitLabel={submit_label || 'senden'}
             fields={fieldObject}
         />
@@ -237,6 +241,12 @@ const generateTextField = (formfield?: FieldSlice) => {
 
     textFormField[fieldName] = {
         type: 'Field',
+        column:
+            formfield?.primary?.column === 'Rechts'
+                ? 'right'
+                : formfield.primary.column === 'Links'
+                ? 'left'
+                : undefined,
         inputType: prismicSelectMap[formfield?.primary.input_type || 'Text'],
         placeholder: formfield?.primary.placeholder || '',
         isRequired: formfield?.primary.is_required || false,
@@ -255,6 +265,12 @@ const generateTextArea = (formfield?: AreaSlice) => {
 
     textArea[fieldName] = {
         type: 'Area',
+        column:
+            formfield?.primary?.column === 'Rechts'
+                ? 'right'
+                : formfield.primary.column === 'Links'
+                ? 'left'
+                : undefined,
         placeholder: formfield?.primary.placeholder || '',
         isRequired: formfield?.primary.is_required || false,
         info: formfield?.primary.info,
@@ -291,7 +307,7 @@ const generateSelect = (formfield?: SelectSlice) => {
     selectField[fieldName] = {
         type: 'Select',
         initalValue: formfield?.primary?.inital_value || undefined,
-        isRequired: formfield.isRequired,
+        isRequired: formfield.primary.is_required,
         dropdownItems: formfield.items.map((item) => {
             return {
                 label: item.label || '',
@@ -311,7 +327,7 @@ const generateUpload = (formfield?: FileUploadSlice) => {
 
     selectField[fieldName] = {
         type: 'Upload',
-        isRequired: formfield.isRequired,
+        isRequired: formfield.primary.is_required,
         addBtnLabel: formfield.primary.add_btn_label || '',
         removeBtnLabel: formfield.primary.remove_btn_label || '',
         acceptedFormats: formfield.primary.accepted_formats || '',
@@ -327,7 +343,7 @@ const generateDatepicker = (formfield?: DatepickerSlice) => {
 
     selectField[fieldName] = {
         type: 'Datepicker',
-        isRequired: formfield.isRequired,
+        isRequired: formfield.primary.is_required,
         info: formfield?.primary?.info || '',
         placeholder: formfield?.primary.placeholder || '',
         icon: { src: formfield.primary.icon || '' },
