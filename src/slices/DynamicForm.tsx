@@ -20,6 +20,7 @@ import {
     Field,
     FieldGenerationProps,
     FieldGroup,
+    FileUpload,
     Select,
 } from '@blateral/b.kit/lib/components/sections/DynamicForm';
 
@@ -305,7 +306,8 @@ const generateTextField = (formfield?: FieldSlice) => {
         info: formfield?.primary.info,
         icon: { src: formfield?.primary.icon?.url || '' },
         validate: formfield.validate,
-    };
+        errorMsg: formfield?.errorMsg,
+    } as Field;
 
     return textFormField;
 };
@@ -326,7 +328,8 @@ const generateTextArea = (formfield?: AreaSlice) => {
         placeholder: formfield?.primary.placeholder || '',
         isRequired: formfield?.primary.is_required || false,
         info: formfield?.primary.info,
-    };
+        errorMsg: formfield?.errorMsg,
+    } as Area;
 
     return textArea;
 };
@@ -346,7 +349,8 @@ const generateFieldGroup = (formfield?: FieldGroupSlice) => {
                 initialChecked: item.initialChecked || false,
             };
         }),
-    };
+        errorMsg: formfield?.errorMsg,
+    } as FieldGroup;
 
     return fieldGroup;
 };
@@ -367,7 +371,8 @@ const generateSelect = (formfield?: SelectSlice) => {
             };
         }),
         icon: { src: formfield.primary.icon?.url || '' },
-    };
+        errorMsg: formfield?.errorMsg,
+    } as Select;
 
     return selectField;
 };
@@ -383,7 +388,8 @@ const generateUpload = (formfield?: FileUploadSlice) => {
         addBtnLabel: formfield.primary.add_btn_label || '',
         removeBtnLabel: formfield.primary.remove_btn_label || '',
         acceptedFormats: formfield.primary.accepted_formats || '',
-    };
+        errorMsg: formfield?.errorMsg,
+    } as FileUpload;
 
     return selectField;
 };
@@ -399,7 +405,9 @@ const generateDatepicker = (formfield?: DatepickerSlice) => {
         info: formfield?.primary?.info || '',
         placeholder: formfield?.primary.placeholder || '',
         icon: { src: formfield.primary.icon || '' },
-    };
+        mutliDateError: formfield?.mutliDateError,
+        singleDateError: formfield?.singleDateError,
+    } as Datepicker;
 
     return selectField;
 };
