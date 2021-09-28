@@ -174,6 +174,12 @@ export interface DynamicFormSliceType
         radio?: (props: FieldGenerationProps<FieldGroup>) => React.ReactNode;
         upload?: (props: FieldGenerationProps<FieldGroup>) => React.ReactNode;
     };
+    submitAction?: (props: {
+        label?: string;
+        isInverted?: boolean;
+        handleSubmit?: () => Promise<any>;
+        isDisabled?: boolean;
+    }) => React.ReactNode;
 
     primary: {
         bg_mode?: PrismicSelectField;
@@ -189,6 +195,7 @@ export interface DynamicFormSliceType
 export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     onSubmit,
     definitions,
+    submitAction,
     bgModeSelectAlias = {
         full: 'soft',
         inverted: 'heavy',
@@ -244,7 +251,19 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
             onSubmit={onSubmit}
             definitions={definitions}
             bgMode={bgMode}
-            submitLabel={submit_label || 'senden'}
+            submitAction={
+                submitAction
+                    ? ({ isInverted, handleSubmit, isDisabled }) =>
+                          submitAction({
+                              isInverted,
+                              handleSubmit,
+                              isDisabled,
+                              label: submit_label
+                                  ? getText(submit_label)
+                                  : 'senden',
+                          })
+                    : undefined
+            }
             fields={fieldObject}
         />
     );
