@@ -20,6 +20,7 @@ import {
     Field,
     FieldGenerationProps,
     FieldGroup,
+    FileUpload,
     Select,
 } from '@blateral/b.kit/lib/components/sections/DynamicForm';
 
@@ -180,6 +181,7 @@ export interface DynamicFormSliceType
         handleSubmit?: () => Promise<any>;
         isDisabled?: boolean;
     }) => React.ReactNode;
+    onField?: (field: FormField) => FormField;
 
     primary: {
         bg_mode?: PrismicSelectField;
@@ -196,6 +198,7 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     onSubmit,
     definitions,
     submitAction,
+    onField,
     bgModeSelectAlias = {
         full: 'soft',
         inverted: 'heavy',
@@ -210,36 +213,42 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     items.forEach((formfield) => {
         switch (formfield.slice_type) {
             case 'Field':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateTextField(formfield as FieldSlice),
                 };
                 break;
             case 'Area':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateTextArea(formfield as AreaSlice),
                 };
                 break;
             case 'FieldGroup':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateFieldGroup(formfield as FieldGroupSlice),
                 };
                 break;
             case 'Select':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateSelect(formfield as SelectSlice),
                 };
                 break;
             case 'Upload':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateUpload(formfield as FileUploadSlice),
                 };
                 break;
             case 'Datepicker':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateDatepicker(formfield as DatepickerSlice),
@@ -297,7 +306,8 @@ const generateTextField = (formfield?: FieldSlice) => {
         info: formfield?.primary.info,
         icon: { src: formfield?.primary.icon?.url || '' },
         validate: formfield.validate,
-    };
+        errorMsg: formfield?.errorMsg,
+    } as Field;
 
     return textFormField;
 };
@@ -318,7 +328,8 @@ const generateTextArea = (formfield?: AreaSlice) => {
         placeholder: formfield?.primary.placeholder || '',
         isRequired: formfield?.primary.is_required || false,
         info: formfield?.primary.info,
-    };
+        errorMsg: formfield?.errorMsg,
+    } as Area;
 
     return textArea;
 };
@@ -338,7 +349,8 @@ const generateFieldGroup = (formfield?: FieldGroupSlice) => {
                 initialChecked: item.initialChecked || false,
             };
         }),
-    };
+        errorMsg: formfield?.errorMsg,
+    } as FieldGroup;
 
     return fieldGroup;
 };
@@ -359,7 +371,8 @@ const generateSelect = (formfield?: SelectSlice) => {
             };
         }),
         icon: { src: formfield.primary.icon?.url || '' },
-    };
+        errorMsg: formfield?.errorMsg,
+    } as Select;
 
     return selectField;
 };
@@ -375,7 +388,8 @@ const generateUpload = (formfield?: FileUploadSlice) => {
         addBtnLabel: formfield.primary.add_btn_label || '',
         removeBtnLabel: formfield.primary.remove_btn_label || '',
         acceptedFormats: formfield.primary.accepted_formats || '',
-    };
+        errorMsg: formfield?.errorMsg,
+    } as FileUpload;
 
     return selectField;
 };
@@ -391,7 +405,9 @@ const generateDatepicker = (formfield?: DatepickerSlice) => {
         info: formfield?.primary?.info || '',
         placeholder: formfield?.primary.placeholder || '',
         icon: { src: formfield.primary.icon || '' },
-    };
+        mutliDateError: formfield?.mutliDateError,
+        singleDateError: formfield?.singleDateError,
+    } as Datepicker;
 
     return selectField;
 };
