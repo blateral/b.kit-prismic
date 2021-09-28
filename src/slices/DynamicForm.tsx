@@ -180,6 +180,7 @@ export interface DynamicFormSliceType
         handleSubmit?: () => Promise<any>;
         isDisabled?: boolean;
     }) => React.ReactNode;
+    onField?: (field: FormField) => FormField;
 
     primary: {
         bg_mode?: PrismicSelectField;
@@ -196,6 +197,7 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     onSubmit,
     definitions,
     submitAction,
+    onField,
     bgModeSelectAlias = {
         full: 'soft',
         inverted: 'heavy',
@@ -210,36 +212,42 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     items.forEach((formfield) => {
         switch (formfield.slice_type) {
             case 'Field':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateTextField(formfield as FieldSlice),
                 };
                 break;
             case 'Area':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateTextArea(formfield as AreaSlice),
                 };
                 break;
             case 'FieldGroup':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateFieldGroup(formfield as FieldGroupSlice),
                 };
                 break;
             case 'Select':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateSelect(formfield as SelectSlice),
                 };
                 break;
             case 'Upload':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateUpload(formfield as FileUploadSlice),
                 };
                 break;
             case 'Datepicker':
+                if (onField) formfield = onField(formfield);
                 fieldObject = {
                     ...fieldObject,
                     ...generateDatepicker(formfield as DatepickerSlice),
