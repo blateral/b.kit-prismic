@@ -1,12 +1,12 @@
 import { QuickNav } from '@blateral/b.kit';
+import React from 'react';
 import {
-    PrismicLink,
     PrismicKeyText,
+    PrismicLink,
+    PrismicRelationship,
     PrismicSlice,
     resolveUnknownLink,
-} from 'index';
-import React from 'react';
-import { PrismicRelationship } from 'utils/prismic';
+} from 'utils/prismic';
 
 interface QuickNavItem {
     link: PrismicLink;

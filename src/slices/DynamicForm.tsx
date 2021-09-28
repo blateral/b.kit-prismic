@@ -7,12 +7,23 @@ import {
     DynamicFormDataPage,
     PrismicHeading,
     getText,
+    PrismicSelectField,
+    mapPrismicSelect,
 } from 'utils/prismic';
 
 import { AliasSelectMapperType } from 'utils/mapping';
 import React from 'react';
-import { BgMode } from '@blateral/b.kit/lib/components/base/Section';
 import { DynamicForm } from '@blateral/b.kit';
+import {
+    Area,
+    Datepicker,
+    Field,
+    FieldGenerationProps,
+    FieldGroup,
+    Select,
+} from '@blateral/b.kit/lib/components/sections/DynamicForm';
+
+type BgMode = 'full' | 'inverted';
 
 export interface FormStructure {
     [key: string]:
@@ -152,22 +163,48 @@ export interface FileUploadSlice extends FormField {
 export interface DynamicFormSliceType
     extends PrismicSlice<'DynamicForm', FormField> {
     onSubmit?: (values: FormData) => Promise<void>;
+    definitions?: {
+        field?: (props: FieldGenerationProps<Field>) => React.ReactNode;
+        area?: (props: FieldGenerationProps<Area>) => React.ReactNode;
+        select?: (props: FieldGenerationProps<Select>) => React.ReactNode;
+        datepicker?: (
+            props: FieldGenerationProps<Datepicker>
+        ) => React.ReactNode;
+        checkbox?: (props: FieldGenerationProps<FieldGroup>) => React.ReactNode;
+        radio?: (props: FieldGenerationProps<FieldGroup>) => React.ReactNode;
+        upload?: (props: FieldGenerationProps<FieldGroup>) => React.ReactNode;
+    };
+    submitAction?: (props: {
+        label?: string;
+        isInverted?: boolean;
+        handleSubmit?: () => Promise<any>;
+        isDisabled?: boolean;
+    }) => React.ReactNode;
 
     primary: {
-        bg_mode: 'Voll' | 'Invertiert' | 'Kein' | undefined;
+        bg_mode?: PrismicSelectField;
         is_active?: PrismicBoolean;
         submit_label?: PrismicKeyText;
-        bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
         dynamic_form?: DynamicFormDataPage;
     };
+
+    // helpers to define elements outside of slice
+    bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
 }
 
 export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     onSubmit,
+    definitions,
+    submitAction,
+    bgModeSelectAlias = {
+        full: 'soft',
+        inverted: 'heavy',
+    },
 
     primary: { submit_label, bg_mode },
     items,
 }) => {
+    const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     let fieldObject = {};
 
     items.forEach((formfield) => {
@@ -212,14 +249,21 @@ export const DynamicFormSlice: React.FC<DynamicFormSliceType> = ({
     return (
         <DynamicForm
             onSubmit={onSubmit}
-            bgMode={
-                bg_mode === 'Invertiert'
-                    ? 'inverted'
-                    : bg_mode === 'Voll'
-                    ? 'full'
+            definitions={definitions}
+            bgMode={bgMode}
+            submitAction={
+                submitAction
+                    ? ({ isInverted, handleSubmit, isDisabled }) =>
+                          submitAction({
+                              isInverted,
+                              handleSubmit,
+                              isDisabled,
+                              label: submit_label
+                                  ? getText(submit_label)
+                                  : 'senden',
+                          })
                     : undefined
             }
-            submitLabel={submit_label || 'senden'}
             fields={fieldObject}
         />
     );
