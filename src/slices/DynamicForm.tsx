@@ -9,6 +9,7 @@ import {
     getText,
     PrismicSelectField,
     mapPrismicSelect,
+    PrismicLink,
 } from 'utils/prismic';
 
 import { AliasSelectMapperType } from 'utils/mapping';
@@ -156,6 +157,12 @@ export interface FileUploadSlice extends FormField {
         remove_btn_label?: PrismicKeyText;
         info?: PrismicKeyText;
         accepted_formats?: PrismicKeyText;
+
+        submit_label?: PrismicKeyText;
+
+        subject_text?: PrismicKeyText;
+        redirect_url?: PrismicLink;
+        target_mails?: PrismicKeyText;
     };
     validate?: (value: Array<File>, config: FileUploadSlice) => Promise<string>;
     errorMsg?: string;
