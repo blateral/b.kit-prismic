@@ -349,6 +349,7 @@ export interface PrismicSettingsData {
     socials?: Array<{
         platform?: PrismicKeyText;
         link?: PrismicLink;
+        icon?: PrismicImage;
     }>;
 
     logo_image_full?: PrismicImage;
