@@ -44,10 +44,10 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             settingsData.socials.forEach((item) => {
                 if (item.icon && item.link) {
                     socials.push({
-                        href: item.link?.url || '',
+                        href: resolveUnknownLink(item.link) || '',
                         icon: (
                             <img
-                                src={resolveUnknownLink(item.link) || ''}
+                                src={item.icon.url}
                                 alt={item.icon.alt || ''}
                             />
                         ),
