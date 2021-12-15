@@ -32,12 +32,30 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
 }) => {
     const settingsData = settingsPage?.data;
 
-    const mappedSocials =
-        mapSocials &&
-        settingsData &&
-        settingsData.socials &&
-        settingsData.socials.length > 0 &&
-        mapSocials(settingsData.socials);
+    let socials: {
+        href: string;
+        icon: JSX.Element;
+    }[] = [];
+
+    if (settingsData?.socials) {
+        if (mapSocials) {
+            socials = mapSocials(settingsData.socials);
+        } else {
+            settingsData.socials.forEach((item) => {
+                if (item.icon && item.link) {
+                    socials.push({
+                        href: item.link?.url || '',
+                        icon: (
+                            <img
+                                src={item.icon.url}
+                                alt={item.icon.alt || ''}
+                            />
+                        ),
+                    });
+                }
+            });
+        }
+    }
 
     const logoLinkParsed = resolveUnknownLink(settingsData?.logo_href);
 
@@ -51,7 +69,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
     return (
         <Footer
             isInverted={settingsData?.is_inverted}
-            socials={mappedSocials || undefined}
+            socials={socials || undefined}
             logo={{
                 img: settingsData?.logo_image_footer?.url,
                 link: logoLinkCleaned,
