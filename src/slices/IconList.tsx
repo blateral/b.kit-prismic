@@ -15,7 +15,8 @@ import {
 } from 'utils/prismic';
 
 import { IconList } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
+import { PrismicContext } from 'utils/settings';
 
 interface IconListImages {
     image: PrismicImage;
@@ -70,6 +71,8 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     return (
         <IconList
             superTitle={super_title && getText(super_title)}
@@ -92,7 +95,11 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -104,7 +111,11 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

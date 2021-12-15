@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     getHtmlText,
     getText,
@@ -20,6 +20,7 @@ import {
 import { Poster } from '@blateral/b.kit';
 import { AliasMapperType, ImageSizeSettings } from 'utils/mapping';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { PrismicContext } from 'utils/settings';
 
 interface ImageFormats {
     landscape: string;
@@ -83,6 +84,8 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     // get image urls for different formats / ratios
     const landscapeUrl = image && getImg(image, imageFormatAlias.landscape).url;
     const landscapeWideUrl =
@@ -115,7 +118,11 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -127,7 +134,11 @@ export const PosterSlice: React.FC<PosterSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

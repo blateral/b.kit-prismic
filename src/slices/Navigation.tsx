@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     LogoProps,
     NavProps,
@@ -17,6 +17,7 @@ import {
 } from 'utils/prismic';
 
 import { Navigation } from '@blateral/b.kit';
+import { PrismicContext, PrismicCtx } from 'utils/settings';
 
 // export interface NavigationSliceType {
 //     nav_primaryAction?: (props: {
@@ -90,8 +91,10 @@ export const NavigationSlice: React.FC<
     isTopbarLargeOnPageTop,
     ...rest
 }) => {
+    const settingsCtx = useContext(PrismicContext);
     const data = settingsPage?.data;
     const menu = createMenu({
+        ctx: settingsCtx,
         pageUrl,
         socials: socialMapper && socialMapper(data?.socials),
         menu_islargemenu: data?.menu_islargemenu,
@@ -153,7 +156,8 @@ const createMenu = ({
     socials,
     logo,
     search,
-}: MenuSliceType): NavProps => {
+    ctx,
+}: MenuSliceType & { ctx?: PrismicCtx }): NavProps => {
     // return logo from prismic
     // const logoFull = settingsData?.logo_image_full;
     // const logoSmall = settingsData?.logo_image_small;
@@ -170,7 +174,9 @@ const createMenu = ({
 
         navItems?.every((navItem, itemIndex) => {
             const itemLink =
-                (navItem.link && resolveUnknownLink(navItem.link)) || '';
+                (navItem.link &&
+                    resolveUnknownLink(navItem.link, ctx?.linkResolver)) ||
+                '';
 
             // try to get page URL
             let pageUrlString = pageUrl;
@@ -191,7 +197,10 @@ const createMenu = ({
         else return true;
     });
 
-    const logoLinkParsed = resolveUnknownLink(settingsData?.logo_href);
+    const logoLinkParsed = resolveUnknownLink(
+        settingsData?.logo_href,
+        ctx?.linkResolver
+    );
     const logoLinkCleaned =
         logoLinkParsed && /index/.test(logoLinkParsed)
             ? logoLinkParsed.replace('index', '')
@@ -220,7 +229,8 @@ const createMenu = ({
                           isInverted,
                           href:
                               resolveUnknownLink(
-                                  settingsData?.header_primary_link
+                                  settingsData?.header_primary_link,
+                                  ctx?.linkResolver
                               ) || '',
                           label:
                               (size === 'desktop' ||
@@ -241,7 +251,8 @@ const createMenu = ({
                           isInverted,
                           href:
                               resolveUnknownLink(
-                                  settingsData?.header_secondary_link
+                                  settingsData?.header_secondary_link,
+                                  ctx?.linkResolver
                               ) || '',
                           label:
                               (size === 'desktop' ||
@@ -266,7 +277,11 @@ const createMenu = ({
                             id: `nav-link${subindex}`,
                             label: item?.label || '',
                             link: {
-                                href: resolveUnknownLink(item.link) || '',
+                                href:
+                                    resolveUnknownLink(
+                                        item.link,
+                                        ctx?.linkResolver
+                                    ) || '',
                             },
                             onClick: (id: string, fullId: string) =>
                                 console.log(fullId),

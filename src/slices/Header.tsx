@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     AliasMapperType,
     AliasSelectMapperType,
@@ -25,6 +25,7 @@ import {
 
 import { Header } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { PrismicContext } from 'utils/settings';
 
 interface HeaderImageItem {
     image?: PrismicImage;
@@ -144,6 +145,8 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     // map header images
     const headerImageMap = items.map((item) => {
         // get image format url for landscape
@@ -172,7 +175,9 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     return (
         <Header
             size={mapPrismicSelect<HeaderSize>(sizeSelectAlias, size) || 'full'}
-            videoUrl={resolveUnknownLink(video_url) || ''}
+            videoUrl={
+                resolveUnknownLink(video_url, settingsCtx?.linkResolver) || ''
+            }
             images={headerImageMap}
             titleAs={getHeadlineTag(title)}
             title={getText(title)}
@@ -183,7 +188,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -195,7 +204,11 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

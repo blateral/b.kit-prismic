@@ -25,8 +25,9 @@ import {
 } from '../utils/prismic';
 
 import { PromotionCardProps } from '@blateral/b.kit/lib/components/blocks/PromotionCard';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ResponsiveObject } from './slick';
+import { PrismicContext, PrismicCtx } from 'utils/settings';
 
 type BgMode =
     | 'full'
@@ -168,14 +169,21 @@ const listImageSizes = {
 export const CrossPromotionListSlice: React.FC<CrossPromotionListSliceType> = (
     props
 ) => {
+    const settingsCtx = useContext(PrismicContext);
     const {
         primary: { is_carousel },
     } = props;
 
     if (is_carousel) {
-        return createCPromoCarousel(props);
+        return createCPromoCarousel({
+            ...props,
+            linkResolver: settingsCtx?.linkResolver,
+        });
     } else {
-        return createCPromoList(props);
+        return createCPromoList({
+            ...props,
+            linkResolver: settingsCtx?.linkResolver,
+        });
     }
 };
 
@@ -208,7 +216,8 @@ const createCPromoList = ({
     items,
     primaryAction,
     secondaryAction,
-}: CrossPromotionListSliceType) => {
+    linkResolver,
+}: CrossPromotionListSliceType & Partial<PrismicCtx>) => {
     const promoItems: Array<CrossPromotionItems> = items;
     const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
     const itemCount = promoItems.length;
@@ -244,7 +253,7 @@ const createCPromoList = ({
             title: getText(item.title),
             href:
                 item.link && item.link.link_type !== 'Any' && item.link.url
-                    ? resolveUnknownLink(item.link)
+                    ? resolveUnknownLink(item.link, linkResolver)
                     : undefined,
         } as PromotionCardProps & { size?: 'full' | 'half' | undefined };
     };
@@ -281,7 +290,11 @@ const createCPromoList = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -293,7 +306,11 @@ const createCPromoList = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined
@@ -339,7 +356,8 @@ const createCPromoCarousel = ({
     onInit,
     slidesToShow,
     responsive,
-}: CrossPromotionListSliceType) => {
+    linkResolver,
+}: CrossPromotionListSliceType & Partial<PrismicCtx>) => {
     const imgFormat = mapPrismicSelect(imageFormatAlias, format);
     const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
     return (
@@ -357,7 +375,11 @@ const createCPromoCarousel = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -369,7 +391,11 @@ const createCPromoCarousel = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined
@@ -387,7 +413,8 @@ const createCPromoCarousel = ({
                 return {
                     href:
                         link && link.link_type !== 'Any'
-                            ? resolveUnknownLink(link) || undefined
+                            ? resolveUnknownLink(link, linkResolver) ||
+                              undefined
                             : undefined,
                     title: getText(title),
                     image: {

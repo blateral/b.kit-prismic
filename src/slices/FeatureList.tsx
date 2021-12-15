@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     PrismicBoolean,
     PrismicHeading,
@@ -27,6 +27,7 @@ import {
 
 import { FeatureCarousel, FeatureList } from '@blateral/b.kit';
 import { ResponsiveObject } from './slick';
+import { PrismicContext } from 'utils/settings';
 
 type BgMode = 'full' | 'splitted';
 interface ImageFormats {
@@ -164,6 +165,8 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
     slidesToShow,
     responsive,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     // get image format for all images
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
 
@@ -182,7 +185,11 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                       primaryAction({
                           isInverted,
                           label: getText(primary_label),
-                          href: resolveUnknownLink(primary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  primary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(primary_link),
                       })
                 : undefined,
@@ -192,7 +199,11 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                       secondaryAction({
                           isInverted,
                           label: getText(secondary_label),
-                          href: resolveUnknownLink(secondary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  secondary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(secondary_link),
                       })
                 : undefined,
@@ -249,8 +260,10 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                                       isInverted,
                                       label: getText(primary_label),
                                       href:
-                                          resolveUnknownLink(primary_link) ||
-                                          '',
+                                          resolveUnknownLink(
+                                              primary_link,
+                                              settingsCtx?.linkResolver
+                                          ) || '',
                                       isExternal:
                                           isPrismicLinkExternal(primary_link),
                                   })
@@ -263,8 +276,10 @@ export const FeatureListSlice: React.FC<FeatureListSliceType> = ({
                                       isInverted,
                                       label: getText(secondary_label),
                                       href:
-                                          resolveUnknownLink(secondary_link) ||
-                                          '',
+                                          resolveUnknownLink(
+                                              secondary_link,
+                                              settingsCtx?.linkResolver
+                                          ) || '',
                                       isExternal:
                                           isPrismicLinkExternal(secondary_link),
                                   })

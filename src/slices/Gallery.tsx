@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     PrismicBoolean,
     PrismicHeading,
@@ -26,6 +26,7 @@ import {
 
 import { Gallery, ImageCarousel } from '@blateral/b.kit';
 import { ResponsiveObject } from 'slices/slick';
+import { PrismicContext } from 'utils/settings';
 
 type BgMode = 'full' | 'splitted';
 interface ImageFormats {
@@ -160,6 +161,7 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
     slidesToShow,
     responsive,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
     const bgMode = mapPrismicSelect<BgMode>(bgModeSelectAlias, bg_mode);
 
     // create props object
@@ -211,7 +213,11 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                       primaryAction({
                           isInverted,
                           label: getText(primary_label),
-                          href: resolveUnknownLink(primary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  primary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(primary_link),
                       })
                 : undefined,
@@ -221,7 +227,11 @@ export const GallerySlice: React.FC<GallerySliceType> = ({
                       secondaryAction({
                           isInverted,
                           label: getText(secondary_label),
-                          href: resolveUnknownLink(secondary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  secondary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(secondary_link),
                       })
                 : undefined,

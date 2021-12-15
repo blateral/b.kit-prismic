@@ -14,8 +14,9 @@ import {
     isValidAction,
 } from 'utils/prismic';
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { CallToAction } from '@blateral/b.kit';
+import { PrismicContext } from 'utils/settings';
 
 interface AddressSliceType {
     decorator?: PrismicImage;
@@ -93,6 +94,8 @@ export const CallToActionSlice: React.FC<CallToActionSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     return (
         <CallToAction
             isInverted={is_inverted}
@@ -143,7 +146,11 @@ export const CallToActionSlice: React.FC<CallToActionSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -155,7 +162,11 @@ export const CallToActionSlice: React.FC<CallToActionSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

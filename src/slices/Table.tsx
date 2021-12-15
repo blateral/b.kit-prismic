@@ -13,9 +13,10 @@ import {
     isValidAction,
 } from '../utils/prismic';
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { Table } from '@blateral/b.kit';
 import { TableProps } from '@blateral/b.kit/lib/components/sections/Table';
+import { PrismicContext } from 'utils/settings';
 
 interface TableItem {
     table_title?: PrismicKeyText;
@@ -63,6 +64,7 @@ export const TableSlice: React.FC<TableSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
     const tableData = createTableItems(items);
 
     return (
@@ -79,7 +81,11 @@ export const TableSlice: React.FC<TableSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -91,7 +97,11 @@ export const TableSlice: React.FC<TableSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

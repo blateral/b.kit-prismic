@@ -1,5 +1,5 @@
 import { Teaser, TeaserWide } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     AliasMapperType,
     AliasSelectMapperType,
@@ -24,6 +24,7 @@ import {
     getHeadlineTag,
     isValidAction,
 } from 'utils/prismic';
+import { PrismicContext } from 'utils/settings';
 
 type BgMode = 'full' | 'splitted';
 
@@ -137,6 +138,8 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     // get image format for all images
     const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
@@ -157,7 +160,11 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
                       primaryAction({
                           isInverted,
                           label: getText(primary_label),
-                          href: resolveUnknownLink(primary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  primary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(primary_link),
                       })
                 : undefined,
@@ -167,7 +174,11 @@ export const TeaserSlice: React.FC<TeaserSliceType> = ({
                       secondaryAction({
                           isInverted,
                           label: getText(secondary_label),
-                          href: resolveUnknownLink(secondary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  secondary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(secondary_link),
                       })
                 : undefined,

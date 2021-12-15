@@ -19,7 +19,7 @@ import {
 } from 'utils/prismic';
 
 // import { FactList } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
 import { FactGrid } from '@blateral/b.kit';
 import {
     AliasMapperType,
@@ -27,6 +27,7 @@ import {
     ImageSizeSettings,
     isSVG,
 } from 'utils/mapping';
+import { PrismicContext } from 'utils/settings';
 
 type BgMode = 'full' | 'splitted';
 type Columns = '3' | '4' | '6';
@@ -127,6 +128,8 @@ export const FactGridSlice: React.FC<FactGridSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     // get image format for all images
     const imgFormat = mapPrismicSelect(imageFormatAlias, image_format);
     const columnsPerRow = mapPrismicSelect(columnAlias, columns);
@@ -148,7 +151,11 @@ export const FactGridSlice: React.FC<FactGridSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -160,7 +167,11 @@ export const FactGridSlice: React.FC<FactGridSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

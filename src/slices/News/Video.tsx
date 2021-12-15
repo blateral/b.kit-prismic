@@ -14,9 +14,10 @@ import {
 
 import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { NewsVideo } from '@blateral/b.kit';
+import { PrismicContext } from 'utils/settings';
 
 type BgMode =
     | 'full'
@@ -75,6 +76,7 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
     const introImageUrl = image && getImg(image).url;
     const mappedImage: ImageProps = {
         ...getImageFromUrls(
@@ -108,7 +110,11 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -120,7 +126,11 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

@@ -11,10 +11,12 @@ import {
     getImageFromUrls,
     getHeadlineTag,
     PrismicImage,
+    linkResolver,
 } from 'utils/prismic';
+import { PrismicCtx, PrismicContext } from 'utils/settings';
 
 import { NewsOverview } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { ImageSizeSettings } from 'utils/mapping';
 
@@ -50,6 +52,8 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
     queryParams,
     items,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     return (
         <NewsOverview
             superTitle={getText(super_title)}
@@ -59,7 +63,7 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
             text={getHtmlText(text)}
             tags={generateUniqueTag(items)}
             queryParams={queryParams}
-            news={mapNewsListData(items, secondaryAction) || []}
+            news={mapNewsListData(items, secondaryAction, settingsCtx) || []}
         />
     );
 };
@@ -71,7 +75,6 @@ function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
     const flatNewsTags = flatten(newsTagsCollection);
     const uniqueNewsTags = Array.from(new Set(flatNewsTags));
 
-
     return uniqueNewsTags;
 }
 
@@ -82,7 +85,8 @@ function mapNewsListData(
         label?: string;
         href?: string;
         isExternal?: boolean;
-    }) => React.ReactNode
+    }) => React.ReactNode,
+    ctx?: PrismicCtx
 ) {
     return newsCollection?.sort(byDateDescending)?.map((news) => {
         const introImageUrl = createImageUrl(news.data.news_image);
@@ -107,14 +111,21 @@ function mapNewsListData(
                 news.data &&
                 news.data.news_intro &&
                 getHtmlText(news.data.news_intro),
-            link: { href: `/news/${news.uid}`, isExternal: false },
+            link: {
+                href: ctx?.linkResolver
+                    ? ctx?.linkResolver(news)
+                    : linkResolver(news) || '',
+                isExternal: false,
+            },
 
             secondaryAction: secondaryAction
                 ? (isInverted: boolean) =>
                       secondaryAction({
                           isInverted,
                           label: 'Beitrag lesen',
-                          href: `/news/${news.uid}`,
+                          href: ctx?.linkResolver
+                              ? ctx?.linkResolver(news)
+                              : linkResolver(news) || '',
                           isExternal: isPrismicLinkExternal(
                               news.data.secondary_link
                           ),

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     getHeadlineTag,
     getHtmlText,
@@ -23,6 +23,7 @@ import {
     PhoneIcon,
     RouteIcon,
 } from '@blateral/b.kit/lib';
+import { PrismicContext } from 'utils/settings';
 
 interface MapLocationItems {
     super_title?: PrismicHeading;
@@ -113,6 +114,8 @@ export const MapSlice: React.FC<MapSliceType> = ({
     mailIcon,
     routingIcon,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     return (
         <Map
             isInverted={is_inverted}
@@ -175,7 +178,8 @@ export const MapSlice: React.FC<MapSliceType> = ({
                                           ),
                                           href:
                                               resolveUnknownLink(
-                                                  location.primary_link
+                                                  location.primary_link,
+                                                  settingsCtx?.linkResolver
                                               ) || '',
                                           isExternal: isPrismicLinkExternal(
                                               location.primary_link
@@ -196,7 +200,8 @@ export const MapSlice: React.FC<MapSliceType> = ({
                                           ),
                                           href:
                                               resolveUnknownLink(
-                                                  location.secondary_link
+                                                  location.secondary_link,
+                                                  settingsCtx?.linkResolver
                                               ) || '',
                                           isExternal: isPrismicLinkExternal(
                                               location.secondary_link

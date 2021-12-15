@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     PrismicKeyText,
     PrismicLink,
@@ -9,6 +9,7 @@ import {
     isPrismicLinkExternal,
 } from 'utils/prismic';
 import { Footer } from '@blateral/b.kit';
+import { PrismicContext } from 'utils/settings';
 
 export interface FooterSliceType {
     settingsPage?: PrismicSettingsPage;
@@ -30,6 +31,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
     injectForm,
     mapSocials,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
     const settingsData = settingsPage?.data;
 
     const mappedSocials =
@@ -39,7 +41,10 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
         settingsData.socials.length > 0 &&
         mapSocials(settingsData.socials);
 
-    const logoLinkParsed = resolveUnknownLink(settingsData?.logo_href);
+    const logoLinkParsed = resolveUnknownLink(
+        settingsData?.logo_href,
+        settingsCtx?.linkResolver
+    );
 
     const logoLinkCleaned =
         logoLinkParsed && /index/.test(logoLinkParsed)
@@ -76,8 +81,10 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             siteLinks={settingsData?.body?.map((linkSlice) => {
                 return {
                     href:
-                        resolveUnknownLink(linkSlice.primary.footer_nav_link) ||
-                        '',
+                        resolveUnknownLink(
+                            linkSlice.primary.footer_nav_link,
+                            settingsCtx?.linkResolver
+                        ) || '',
                     label: (linkSlice.primary.footer_nav_title as any) || '',
                     isExternal: isPrismicLinkExternal(
                         linkSlice?.primary?.footer_nav_link
@@ -86,7 +93,11 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
             })}
             bottomLinks={settingsData?.footer_bottomlinks?.map((bottomLink) => {
                 const result = {
-                    href: resolveUnknownLink(bottomLink.href) || '',
+                    href:
+                        resolveUnknownLink(
+                            bottomLink.href,
+                            settingsCtx?.linkResolver
+                        ) || '',
                     label: bottomLink.label || '',
                     isExternal: isPrismicLinkExternal(bottomLink.href),
                 };

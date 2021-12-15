@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { AliasSelectMapperType, ImageSizeSettings } from 'utils/mapping';
 import {
     PrismicBoolean,
@@ -22,6 +22,7 @@ import {
 import { Video, VideoCarousel } from '@blateral/b.kit';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { ResponsiveObject } from './slick';
+import { PrismicContext } from 'utils/settings';
 
 type BgMode = 'full' | 'splitted';
 export interface VideoCardItem {
@@ -119,6 +120,8 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     responsive,
     playIcon,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     // get background mode
     const bgMode = mapPrismicSelect(bgModeSelectAlias, bg_mode);
 
@@ -135,7 +138,11 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
                       primaryAction({
                           isInverted,
                           label: getText(primary_label),
-                          href: resolveUnknownLink(primary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  primary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(primary_link),
                       })
                 : undefined,
@@ -145,7 +152,11 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
                       secondaryAction({
                           isInverted,
                           label: getText(secondary_label),
-                          href: resolveUnknownLink(secondary_link) || '',
+                          href:
+                              resolveUnknownLink(
+                                  secondary_link,
+                                  settingsCtx?.linkResolver
+                              ) || '',
                           isExternal: isPrismicLinkExternal(secondary_link),
                       })
                 : undefined,

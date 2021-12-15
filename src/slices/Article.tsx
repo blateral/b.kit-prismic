@@ -17,7 +17,8 @@ import {
 
 import { AliasSelectMapperType } from 'utils/mapping';
 import { Article } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
+import { PrismicContext } from 'utils/settings';
 
 type BgMode =
     | 'full'
@@ -79,6 +80,8 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     return (
         <Article
             isInverted={is_inverted}
@@ -95,7 +98,11 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -107,7 +114,11 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

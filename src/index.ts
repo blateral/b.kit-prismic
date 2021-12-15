@@ -1,6 +1,7 @@
 /***** Version: 0.11.19 *****/
 
 // export util types and functions
+export * from 'utils/settings';
 export * from 'utils/prismic';
 export * from 'utils/prismicApi';
 export * from 'utils/sitemapGenerator';

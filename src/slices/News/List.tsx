@@ -14,12 +14,14 @@ import {
     getImageFromUrls,
     getHeadlineTag,
     isValidAction,
+    linkResolver,
 } from 'utils/prismic';
 
 import { NewsList } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
 import { ImageSizeSettings } from 'utils/mapping';
+import { PrismicContext, PrismicCtx } from 'utils/settings';
 
 export interface NewsListSliceType
     extends PrismicSlice<'NewsList', PrismicNewsPage> {
@@ -77,10 +79,12 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
     secondaryAction,
     onTagClick,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
     const newsListMap = mapNewsListData({
         newsCollection: items,
         secondaryAction,
         onTagClick,
+        ctx: settingsCtx,
     });
     return (
         <NewsList
@@ -99,7 +103,11 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -111,7 +119,11 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined
@@ -123,6 +135,7 @@ function mapNewsListData({
     newsCollection,
     secondaryAction,
     onTagClick,
+    ctx,
 }: {
     newsCollection: PrismicNewsPage[] | undefined;
     secondaryAction?: (props: {
@@ -132,6 +145,7 @@ function mapNewsListData({
         isExternal?: boolean;
     }) => React.ReactNode;
     onTagClick?: (name?: string) => void;
+    ctx?: PrismicCtx;
 }) {
     if (!newsCollection) return [];
 
@@ -171,13 +185,20 @@ function mapNewsListData({
                 news.data.news_intro &&
                 getHtmlText(news.data.news_intro),
 
-            link: { href: `/news/${news.uid}`, isExternal: false },
+            link: {
+                href: ctx?.linkResolver
+                    ? ctx?.linkResolver(news)
+                    : linkResolver(news) || '',
+                isExternal: false,
+            },
             secondaryAction: (isInverted: boolean) =>
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
                     label: 'Beitrag lesen',
-                    href: `/news/${news.uid}`,
+                    href: ctx?.linkResolver
+                        ? ctx?.linkResolver(news)
+                        : linkResolver(news) || '',
                     isExternal: isPrismicLinkExternal(news.data.secondary_link),
                 }),
             onTagClick: onTagClick || undefined,

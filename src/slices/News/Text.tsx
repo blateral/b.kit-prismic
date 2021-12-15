@@ -12,7 +12,8 @@ import {
 } from 'utils/prismic';
 
 import { NewsText } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
+import { PrismicContext } from 'utils/settings';
 
 export interface NewsTextSliceType extends PrismicSlice<'NewsText'> {
     primary: {
@@ -53,6 +54,8 @@ export const NewsTextSlice: React.FC<NewsTextSliceType> = ({
     primaryAction,
     secondaryAction,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
+
     return (
         <NewsText
             text={getHtmlText(text)}
@@ -64,7 +67,11 @@ export const NewsTextSlice: React.FC<NewsTextSliceType> = ({
                           primaryAction({
                               isInverted,
                               label: getText(primary_label),
-                              href: resolveUnknownLink(primary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      primary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(primary_link),
                           })
                     : undefined
@@ -76,7 +83,11 @@ export const NewsTextSlice: React.FC<NewsTextSliceType> = ({
                           secondaryAction({
                               isInverted,
                               label: getText(secondary_label),
-                              href: resolveUnknownLink(secondary_link) || '',
+                              href:
+                                  resolveUnknownLink(
+                                      secondary_link,
+                                      settingsCtx?.linkResolver
+                                  ) || '',
                               isExternal: isPrismicLinkExternal(secondary_link),
                           })
                     : undefined

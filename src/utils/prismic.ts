@@ -362,7 +362,10 @@ export const linkResolver = (doc: Document) => {
  * Resolve unknown link to valid url string
  * @param link Link e.g. url string or Prismic link object
  */
-export const resolveUnknownLink = (link: unknown): string | null => {
+export const resolveUnknownLink = (
+    link: unknown,
+    documentLinkResolver?: (doc: Document) => string
+): string | null => {
     if (typeof link === 'object' && link !== null && 'link_type' in link) {
         const mylink = link as PrismicLink;
         if (mylink.link_type === 'Any') {
@@ -372,7 +375,9 @@ export const resolveUnknownLink = (link: unknown): string | null => {
             return mylink.url;
         }
         if (mylink.link_type === 'Document') {
-            return linkResolver(mylink);
+            return documentLinkResolver
+                ? documentLinkResolver(mylink)
+                : linkResolver(mylink);
         }
         if (mylink.link_type === 'Media') {
             return mylink.url;
