@@ -47,7 +47,7 @@ export const FooterSlice: React.FC<FooterSliceType> = ({
                         href: item.link?.url || '',
                         icon: (
                             <img
-                                src={item.icon.url}
+                                src={resolveUnknownLink(item.link) || ''}
                                 alt={item.icon.alt || ''}
                             />
                         ),
