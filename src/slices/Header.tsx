@@ -22,6 +22,7 @@ import {
     resolveUnknownLink,
     isValidAction,
     PrismicRichText,
+    getHtmlText,
 } from 'utils/prismic';
 
 import { Header } from '@blateral/b.kit';
@@ -198,7 +199,7 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             images={headerImageMap}
             titleAs={getHeadlineTag(title)}
             // title={getText(title)}
-            intro={{ title: getText(title), text: getText(header_intro) }}
+            intro={{ title: getText(title), text: getHtmlText(header_intro) }}
             badge={headerBadge(badge, badge_on_mobile)}
             primaryCta={getPrimaryButtonOrPointer({
                 isCta: !header_buttonstyle,
