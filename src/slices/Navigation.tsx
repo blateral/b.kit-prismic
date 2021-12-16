@@ -74,8 +74,14 @@ export interface NavigationProps {
         name?: string;
     }) => React.ReactNode;
     search?: (isInverted?: boolean) => React.ReactNode;
-    openMenuIcon?: (isInverted?: boolean) => React.ReactNode;
-    closeMenuIcon?: (isInverted?: boolean) => React.ReactNode;
+    openMenuIcon?: (props: {
+        isInverted?: boolean;
+        clickHandler?: () => void;
+    }) => React.ReactNode;
+    closeMenuIcon?: (props: {
+        isInverted?: boolean;
+        clickHandler?: () => void;
+    }) => React.ReactNode;
 }
 
 export const NavigationSlice: React.FC<
