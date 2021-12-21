@@ -37,6 +37,7 @@ export interface NewsListSliceType
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
         show_more_text?: PrismicKeyText;
+        news_button_label?: PrismicKeyText;
     };
     primaryAction?: (props: {
         isInverted?: boolean;
@@ -73,6 +74,8 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         super_title,
         has_back,
         text,
+        show_more_text,
+        news_button_label,
     },
     items,
     primaryAction,
@@ -85,6 +88,7 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
         secondaryAction,
         onTagClick,
         ctx: settingsCtx,
+        newsButtonLabel: news_button_label || '',
     });
     return (
         <NewsList
@@ -93,7 +97,7 @@ export const NewsListSlice: React.FC<NewsListSliceType> = ({
             title={getText(title)}
             titleAs={getHeadlineTag(title)}
             text={getHtmlText(text)}
-            showMoreText={'mehr anzeigen'}
+            showMoreText={show_more_text || ''}
             hasBack={has_back}
             news={newsListMap}
             isInverted={is_inverted}
@@ -136,7 +140,9 @@ function mapNewsListData({
     secondaryAction,
     onTagClick,
     ctx,
+    newsButtonLabel,
 }: {
+    newsButtonLabel?: string;
     newsCollection: PrismicNewsPage[] | undefined;
     secondaryAction?: (props: {
         isInverted?: boolean;
@@ -195,7 +201,7 @@ function mapNewsListData({
                 secondaryAction &&
                 secondaryAction({
                     isInverted,
-                    label: 'Beitrag lesen',
+                    label: newsButtonLabel || 'Beitrag lesen',
                     href: ctx?.linkResolver
                         ? ctx?.linkResolver(news)
                         : linkResolver(news) || '',

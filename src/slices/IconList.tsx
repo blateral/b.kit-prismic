@@ -37,6 +37,8 @@ export interface IconListSliceType
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
+        show_more_text?: PrismicKeyText;
+        show_less_text?: PrismicKeyText;
     };
 
     // helpers to define component elements outside of slice
@@ -66,6 +68,8 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
+        show_more_text,
+        show_less_text,
     },
     items,
     primaryAction,
@@ -89,6 +93,8 @@ export const IconListSlice: React.FC<IconListSliceType> = ({
                     alt: item?.image?.alt || '',
                 };
             })}
+            showMoreText={show_more_text || undefined}
+            showLessText={show_less_text || undefined}
             primaryAction={
                 primaryAction && isValidAction(primary_label, primary_link)
                     ? (isInverted) =>

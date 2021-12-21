@@ -12,6 +12,7 @@ import {
     getHeadlineTag,
     PrismicImage,
     linkResolver,
+    PrismicKeyText,
 } from 'utils/prismic';
 import { PrismicCtx, PrismicContext } from 'utils/settings';
 
@@ -27,6 +28,8 @@ export interface NewsOverviewSliceType
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
+        show_more_text?: PrismicKeyText;
+        news_button_label?: PrismicKeyText;
     };
     queryParams?: Record<string, any>;
     secondaryAction?: (props: {
@@ -47,7 +50,7 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
-    primary: { title, super_title, text },
+    primary: { title, super_title, text, show_more_text, news_button_label },
     secondaryAction,
     queryParams,
     items,
@@ -63,7 +66,15 @@ export const NewsOverviewSlice: React.FC<NewsOverviewSliceType> = ({
             text={getHtmlText(text)}
             tags={generateUniqueTag(items)}
             queryParams={queryParams}
-            news={mapNewsListData(items, secondaryAction, settingsCtx) || []}
+            news={
+                mapNewsListData(
+                    items,
+                    news_button_label || '',
+                    secondaryAction,
+                    settingsCtx
+                ) || []
+            }
+            showMoreText={show_more_text || ''}
         />
     );
 };
@@ -80,6 +91,7 @@ function generateUniqueTag(newsCollection?: PrismicNewsPage[]) {
 
 function mapNewsListData(
     newsCollection: PrismicNewsPage[] | undefined,
+    newsButtonLabel?: string,
     secondaryAction?: (props: {
         isInverted?: boolean;
         label?: string;
@@ -122,7 +134,7 @@ function mapNewsListData(
                 ? (isInverted: boolean) =>
                       secondaryAction({
                           isInverted,
-                          label: 'Beitrag lesen',
+                          label: newsButtonLabel || 'Beitrag lesen',
                           href: ctx?.linkResolver
                               ? ctx?.linkResolver(news)
                               : linkResolver(news) || '',
