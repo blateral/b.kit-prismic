@@ -4,6 +4,7 @@ import {
     resolveUnknownLink,
     isPrismicLinkEmpty,
 } from './prismic';
+import { Document } from '@prismicio/client/types/documents';
 
 import Prismic from 'prismic-javascript';
 
@@ -20,11 +21,16 @@ export const initPrismicApi = async (req: any) => {
     });
 };
 
-export const getPreviewUrl = async (req: any, token: string, docId: string) => {
+export const getPreviewUrl = async (
+    req: any,
+    token: string,
+    docId: string,
+    customResolver?: (doc: Document) => string
+) => {
     const api = await initPrismicApi(req);
     return await api
         .getPreviewResolver(token, docId)
-        .resolve(linkResolver, '/');
+        .resolve(customResolver || linkResolver, '/');
 };
 
 export const getPageUrl = (req: any, domain?: PrismicLink) => {
