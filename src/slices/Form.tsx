@@ -40,6 +40,13 @@ export interface FormSliceType extends PrismicSlice<'Form'> {
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
+
+        name_label?: PrismicKeyText;
+        surname_label?: PrismicKeyText;
+        mail_label?: PrismicKeyText;
+        phone_label?: PrismicKeyText;
+        area_label?: PrismicKeyText;
+
         submit_label?: PrismicKeyText;
         checkbox_label?: PrismicRichText;
 
@@ -85,6 +92,13 @@ export const FormSlice: React.FC<FormSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
+
+        name_label,
+        surname_label,
+        mail_label,
+        phone_label,
+        area_label,
+
         submit_label,
         checkbox_label,
 
@@ -115,27 +129,28 @@ export const FormSlice: React.FC<FormSliceType> = ({
                 name: {
                     isRequired: fieldSettings?.name?.isRequired,
                     infoMessage: fieldSettings?.name?.infoMessage,
-                    label: fieldSettings?.name?.label,
+                    label: getText(name_label) || fieldSettings?.name?.label,
                 },
                 surname: {
                     isRequired: fieldSettings?.surname?.isRequired,
                     infoMessage: fieldSettings?.surname?.infoMessage,
-                    label: fieldSettings?.surname?.label,
+                    label:
+                        getText(surname_label) || fieldSettings?.surname?.label,
                 },
                 mail: {
                     isRequired: fieldSettings?.mail?.isRequired,
                     infoMessage: fieldSettings?.mail?.infoMessage,
-                    label: fieldSettings?.mail?.label,
+                    label: getText(mail_label) || fieldSettings?.mail?.label,
                 },
                 phone: {
                     isRequired: fieldSettings?.phone?.isRequired,
                     infoMessage: fieldSettings?.phone?.infoMessage,
-                    label: fieldSettings?.phone?.label,
+                    label: getText(phone_label) || fieldSettings?.phone?.label,
                 },
                 area: {
                     isRequired: fieldSettings?.area?.isRequired,
                     infoMessage: fieldSettings?.area?.infoMessage,
-                    label: fieldSettings?.area?.label,
+                    label: getText(area_label) || fieldSettings?.area?.label,
                 },
             }}
             checkbox={{
