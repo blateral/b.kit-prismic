@@ -186,6 +186,9 @@ export interface PrismicNewsPage extends Document {
         author_has_background?: PrismicBoolean;
         author_is_inverted?: PrismicBoolean;
 
+        news_button_label: PrismicKeyText;
+        show_more_text: PrismicKeyText;
+
         body: Array<
             | NewsTextSliceType
             | NewsTableSliceType

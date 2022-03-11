@@ -8,12 +8,14 @@ import {
     isPrismicLinkExternal,
     getImageFromUrls,
     getPrismicImage as getImg,
+    linkResolver,
 } from 'utils/prismic';
 
 import { ImageSizeSettings } from 'utils/mapping';
 import { NewsFooter } from '@blateral/b.kit';
-import React from 'react';
+import React, { useContext } from 'react';
 import { ImageProps } from '@blateral/b.kit/lib/components/blocks/Image';
+import { PrismicContext, PrismicCtx } from 'utils/settings';
 
 export interface NewsFooterSliceType
     extends PrismicSlice<'NewsFooter', PrismicNewsPage> {
@@ -23,6 +25,8 @@ export interface NewsFooterSliceType
         publication_date?: PrismicKeyText;
         is_inverted?: PrismicBoolean;
         news_footer_background?: PrismicBoolean;
+        show_more_text?: PrismicKeyText;
+        news_button_label?: PrismicKeyText;
     };
     secondaryAction?: (props: {
         isInverted?: boolean;
@@ -44,15 +48,23 @@ const imageSizes = {
 } as ImageSizeSettings<{ main: ImageProps }>;
 
 export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
-    primary: { news_footer_background, is_inverted },
+    primary: {
+        news_footer_background,
+        is_inverted,
+        show_more_text,
+        news_button_label,
+    },
     items,
     secondaryAction,
     onTagClick,
 }) => {
+    const settingsCtx = useContext(PrismicContext);
     const newsListMap = mapNewsListData({
         newsCollection: items,
         secondaryAction,
         onTagClick,
+        newsButtonLabel: getText(news_button_label),
+        ctx: settingsCtx,
     });
 
     return (
@@ -60,7 +72,7 @@ export const NewsFooterSlice: React.FC<NewsFooterSliceType> = ({
             news={newsListMap || []}
             isInverted={is_inverted}
             hasBack={news_footer_background}
-            showMoreText={'mehr anzeigen'}
+            showMoreText={getText(show_more_text)}
         />
     );
 };
@@ -68,6 +80,8 @@ function mapNewsListData({
     newsCollection,
     secondaryAction,
     onTagClick,
+    newsButtonLabel,
+    ctx,
 }: {
     newsCollection: PrismicNewsPage[] | undefined;
     secondaryAction?: (props: {
@@ -77,6 +91,8 @@ function mapNewsListData({
         isExternal?: boolean;
     }) => React.ReactNode;
     onTagClick?: (name?: string) => void;
+    newsButtonLabel?: string;
+    ctx?: PrismicCtx;
 }) {
     if (!newsCollection) return [];
 
@@ -115,14 +131,21 @@ function mapNewsListData({
                 news.data &&
                 news.data.news_intro &&
                 getHtmlText(news.data.news_intro),
-            link: { href: `/news/${news.uid}`, isExternal: false },
+            link: {
+                href: ctx?.linkResolver
+                    ? ctx?.linkResolver(news)
+                    : linkResolver(news) || '',
+                isExternal: false,
+            },
 
             secondaryAction: secondaryAction
                 ? (isInverted: boolean) =>
                       secondaryAction({
                           isInverted,
-                          label: 'Beitrag lesen',
-                          href: `/news/${news.uid}`,
+                          label: newsButtonLabel || 'Beitrag lesen',
+                          href: ctx?.linkResolver
+                              ? ctx?.linkResolver(news)
+                              : linkResolver(news) || '',
                           isExternal: isPrismicLinkExternal(
                               news.data.secondary_link
                           ),
