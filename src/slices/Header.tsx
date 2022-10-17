@@ -32,6 +32,9 @@ interface HeaderImageItem {
     image?: PrismicImage;
 }
 
+type VerticalFocus = 'top' | 'bottom' | 'center';
+type HorizontalFocus = 'left' | 'right' | 'center';
+
 type HeaderSize = 'full' | 'small';
 
 interface ImageFormats {
@@ -62,10 +65,19 @@ export interface HeaderSliceType
         nav_inverted?: PrismicBoolean;
         size?: PrismicSelectField;
         is_inverted?: PrismicBoolean;
+
+        focuspoint_vertical?: PrismicSelectField;
+        focuspoint_horizontal?: PrismicSelectField;
     };
 
     // helpers to define component elements outside of slice
     sizeSelectAlias?: AliasSelectMapperType<HeaderSize>;
+    focusPointAliasHorizontal?: AliasSelectMapperType<
+        'left' | 'right' | 'center'
+    >;
+    focusPointAliasVertical?: AliasSelectMapperType<
+        'top' | 'bottom' | 'center'
+    >;
     imageFormatAlias?: AliasMapperType<ImageFormats>;
     primaryAction?: (props: {
         isInverted?: boolean;
@@ -150,6 +162,8 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
         primary_link,
         secondary_label,
         secondary_link,
+        focuspoint_horizontal,
+        focuspoint_vertical,
     },
     items,
     customBottomGradient,
@@ -157,6 +171,16 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
     sizeSelectAlias = {
         full: 'full',
         small: 'small',
+    },
+    focusPointAliasHorizontal = {
+        center: 'Mitte',
+        left: 'Links',
+        right: 'Rechts',
+    },
+    focusPointAliasVertical = {
+        center: 'Mitte',
+        top: 'Oben',
+        bottom: 'Unten',
     },
     imageFormatAlias = {
         portrait: 'portrait',
@@ -217,6 +241,16 @@ export const HeaderSlice: React.FC<HeaderSliceType> = ({
             })}
             customTopGradient={customTopGradient}
             customBottomGradient={customBottomGradient}
+            focusPoint={[
+                mapPrismicSelect<HorizontalFocus>(
+                    focusPointAliasHorizontal,
+                    focuspoint_horizontal
+                ) || 'center',
+                mapPrismicSelect<VerticalFocus>(
+                    focusPointAliasVertical,
+                    focuspoint_vertical
+                ) || 'center',
+            ]}
         />
     );
 };
