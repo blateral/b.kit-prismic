@@ -49,6 +49,7 @@ export interface CookieConsentSliceType {
             ['data-gtm']: string;
         };
     }) => React.ReactNode;
+    onClose?: () => void;
 }
 
 export const CookieConsentSlice: React.FC<CookieConsentSliceType> = ({
@@ -59,11 +60,12 @@ export const CookieConsentSlice: React.FC<CookieConsentSliceType> = ({
     declineCtaLabel,
     acceptAction,
     declineAction,
+    onClose,
     ...rest
 }) => {
     // FIXME: Locale key 'eng' not compatible with 'en'
     return (
-        <CookieConsent {...{ ...rest, localeKey: "de" }}>
+        <CookieConsent {...{ ...rest, localeKey: 'de' }} onClose={onClose}>
             {({
                 handleAccept,
                 handleDecline,
