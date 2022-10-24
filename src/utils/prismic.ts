@@ -462,7 +462,7 @@ export const getHeadlineTag = (
                 throw new Error('Heading type is not defined!');
         }
     } catch (e) {
-        console.warn(e);
+        // console.warn(e);
         return undefined;
     }
 };
@@ -488,7 +488,7 @@ export const mapPrismicSelect = <TargetType extends string>(
             }
         }
     } catch (e) {
-        console.log(e);
+        // console.log(e);
     }
     return alias;
 };
