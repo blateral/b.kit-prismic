@@ -53,7 +53,7 @@ export const updateUrlParameters = (
         });
         return uri + hash; // finally append the hash as well
     } catch (e) {
-        console.warn(e);
+        // console.warn(e);
         return uri;
     }
 };
