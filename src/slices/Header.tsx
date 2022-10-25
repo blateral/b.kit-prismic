@@ -141,7 +141,7 @@ export interface HeaderSliceType
 // for this component defined image sizes
 const imageSizes = {
     main: {
-        small: { width: 660, height: 792 },
+        small: { width: 660, height: 1100 },
         medium: { width: 832, height: 1100 },
         semilarge: { width: 1024, height: 1100 },
         large: { width: 1440, height: 1100 },
