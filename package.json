@@ -1,6 +1,6 @@
 {
     "name": "@blateral/b.kit-prismic",
-    "version": "0.11.25-patch",
+    "version": "0.11.19-patch.7",
     "description": "",
     "main": "lib/index.js",
     "module": "lib/index.es.js",
