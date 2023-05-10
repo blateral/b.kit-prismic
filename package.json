@@ -16,7 +16,9 @@
         "deploy": "yarn tc && yarn build && yarn publish",
         "check-yalc": "if yalc --version; then yalc check; else echo Skipping yalc check; fi",
         "lookup": "yarn --check-files",
-        "publish-yalc": "rm -rf lib && yalc update && yarn build && yalc publish"
+        "publish-yalc": "rm -rf lib && yalc update && yarn build && yalc publish",
+        "deploy-patch": "yarn tc && yarn build && yarn publish --tag patch",
+        "deploy-beta": "yarn tc && yarn build && yarn publish --tag beta"
     },
     "repository": {
         "type": "git",
