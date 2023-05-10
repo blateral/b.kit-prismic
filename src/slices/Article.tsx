@@ -33,6 +33,7 @@ export interface ArticleSliceType extends PrismicSlice<'Article'> {
         super_title?: PrismicHeading;
         title?: PrismicHeading;
         text?: PrismicRichText;
+        intro?: PrismicRichText;
         aside_text?: PrismicRichText;
         is_inverted?: PrismicBoolean;
         bg_mode?: PrismicSelectField;
@@ -69,6 +70,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
+        intro,
     },
     bgModeSelectAlias = {
         full: 'full',
@@ -91,6 +93,7 @@ export const ArticleSlice: React.FC<ArticleSliceType> = ({
             superTitle={getText(super_title)}
             superTitleAs={getHeadlineTag(super_title)}
             text={getHtmlText(text)}
+            intro={getHtmlText(intro)}
             asideText={getHtmlText(aside_text)}
             primaryAction={
                 primaryAction && isValidAction(primary_label, primary_link)
