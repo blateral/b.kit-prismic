@@ -45,6 +45,9 @@ export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
+
+        consent_text?: PrismicKeyText;
+        consent_action_label?: PrismicKeyText;
     };
     // helpers to define component elements outside of slice
     bgModeSelectAlias?: AliasSelectMapperType<BgMode>;
@@ -60,6 +63,17 @@ export interface NewsVideoSliceType extends PrismicSlice<'NewsVideo'> {
         href?: string;
         isExternal?: boolean;
     }) => React.ReactNode;
+
+    consentAction?: (props: {
+        label: string;
+        handleClick?: () => void;
+        consentProps: Record<string, string>;
+    }) => React.ReactNode;
+    /**
+     * Custom handler for play button click
+     * @returns true if video should be played
+     */
+    onPlayClick?: () => Promise<boolean>;
 }
 
 export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
@@ -72,9 +86,13 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
+        consent_text,
+        consent_action_label,
     },
     primaryAction,
     secondaryAction,
+    consentAction,
+    onPlayClick,
 }) => {
     const settingsCtx = useContext(PrismicContext);
     const introImageUrl = image && getImg(image).url;
@@ -135,6 +153,18 @@ export const NewsVideoSlice: React.FC<NewsVideoSliceType> = ({
                           })
                     : undefined
             }
+            consentText={getText(consent_text)}
+            consentAction={
+                consentAction && consent_action_label
+                    ? ({ consentProps, handleClick }) =>
+                          consentAction({
+                              consentProps,
+                              handleClick,
+                              label: getText(consent_action_label),
+                          })
+                    : undefined
+            }
+            onPlayClick={onPlayClick}
         />
     );
 };

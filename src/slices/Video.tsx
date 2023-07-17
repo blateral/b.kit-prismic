@@ -42,6 +42,9 @@ export interface VideoSliceType extends PrismicSlice<'Video', VideoCardItem> {
         secondary_link?: PrismicLink;
         primary_label?: PrismicKeyText;
         secondary_label?: PrismicKeyText;
+
+        consent_text?: PrismicKeyText;
+        consent_action_label?: PrismicKeyText;
     };
 
     // helpers to define component elements outside of slice
@@ -79,6 +82,17 @@ export interface VideoSliceType extends PrismicSlice<'Video', VideoCardItem> {
     slidesToShow?: number;
     responsive?: ResponsiveObject[];
     playIcon?: React.ReactChild;
+
+    consentAction?: (props: {
+        label: string;
+        handleClick?: () => void;
+        consentProps: Record<string, string>;
+    }) => React.ReactNode;
+    /**
+     * Custom handler for play button click
+     * @returns true if video should be played
+     */
+    onPlayClick?: () => Promise<boolean>;
 }
 
 // for this component defines image sizes
@@ -102,6 +116,8 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
         primary_label,
         secondary_link,
         secondary_label,
+        consent_text,
+        consent_action_label,
     },
     items,
     bgModeSelectAlias = {
@@ -119,6 +135,8 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
     slidesToShow,
     responsive,
     playIcon,
+    consentAction,
+    onPlayClick,
 }) => {
     const settingsCtx = useContext(PrismicContext);
 
@@ -215,6 +233,18 @@ export const VideoSlice: React.FC<VideoSliceType> = ({
                 bgImage={mappedImage}
                 embedId={getText(embedId)}
                 playIcon={playIcon}
+                consentText={getText(consent_text)}
+                consentAction={
+                    consentAction && consent_action_label
+                        ? ({ consentProps, handleClick }) =>
+                              consentAction({
+                                  consentProps,
+                                  handleClick,
+                                  label: getText(consent_action_label),
+                              })
+                        : undefined
+                }
+                onPlayClick={onPlayClick}
             />
         );
     }
